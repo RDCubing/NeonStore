@@ -17,6 +17,9 @@ namespace NeonStore
         public static ObservableCollection<AppItem> TopApps { get; }
     = new ObservableCollection<AppItem>();
 
+        public static ObservableCollection<AppItem> OtherApps { get; }
+    = new ObservableCollection<AppItem>();
+
         public static async Task LoadAsync()
         {
             try
@@ -50,6 +53,7 @@ namespace NeonStore
     {
         NeonStore.Clear();
         TopApps.Clear();
+        OtherApps.Clear();
 
         foreach (var app in data.NeonStore)
         {
@@ -60,6 +64,11 @@ namespace NeonStore
             {
                 TopApps.Add(app);
                 Debug.WriteLine("TopApp Added: " + app.Title);
+            }
+            else
+            {
+                OtherApps.Add(app);
+                Debug.WriteLine("OtherApp Added: " + app.Title);
             }
         }
     });

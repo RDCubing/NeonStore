@@ -36,6 +36,7 @@
     VerticalScrollMode="Disabled"
     VerticalScrollBarVisibility="Disabled">
             <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Left">
+                <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="50,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -46,33 +47,131 @@
 
                     <!-- Title -->
                     <TextBlock Grid.Row="0"
-               Text="What's New"
+               Text="Spotlight #1"
                FontSize="36"
                FontWeight="Light"
                Foreground="White"
                Margin="0,0,0,10"
                TextWrapping="Wrap"/>
 
-                    <!-- Description -->
-                    <StackPanel Grid.Row="1"
-            Margin="0,0,0,25">
+                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
+      Margin="0,0,0,0">
 
-                        <Image Source="Assets/whatsnew.png"
-           Stretch="UniformToFill"
-           Margin="0,0,0,10"
-                               Height="400"/>
+                        <Button VerticalAlignment="Top"
+        Margin="0,5,0,0" BorderThickness="0"
+        Click="Chris_Click">
 
-                        <TextBlock Text="GeekHub Metro has been migrated and rebranded into NeonStore (aka NanoStore) as part of a system upgrade, and the main GeekHub database is also moving to a new website to improve performance, organization, and future updates."
-               FontSize="18"
-               FontWeight="Light"
-               Foreground="White"
-               TextWrapping="Wrap"
-                                   Width="500" HorizontalAlignment="Left"/>
+                            <Grid Height="410" Width="640">
+                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/rlillo.png"
+               Stretch="UniformToFill"/>
 
-                    </StackPanel>
+                                <Rectangle Fill="#44000000"/>
+
+                                <StackPanel VerticalAlignment="Bottom"
+            Margin="20"
+            Orientation="Horizontal">
+
+                                    <!-- LOGO -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/chris.png"
+           Width="64"
+           Height="64"
+           Margin="0,0,12,0"
+           VerticalAlignment="Center"/>
+
+                                    <!-- TEXT -->
+                                    <StackPanel>
+
+                                        <TextBlock Text="ChrisRLillo Music"
+                   Foreground="White"
+                   FontSize="44"
+                   FontWeight="Light"/>
+
+                                        <TextBlock Text="Chilean music in its peak"
+                   Foreground="#DDDDDD"
+                   FontSize="18"
+                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Button>
+
+                    </Grid>
+
+
                 </Grid>
                 <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="50,0,40,0">
+                <Grid Width="Auto" Margin="50,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Popular"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
+      Margin="0,0,0,0">
+
+                        <Button VerticalAlignment="Top"
+        Margin="0,5,0,0" BorderThickness="0"
+        Click="OctoStore_Click">
+
+                            <Grid Height="410" Width="640">
+                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octoshot.png"
+               Stretch="UniformToFill"/>
+
+                                <Rectangle Fill="#44000000"/>
+
+                                <StackPanel VerticalAlignment="Bottom"
+            Margin="20"
+            Orientation="Horizontal">
+
+                                    <!-- LOGO -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octostore.png"
+           Width="64"
+           Height="64"
+           Margin="0,0,12,0"
+           VerticalAlignment="Center"/>
+
+                                    <!-- TEXT -->
+                                    <StackPanel>
+
+                                        <TextBlock Text="OctoStore"
+                   Foreground="White"
+                   FontSize="44"
+                   FontWeight="Light"/>
+
+                                        <TextBlock Text="Windows 8.1 Store, revived"
+                   Foreground="#DDDDDD"
+                   FontSize="18"
+                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Button>
+
+                    </Grid>
+
+
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="50,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <!-- Links header -->
@@ -203,73 +302,7 @@
                     
                     
                 </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="50,0,40,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Spotlight #1"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-      Margin="0,0,0,0">
-
-                        <Button VerticalAlignment="Top"
-        Margin="0,5,0,0" BorderThickness="0"
-        Click="Chris_Click">
-
-                            <Grid Height="410" Width="500">
-                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/rlillo.png"
-               Stretch="UniformToFill"/>
-
-                                <Rectangle Fill="#44000000"/>
-
-                                <StackPanel VerticalAlignment="Bottom"
-            Margin="20"
-            Orientation="Horizontal">
-
-                                    <!-- LOGO -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/chris.png"
-           Width="64"
-           Height="64"
-           Margin="0,0,12,0"
-           VerticalAlignment="Center"/>
-
-                                    <!-- TEXT -->
-                                    <StackPanel>
-
-                                        <TextBlock Text="ChrisRLillo Music"
-                   Foreground="White"
-                   FontSize="44"
-                   FontWeight="Light"/>
-
-                                        <TextBlock Text="Chilean music in its peak"
-                   Foreground="#DDDDDD"
-                   FontSize="18"
-                   TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                </StackPanel>
-
-                            </Grid>
-
-                        </Button>
-
-                    </Grid>
-
-
-                </Grid>
+                
                 <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="50,0,0,0">
                     <Grid.RowDefinitions>

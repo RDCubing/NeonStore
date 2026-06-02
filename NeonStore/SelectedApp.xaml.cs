@@ -113,18 +113,6 @@ namespace NeonStore
             navigationHelper.OnNavigatedFrom(e);
         }
 
-        public ObservableCollection<AppItem> OtherApps
-        {
-            get
-            {
-                return new ObservableCollection<AppItem>(
-                    AppData.NeonStore
-                        .Where(a => a.Title != AppState.SelectedApp?.Title)
-                        .Take(3)
-                );
-            }
-        }
-
         private void OtherApps_ItemClick(object sender, ItemClickEventArgs e)
         {
             var app = (AppItem)e.ClickedItem;
@@ -132,6 +120,28 @@ namespace NeonStore
             AppState.SelectedApp = app;
 
             Frame.Navigate(typeof(SelectedApp));
+        }
+
+        public ObservableCollection<AppItem> TopApps
+        {
+            get
+            {
+                return new ObservableCollection<AppItem>(
+                    TopApp.TopApps
+                        .Where(a => a.Title != AppState.SelectedApp?.Title)
+                );
+            }
+        }
+
+        public ObservableCollection<AppItem> OtherApps
+        {
+            get
+            {
+                return OtherApp.OtherApps
+                    .Where(a => a.Title != AppState.SelectedApp?.Title)
+                    .Take(5)
+                    .ToObservableCollection();
+            }
         }
 
         private async void OpenProject_Click(object sender, RoutedEventArgs e)
@@ -145,11 +155,18 @@ namespace NeonStore
                 var uri = new Uri(project.DownloadUrl);
 
                 // ✅ Notification: download started
-                ToastService.Show("Download started", project.Title);
+                ToastService.Show("Download started", project.Title, project.ImagePath);
 
                 var picker = new Windows.Storage.Pickers.FileSavePicker();
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Downloads;
-                picker.SuggestedFileName = project.Title;
+                string fileName = System.IO.Path.GetFileName(new Uri(project.DownloadUrl).LocalPath);
+
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    fileName = project.Title;
+                }
+
+                picker.SuggestedFileName = fileName;
 
                 string extension = System.IO.Path.GetExtension(uri.AbsolutePath);
                 if (string.IsNullOrEmpty(extension))
@@ -167,7 +184,7 @@ namespace NeonStore
                 await Windows.Storage.FileIO.WriteBufferAsync(file, buffer);
 
                 // ✅ Notification: download completed
-                ToastService.Show("Download complete", project.Title);
+                ToastService.Show("Download complete", project.Title, project.ImagePath);
 
                 var dialog = new MessageDialog($"\"{file.Name}\" downloaded. Open it?");
                 dialog.Commands.Add(new UICommand("Open"));

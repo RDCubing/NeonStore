@@ -90,6 +90,7 @@ namespace NeonStore
             Window.Current.Activate();
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
             await NeonStoreService.LoadAsync();
+            await AutoUpdateService.CheckAsync();
             UpdateRandomTopAppTile();
 
             StartTileRotation();
@@ -159,6 +160,17 @@ namespace NeonStore
                     Windows.UI.ApplicationSettings.SettingsPaneCommandsRequestedEventArgs args)
         {
             args.Request.ApplicationCommands.Add(
+    new SettingsCommand("openWelcome", "What's New", (p) =>
+    {
+        var frame = Window.Current.Content as Frame;
+        if (frame != null)
+        {
+            frame.Navigate(typeof(Welcome));
+        }
+    })
+);
+
+            args.Request.ApplicationCommands.Add(
         new SettingsCommand("openWebsite", "Visit Website", async (p) =>
         {
             var uri = new Uri("https://rdcubing.github.io/");
@@ -172,11 +184,26 @@ namespace NeonStore
                     await Launcher.LaunchUriAsync(uri);
                 })
             );
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "languages",
+                "Languages",
+                handler => { new Languages().Show(); }
+            ));
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "updates",
+                "Updates",
+                handler => { new Updates().Show(); }
+            ));
+
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
                 "about",
                 "About",
                 handler => { new About().Show(); }
             ));
+
+            
         }
     }
 }

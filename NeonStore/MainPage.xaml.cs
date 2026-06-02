@@ -68,6 +68,11 @@ namespace NeonStore
             NavigateToApp("ChrisRLillo Music");
         }
 
+        private void OctoStore_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToApp("OctoStore");
+        }
+
         private void NavigateToApp(string id)
         {
             var app = NeonStoreService.NeonStore

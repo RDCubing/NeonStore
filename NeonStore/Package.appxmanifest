@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.0.26149.0" />
+  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.1.26153.1" />
   <Properties>
     <DisplayName>NeonStore</DisplayName>
     <PublisherDisplayName>GDC Productions</PublisherDisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="NeonStore.App">
-      <m2:VisualElements DisplayName="NeonStore" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="NeonStore" ForegroundText="light" BackgroundColor="#0F4C4C" ToastCapable="false">
+      <m2:VisualElements DisplayName="NeonStore" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="NeonStore" ForegroundText="light" BackgroundColor="#0F4C4C" ToastCapable="true">
         <m2:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square70x70Logo="Assets\Square70x70Logo.png" Square310x310Logo="Assets\Square310x310Logo.png" ShortName="NeonStore">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />

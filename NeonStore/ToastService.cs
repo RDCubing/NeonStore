@@ -10,17 +10,27 @@ namespace NeonStore
 {
     public static class ToastService
     {
-        public static void Show(string title, string message)
+        public static void Show(string title, string message, string imagePath = null)
         {
-            var template = ToastTemplateType.ToastText02;
-            var xml = ToastNotificationManager.GetTemplateContent(template);
+            var xml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
 
             var texts = xml.GetElementsByTagName("text");
             texts[0].AppendChild(xml.CreateTextNode(title));
             texts[1].AppendChild(xml.CreateTextNode(message));
 
-            var toast = new ToastNotification(xml);
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                var images = xml.GetElementsByTagName("image");
 
+                if (images.Length > 0)
+                {
+                    var image = (Windows.Data.Xml.Dom.XmlElement)images[0];
+                    image.SetAttribute("src", imagePath);
+                    image.SetAttribute("alt", "image");
+                }
+            }
+
+            var toast = new ToastNotification(xml);
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
     }

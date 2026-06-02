@@ -52,14 +52,26 @@ namespace NeonStore
         private void StartTimer()
         {
             var timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(3); // splash duration
+            timer.Interval = TimeSpan.FromSeconds(3);
+
+            var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             timer.Tick += (s, e) =>
             {
                 timer.Stop();
 
-                // Navigate to MainPage
-                Frame.Navigate(typeof(MainPage));
+                // default = NOT new version unless missing
+                bool isNewVersion = !settings.Values.ContainsKey("HasOpened");
+
+                if (isNewVersion)
+                {
+                    settings.Values["HasOpened"] = true;
+                    Frame.Navigate(typeof(Welcome));
+                }
+                else
+                {
+                    Frame.Navigate(typeof(MainPage));
+                }
             };
 
             timer.Start();
