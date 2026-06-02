@@ -1,0 +1,423 @@
+﻿<Page
+    x:Class="NeonStore.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NeonStore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Stretch="UniformToFill" ImageSource="ms-appx:///Assets/Store1.png"/>
+        </Grid.Background>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Header -->
+        <TextBlock
+        Grid.Row="0"
+        Text="NeonStore"
+        x:Name="TitleText"
+        Margin="50"
+        Style="{StaticResource HeaderTextBlockStyle}" />
+        <!-- Content Area with horizontal scroll only -->
+        <ScrollViewer
+    Grid.Row="1"
+    ZoomMode="Disabled"
+    HorizontalScrollMode="Auto"
+    HorizontalScrollBarVisibility="Auto"
+    VerticalScrollMode="Disabled"
+    VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Grid Width="Auto" Margin="50,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="What's New"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <!-- Description -->
+                    <StackPanel Grid.Row="1"
+            Margin="0,0,0,25">
+
+                        <Image Source="Assets/whatsnew.png"
+           Stretch="UniformToFill"
+           Margin="0,0,0,10"
+                               Height="400"/>
+
+                        <TextBlock Text="GeekHub Metro has been migrated and rebranded into NeonStore (aka NanoStore) as part of a system upgrade, and the main GeekHub database is also moving to a new website to improve performance, organization, and future updates."
+               FontSize="18"
+               FontWeight="Light"
+               Foreground="White"
+               TextWrapping="Wrap"
+                                   Width="500" HorizontalAlignment="Left"/>
+
+                    </StackPanel>
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="50,0,40,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Inspirational Bundle"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
+      Margin="0,0,0,0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" VerticalAlignment="Top"
+        Margin="0,5,0,0" BorderThickness="0"
+        Click="QuoteTile_Click">
+
+                            <Grid Height="410" Width="425">
+                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quote.png"
+               Stretch="UniformToFill"/>
+
+                                <Rectangle Fill="#44000000"/>
+
+                                <StackPanel VerticalAlignment="Bottom"
+            Margin="20"
+            Orientation="Horizontal">
+
+                                    <!-- LOGO -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/q.png"
+           Width="64"
+           Height="64"
+           Margin="0,0,12,0"
+           VerticalAlignment="Center"/>
+
+                                    <!-- TEXT -->
+                                    <StackPanel>
+
+                                        <TextBlock Text="QuoteTile"
+                   Foreground="White"
+                   FontSize="44"
+                   FontWeight="Light"/>
+
+                                        <TextBlock Text="Seek inspiration from quotes"
+                   Foreground="#DDDDDD"
+                   FontSize="18"
+                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Button>
+
+                        <!-- RIGHT COLUMN (STACKED TILES) -->
+                        <Grid Grid.Column="1">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Top square tile -->
+                            <Button Grid.Row="0"
+        Margin="0"
+        BorderThickness="0"
+        Width="220"
+        Height="220"
+        Click="QuoteTileLTS_Click" VerticalAlignment="Top">
+
+                                <Grid>
+
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/lts.png"
+               Stretch="Uniform"/>
+                                    <TextBlock Text="QuoteTile LTS"
+                   Foreground="White"
+                   FontSize="18"
+                   FontWeight="Light"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="10"/>
+
+
+                                </Grid>
+
+                            </Button>
+
+                            <!-- Bottom square tile -->
+                            <Button Grid.Row="1" VerticalAlignment="Top"
+            Margin="0"
+        BorderThickness="0"
+        Width="220"
+        Height="220"
+            Click="LiveText_Click" >
+
+                                <Grid>
+
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/image-5.png"
+           Stretch="Uniform" Width="Auto"/>
+
+                                    <TextBlock Text="Live Text 8.1"
+                   Foreground="White"
+                   FontSize="18"
+                   FontWeight="Light"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="10"/>
+
+                                </Grid>
+
+                            </Button>
+
+                        </Grid>
+
+                    </Grid>
+                    
+                    
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="50,0,40,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Spotlight #1"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
+      Margin="0,0,0,0">
+
+                        <Button VerticalAlignment="Top"
+        Margin="0,5,0,0" BorderThickness="0"
+        Click="Chris_Click">
+
+                            <Grid Height="410" Width="500">
+                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/rlillo.png"
+               Stretch="UniformToFill"/>
+
+                                <Rectangle Fill="#44000000"/>
+
+                                <StackPanel VerticalAlignment="Bottom"
+            Margin="20"
+            Orientation="Horizontal">
+
+                                    <!-- LOGO -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/chris.png"
+           Width="64"
+           Height="64"
+           Margin="0,0,12,0"
+           VerticalAlignment="Center"/>
+
+                                    <!-- TEXT -->
+                                    <StackPanel>
+
+                                        <TextBlock Text="ChrisRLillo Music"
+                   Foreground="White"
+                   FontSize="44"
+                   FontWeight="Light"/>
+
+                                        <TextBlock Text="Chilean music in its peak"
+                   Foreground="#DDDDDD"
+                   FontSize="18"
+                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Button>
+
+                    </Grid>
+
+
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="50,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Top Apps"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <GridView Grid.Row="1" ItemsSource="{Binding TopApps}"
+          IsItemClickEnabled="True"
+          ItemClick="AppsGrid_ItemClick"
+          Margin="0,0,0,25"
+          ScrollViewer.HorizontalScrollMode="Enabled"
+          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+          ScrollViewer.VerticalScrollMode="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Width="160"
+            Height="210"
+            Background="#22000000"
+            Margin="5">
+
+                                    <Grid>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- IMAGE -->
+                                        <Image Grid.Row="0"
+                   Source="{Binding ImagePath}"
+                   Stretch="UniformToFill"/>
+
+                                        <!-- TITLE -->
+                                        <TextBlock Grid.Row="1"
+                       Text="{Binding Title}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="Light"
+                       Margin="8,8,8,0"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- PUBLISHER -->
+                                        <TextBlock Grid.Row="2"
+                       Text="{Binding Publisher}"
+                       Foreground="#AAAAAA"
+                       FontSize="11"
+                       Margin="8,4,8,8"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+
+                    </GridView>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+    <Page.BottomAppBar>
+        <AppBar IsSticky="False" IsOpen="False">
+
+            <Grid Background="#0F4C4C">
+
+                <StackPanel Orientation="Horizontal">
+
+                    <!-- HEADER (Logo + Title) -->
+                    <StackPanel Orientation="Horizontal"
+                    Margin="10,10,10,5"
+                    VerticalAlignment="Center">
+
+                        <!-- Logo -->
+                        <Image Source="ms-appx:///Assets/StoreLogo.png"
+                   Width="50"
+                   Height="30"
+                   Margin="0,0,8,0"/>
+
+                        <!-- Title -->
+                        <TextBlock Text="NeonStore"
+                       Foreground="White"
+                       FontSize="18"
+                       VerticalAlignment="Center"
+                       FontWeight="Light"/>
+
+                    </StackPanel>
+
+                    <Button Click="GoToApps_Click"
+                    Width="Auto"
+                    Height="64" Margin="10"
+                    BorderThickness="0">
+
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+
+                            <SymbolIcon Symbol="AllApps"
+                                 HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="All Apps"
+                               HorizontalAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </Button>
+
+                    <Button Click="TopApps_Click"
+                    Width="Auto"
+                    Height="64" Margin="10"
+                    BorderThickness="0">
+
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+
+                            <SymbolIcon Symbol="Favorite"
+                                 HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Top Apps"
+                               HorizontalAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+        </AppBar>
+    </Page.BottomAppBar>
+</Page>
