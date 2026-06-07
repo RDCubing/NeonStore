@@ -80,17 +80,32 @@
                     <!-- TOP (fixed content) -->
                     <StackPanel Grid.Row="0">
 
+                        <StackPanel Orientation="Horizontal">
                         <!-- Download -->
                         <Button Content="Download"
-                Margin="0,0,0,12"
+                Margin="0,0,12,0"
                 Click="OpenProject_Click"/>
+                            <!-- Progress -->
+                            <ProgressRing x:Name="DownloadProgressRing"
+                  Width="20" VerticalAlignment="Center"
+                  Height="20"
+                  IsActive="False"
+                  Visibility="Collapsed"/>
+                        </StackPanel>
 
+                        <!-- Privacy note -->
+                        <TextBlock x:Name="PrivacyNoteText" Text="When you install an app, you agree to the Terms of Use and any additional terms."
+                   Foreground="White"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Margin="0,12,0,18"/>
+                        
                         <!-- Privacy note -->
                         <TextBlock Text="This app has permission to use some features of your PC that might affect your privacy."
                    Foreground="White"
                    FontSize="12"
                    TextWrapping="Wrap"
-                   Margin="0,0,0,18"/>
+                   Margin="0,12,0,18"/>
 
                         <!-- Separator -->
                         <Rectangle Height="1"

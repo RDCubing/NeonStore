@@ -61,7 +61,7 @@
 
                 <GridView x:Name="ProjectsGrid" IsItemClickEnabled="True" ItemClick="ProjectsGrid_ItemClick"
           ItemsSource="{Binding}"
-          Margin="40">
+          Margin="40,40,40,100">
 
                     <!-- ✅ Horizontal + only 2 rows -->
                     <GridView.ItemsPanel>
@@ -132,7 +132,7 @@
         </Grid>
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsSticky="False" IsOpen="False">
+        <AppBar IsSticky="True" IsOpen="True">
 
             <Grid Background="#0F4C4C">
 

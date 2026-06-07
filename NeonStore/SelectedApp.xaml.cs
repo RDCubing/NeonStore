@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Popups;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+using System.Threading.Tasks;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -106,6 +107,8 @@ namespace NeonStore
             {
                 this.DataContext = app;
             }
+
+            PrivacyNoteText.Visibility = Visibility.Visible;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -146,6 +149,13 @@ namespace NeonStore
 
         private async void OpenProject_Click(object sender, RoutedEventArgs e)
         {
+            PrivacyNoteText.Visibility = Visibility.Collapsed;
+            DownloadProgressRing.Visibility = Visibility.Visible;
+            DownloadProgressRing.IsActive = true;
+
+            // allow UI to update before heavy work starts
+            await Task.Delay(500);
+
             try
             {
                 var project = this.DataContext as AppItem;
@@ -196,11 +206,24 @@ namespace NeonStore
                 {
                     await Windows.System.Launcher.LaunchFileAsync(file);
                 }
+                DownloadHistoryService.Instance.Add(new DownloadItem
+                {
+                    Title = project.Title,
+                    FileName = file.Name,
+                    DownloadUrl = project.DownloadUrl,
+                    ImagePath = project.ImagePath,
+                    DownloadedAt = DateTime.Now
+                });
             }
             catch (Exception ex)
             {
                 var dlg = new MessageDialog(ex.ToString(), "Crash Debug");
                 await dlg.ShowAsync();
+            }
+            finally
+            {
+                DownloadProgressRing.IsActive = false;
+                DownloadProgressRing.Visibility = Visibility.Collapsed;
             }
         }
 

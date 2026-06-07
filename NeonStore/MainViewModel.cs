@@ -10,7 +10,14 @@ namespace NeonStore
     public class MainViewModel
     {
         public ObservableCollection<AppItem> TopApps
-            => NeonStoreService.TopApps;
+        {
+            get
+            {
+                return new ObservableCollection<AppItem>(
+                    NeonStoreService.TopApps.Take(6)
+                );
+            }
+        }
 
         public ObservableCollection<AppItem> Apps
             => NeonStoreService.NeonStore;

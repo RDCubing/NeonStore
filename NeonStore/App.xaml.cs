@@ -91,6 +91,7 @@ namespace NeonStore
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
             await NeonStoreService.LoadAsync();
             await AutoUpdateService.CheckAsync();
+            await DownloadHistoryService.Instance.LoadAsync();
             UpdateRandomTopAppTile();
 
             StartTileRotation();
@@ -195,6 +196,12 @@ namespace NeonStore
                 "updates",
                 "Updates",
                 handler => { new Updates().Show(); }
+            ));
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "downloads",
+                "Downloads",
+                handler => { new Downloads().Show(); }
             ));
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(

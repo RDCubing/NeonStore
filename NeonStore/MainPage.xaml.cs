@@ -89,16 +89,5 @@ namespace NeonStore
             AppState.SelectedApp = app;
             Frame.Navigate(typeof(SelectedApp), app);
         }
-        public ObservableCollection<AppItem> TopApps
-        {
-            get
-            {
-                return new ObservableCollection<AppItem>(
-                    NeonStoreService.NeonStore
-                        .Where(a => a.TopApp == "Yes")
-                        .Take(6)
-                );
-            }
-        }
     }
 }

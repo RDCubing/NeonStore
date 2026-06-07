@@ -121,6 +121,11 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="DownloadHistoryService.cs" />
+    <Compile Include="DownloadItem.cs" />
+    <Compile Include="Downloads.xaml.cs">
+      <DependentUpon>Downloads.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Languages.xaml.cs">
       <DependentUpon>Languages.xaml</DependentUpon>
@@ -202,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Apps.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Downloads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

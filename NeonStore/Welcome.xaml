@@ -120,13 +120,5 @@
 
         </ScrollViewer>
 
-        <!-- AUDIO -->
-        <MediaElement x:Name="BackgroundAudio"
-                  Source="ms-appx:///Audio/song04.mp3"
-                  AutoPlay="True"
-                  IsLooping="True"
-                  Volume="1"
-                  Visibility="Collapsed"/>
-
     </Grid>
 </Page>
