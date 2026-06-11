@@ -21,7 +21,7 @@ namespace NeonStore
     /// <summary>
     /// A basic page that provides characteristics common to most applications.
     /// </summary>
-    public sealed partial class TopApps : Page
+    public sealed partial class CategoriesPage : Page
     {
 
         private NavigationHelper navigationHelper;
@@ -45,13 +45,13 @@ namespace NeonStore
         }
 
 
-        public TopApps()
+        public CategoriesPage()
         {
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.navigationHelper.SaveState += navigationHelper_SaveState;
-            this.DataContext = NeonStoreService.TopApps;
+            this.DataContext = NeonStoreService.Categories;
         }
 
         /// <summary>
@@ -104,15 +104,15 @@ namespace NeonStore
 
         #endregion
 
-        private void ProjectsGrid_ItemClick(object sender, ItemClickEventArgs e)
+        private void CategoryGrid_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var app = (AppItem)e.ClickedItem;
+            string category = e.ClickedItem as string;
 
-            AppState.SelectedApp = app;
+            if (string.IsNullOrEmpty(category))
+                return;
 
-            Frame.Navigate(typeof(SelectedApp));
+            Frame.Navigate(typeof(CategoryAppsPage), category);
         }
-
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             try

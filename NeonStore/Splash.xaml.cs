@@ -31,6 +31,11 @@ namespace NeonStore
             "Assets from 8.1, too lazy to edit..",
             "Ok...?",
             "This is another page, I swear!",
+            "If you're still not a member of GDCR, then you're not supposed to use this.",
+            "Hello world!",
+            "We made this to not look like exactly like 8.1 Store, it's just to combine our style!",
+            "GeekHub Server Managers: Jack/Xylo, Alex and Triple K!",
+            "Downloading a great masterpiece...",
             "Our JSON uses GitHub and Gist technology, open but fast!"
         };
 

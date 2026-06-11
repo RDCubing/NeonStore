@@ -89,6 +89,7 @@ namespace NeonStore
             // Ensure the current window is active
             Window.Current.Activate();
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
+            ThemeManager.ApplyAccent();
             await NeonStoreService.LoadAsync();
             await AutoUpdateService.CheckAsync();
             await DownloadHistoryService.Instance.LoadAsync();
@@ -202,6 +203,12 @@ namespace NeonStore
                 "downloads",
                 "Downloads",
                 handler => { new Downloads().Show(); }
+            ));
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "personalization",
+                "Personalization",
+                handler => { new Personalization().Show(); }
             ));
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(

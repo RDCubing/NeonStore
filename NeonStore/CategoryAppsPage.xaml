@@ -1,6 +1,6 @@
 ﻿<Page
     x:Name="pageRoot"
-    x:Class="NeonStore.Apps"
+    x:Class="NeonStore.CategoryAppsPage"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,7 +12,7 @@
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
-        <x:String x:Key="AppName">All Apps</x:String>
+        <x:String x:Key="AppName">My Application</x:String>
     </Page.Resources>
 
     <!--
@@ -46,7 +46,7 @@
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="All Applications" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+            <TextBlock x:Name="pageTitle" Text="{Binding}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
         <!-- CONTENT AREA -->
@@ -60,7 +60,7 @@
         ZoomMode="Disabled">
 
                 <GridView x:Name="ProjectsGrid" IsItemClickEnabled="True" ItemClick="ProjectsGrid_ItemClick"
-          ItemsSource="{Binding}"
+          ItemsSource="{Binding Apps}"
           Margin="40,40,40,100">
 
                     <!-- ✅ Horizontal + only 2 rows -->

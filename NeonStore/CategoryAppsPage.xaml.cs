@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Collections.ObjectModel;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -21,11 +22,12 @@ namespace NeonStore
     /// <summary>
     /// A basic page that provides characteristics common to most applications.
     /// </summary>
-    public sealed partial class TopApps : Page
+    public sealed partial class CategoryAppsPage : Page
     {
 
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        public ObservableCollection<AppItem> Apps { get; set; }
 
         /// <summary>
         /// This can be changed to a strongly typed view model.
@@ -45,13 +47,12 @@ namespace NeonStore
         }
 
 
-        public TopApps()
+        public CategoryAppsPage()
         {
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.navigationHelper.SaveState += navigationHelper_SaveState;
-            this.DataContext = NeonStoreService.TopApps;
         }
 
         /// <summary>
@@ -95,6 +96,16 @@ namespace NeonStore
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
+            string category = e.Parameter as string;
+
+            pageTitle.Text = category;
+
+            Apps = new ObservableCollection<AppItem>(
+                NeonStoreService.NeonStore
+                    .Where(a => a.Category == category)
+            );
+
+            this.DataContext = this;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

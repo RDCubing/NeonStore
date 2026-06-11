@@ -20,5 +20,6 @@ namespace NeonStore
         public string Description { get; set; }
         public string DownloadUrl { get; set; }
         public string SourceUrl { get; set; }
+        public string Category { get; set; }
     }
 }

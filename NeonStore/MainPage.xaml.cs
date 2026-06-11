@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using Windows.Storage;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,6 +30,22 @@ namespace NeonStore
             this.DataContext = new MainViewModel();
         }
 
+        public void SetHeaderText(string text)
+        {
+            TitleText.Text = text;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool useStore =
+                (bool?)ApplicationData.Current.LocalSettings.Values["UseStoreHeader"] ?? false;
+
+            SetHeaderText(useStore ? "Store" : "NeonStore");
+        }
+
+
+        public TextBlock TitleTextControl => TitleText;
+
         private void GoToApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(Apps));
@@ -37,6 +54,11 @@ namespace NeonStore
         private void TopApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(TopApps));
+        }
+
+        private void CatApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(CategoriesPage));
         }
 
         private void AppsGrid_ItemClick(object sender, ItemClickEventArgs e)
@@ -88,6 +110,30 @@ namespace NeonStore
 
             AppState.SelectedApp = app;
             Frame.Navigate(typeof(SelectedApp), app);
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // optional: simple UX feedback
+                var btn = sender as Button;
+                if (btn != null)
+                    btn.IsEnabled = false;
+
+                System.Diagnostics.Debug.WriteLine("NeonStore: Manual refresh triggered");
+
+                await NeonStoreService.LoadAsync();
+
+                System.Diagnostics.Debug.WriteLine("NeonStore: Refresh complete ✔");
+
+                if (btn != null)
+                    btn.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Refresh ERROR: " + ex.Message);
+            }
         }
     }
 }

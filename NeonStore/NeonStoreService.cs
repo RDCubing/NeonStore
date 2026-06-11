@@ -20,6 +20,9 @@ namespace NeonStore
         public static ObservableCollection<AppItem> OtherApps { get; }
     = new ObservableCollection<AppItem>();
 
+        public static ObservableCollection<string> Categories { get; }
+    = new ObservableCollection<string>();
+
         public static async Task LoadAsync()
         {
             try
@@ -28,16 +31,11 @@ namespace NeonStore
 
                 HttpClient client = new HttpClient();
 
-                // SAFE cache buster (VS2015 compatible)
                 string url =
                     "https://raw.githubusercontent.com/RDCubing/geekhubapi/main/projects.json?t=" +
                     DateTime.UtcNow.Ticks;
 
-                Debug.WriteLine("URL: " + url);
-
                 string json = await client.GetStringAsync(new Uri(url));
-
-                Debug.WriteLine("Downloaded JSON size: " + json.Length);
 
                 RootObject data = JsonConvert.DeserializeObject<RootObject>(json);
 
@@ -48,30 +46,34 @@ namespace NeonStore
                 }
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-    CoreDispatcherPriority.Normal,
-    () =>
-    {
-        NeonStore.Clear();
-        TopApps.Clear();
-        OtherApps.Clear();
+                CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    NeonStore.Clear();
+                    TopApps.Clear();
+                    OtherApps.Clear();
+                    Categories.Clear();
 
-        foreach (var app in data.NeonStore)
-        {
-            NeonStore.Add(app);
-            Debug.WriteLine("Added: " + app.Title);
+                    foreach (var app in data.NeonStore)
+                    {
+                        NeonStore.Add(app);
 
-            if (app.TopApp == "Yes")
-            {
-                TopApps.Add(app);
-                Debug.WriteLine("TopApp Added: " + app.Title);
-            }
-            else
-            {
-                OtherApps.Add(app);
-                Debug.WriteLine("OtherApp Added: " + app.Title);
-            }
-        }
-    });
+                // TOP APPS
+                if (app.TopApp == "Yes")
+                            TopApps.Add(app);
+                        else
+                            OtherApps.Add(app);
+
+                // CATEGORY (NEW)
+                if (!string.IsNullOrEmpty(app.Category))
+                        {
+                            if (!Categories.Contains(app.Category))
+                                Categories.Add(app.Category);
+                        }
+
+                        Debug.WriteLine("Added: " + app.Title);
+                    }
+                });
 
                 Debug.WriteLine("NeonStoreService: Done ✔");
             }

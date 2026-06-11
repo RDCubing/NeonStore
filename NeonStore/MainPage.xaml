@@ -5,7 +5,7 @@
     xmlns:local="using:NeonStore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid>
         <Grid.Background>
@@ -390,7 +390,7 @@
     <Page.BottomAppBar>
         <AppBar IsSticky="True" IsOpen="True">
 
-            <Grid Background="#0F4C4C">
+            <Grid Background="{StaticResource AccentBrush}">
 
                 <StackPanel Orientation="Horizontal">
 
@@ -431,6 +431,23 @@
 
                     </Button>
 
+                    <Button Click="CatApps_Click"
+                    Width="Auto"
+                    Height="64" Margin="10"
+                    BorderThickness="0">
+
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+
+                            <SymbolIcon Symbol="Bookmarks"
+                                 HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Categories"
+                               HorizontalAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </Button>
+
                     <Button Click="TopApps_Click"
                     Width="Auto"
                     Height="64" Margin="10"
@@ -442,6 +459,22 @@
                                  HorizontalAlignment="Center"/>
 
                             <TextBlock Text="Top Apps"
+                               HorizontalAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </Button>
+                    <Button Click="Refresh_Click"
+                    Width="Auto"
+                    Height="64" Margin="10"
+                    BorderThickness="0">
+
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+
+                            <SymbolIcon Symbol="Refresh"
+                                 HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Refresh"
                                HorizontalAlignment="Center"/>
 
                         </StackPanel>
