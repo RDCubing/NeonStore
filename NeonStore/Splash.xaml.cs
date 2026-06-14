@@ -42,6 +42,7 @@ namespace NeonStore
         public Splash()
         {
             this.InitializeComponent();
+            UpdateWelcomeUserText();
             SetRandomLoadingText();
             StartTimer();
         }
@@ -65,6 +66,8 @@ namespace NeonStore
             {
                 timer.Stop();
 
+                
+
                 // default = NOT new version unless missing
                 bool isNewVersion = !settings.Values.ContainsKey("HasOpened");
 
@@ -80,6 +83,24 @@ namespace NeonStore
             };
 
             timer.Start();
+        }
+
+        private void UpdateWelcomeUserText()
+        {
+            var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            string token = settings.Values["token"] as string;
+            string username = settings.Values["username"] as string;
+
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(username))
+            {
+                WelcomeUserText.Text = "Welcome, " + username + "!";
+                WelcomeUserText.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                WelcomeUserText.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

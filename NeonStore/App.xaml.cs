@@ -161,6 +161,8 @@ namespace NeonStore
         private void OnCommandsRequested(Windows.UI.ApplicationSettings.SettingsPane sender,
                     Windows.UI.ApplicationSettings.SettingsPaneCommandsRequestedEventArgs args)
         {
+            // ✅ IMPORTANT: prevent duplicates
+            args.Request.ApplicationCommands.Clear();
             args.Request.ApplicationCommands.Add(
     new SettingsCommand("openWelcome", "What's New", (p) =>
     {
@@ -171,21 +173,6 @@ namespace NeonStore
         }
     })
 );
-
-            args.Request.ApplicationCommands.Add(
-        new SettingsCommand("openWebsite", "Visit Website", async (p) =>
-        {
-            var uri = new Uri("https://rdcubing.github.io/");
-            await Launcher.LaunchUriAsync(uri);
-        })
-    );
-            args.Request.ApplicationCommands.Add(
-                new SettingsCommand("openServer", "Discord Server", async (p) =>
-                {
-                    var uri = new Uri("https://discord.gg/YBsVhkcHT4");
-                    await Launcher.LaunchUriAsync(uri);
-                })
-            );
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
                 "languages",
@@ -209,6 +196,12 @@ namespace NeonStore
                 "personalization",
                 "Personalization",
                 handler => { new Personalization().Show(); }
+            ));
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "account",
+                "Account",
+                handler => { new Account().Show(); }
             ));
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(

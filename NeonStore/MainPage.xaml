@@ -380,6 +380,85 @@
 
                             </DataTemplate>
                         </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+
+                            <Style TargetType="GridViewItem">
+
+                                <!-- NORMAL -->
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+
+                                            <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            RenderTransformOrigin="0.5,0.5">
+
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                </Border.RenderTransform>
+
+                                                <ContentPresenter />
+
+                                                <VisualStateManager.VisualStateGroups>
+
+                                                    <VisualStateGroup x:Name="CommonStates">
+
+                                                        <!-- NORMAL -->
+                                                        <VisualState x:Name="Normal"/>
+
+                                                        <!-- POINTER OVER (HOVER) -->
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.85"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <!-- PRESSED -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.6"
+                                                         Duration="0:0:0.05"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                    </VisualStateGroup>
+
+                                                </VisualStateManager.VisualStateGroups>
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+                            </Style>
+
+                        </GridView.ItemContainerStyle>
 
                     </GridView>
                 </Grid>

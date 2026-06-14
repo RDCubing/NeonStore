@@ -30,7 +30,7 @@
 
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" FontWeight="Bold" TextWrapping="Wrap">
                 <TextBlock.Text>
-                    NeonStore (version 1.3.26162.0)
+                    NeonStore (version 1.4.26165.0)
                 </TextBlock.Text>
             </TextBlock>
 
@@ -60,6 +60,12 @@
                 </TextBlock.Text>
             </TextBlock>
 
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,0" TextWrapping="Wrap">
+                <TextBlock.Text>
+                   Account and reviews system by Andrew
+                </TextBlock.Text>
+            </TextBlock>
+            
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,0" TextWrapping="Wrap">
                 <TextBlock.Text>
                     Previous GeekHub/NanoStore database by Jack, Alex, and shuckkkers

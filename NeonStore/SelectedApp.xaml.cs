@@ -18,6 +18,8 @@ using Windows.UI.Popups;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Windows.Storage;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -59,6 +61,8 @@ namespace NeonStore
             this.DataContext = AppState.SelectedApp;
 
         }
+
+        public bool IsOwner { get; set; }
 
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
@@ -107,6 +111,9 @@ namespace NeonStore
             {
                 this.DataContext = app;
             }
+
+            LoadReviews();
+            UpdateReviewUI();
 
             PrivacyNoteText.Visibility = Visibility.Visible;
         }
@@ -228,5 +235,128 @@ namespace NeonStore
         }
 
         #endregion
+
+        private async void LoadReviews()
+        {
+            try
+            {
+                var app = this.DataContext as AppItem;
+                if (app == null) return;
+
+                string json = await ReviewService.GetReviews(app.Id);
+
+                var arr = JArray.Parse(json);
+
+                var list = new ObservableCollection<Review>();
+
+                var currentUserId = ApplicationData.Current.LocalSettings.Values["userId"] as string;
+
+                foreach (var item in arr)
+                {
+                    list.Add(new Review
+                    {
+                        _id = item["_id"]?.ToString(),
+                        userId = item["userId"]?.ToString(),
+                        username = item["username"]?.ToString(),
+                        rating = int.Parse(item["rating"]?.ToString() ?? "0"),
+                        comment = item["comment"]?.ToString(),
+                        appId = item["appId"]?.ToString(),
+                        createdAt = DateTime.Parse(item["createdAt"]?.ToString() ?? DateTime.MinValue.ToString()),
+                        updatedAt = DateTime.Parse(item["updatedAt"]?.ToString() ?? DateTime.MinValue.ToString())
+                    });
+                }
+
+                ReviewsGrid.ItemsSource = list;
+
+                UpdateReviewStatistics(list);
+
+                UpdateEmptyState(list);
+
+                System.Diagnostics.Debug.WriteLine("[REVIEWS LOADED] " + list.Count);
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("[LOAD REVIEWS ERROR] " + ex.Message);
+            }
+        }
+
+        private async void SubmitReview_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var token = Windows.Storage.ApplicationData.Current.LocalSettings.Values["token"] as string;
+                var username = Windows.Storage.ApplicationData.Current.LocalSettings.Values["username"] as string;
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    await new Windows.UI.Popups.MessageDialog("You must be logged in").ShowAsync();
+                    return;
+                }
+
+                var app = this.DataContext as AppItem;
+
+                int rating = int.Parse(((ComboBoxItem)ReviewRatingBox.SelectedItem).Content.ToString());
+
+                var bodyObj = new
+                {
+                    appId = app.Id,
+                    rating = rating,
+                    comment = ReviewCommentBox.Text
+                };
+
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(bodyObj);
+
+                string result = await ReviewService.SubmitReview(token, json);
+
+                System.Diagnostics.Debug.WriteLine("[SUBMIT REVIEW] " + result);
+
+                LoadReviews();
+
+                ReviewCommentBox.Text = "";
+            }
+            catch (System.Exception ex)
+            {
+                await new Windows.UI.Popups.MessageDialog(ex.Message).ShowAsync();
+            }
+        }
+
+        private void UpdateReviewStatistics(IEnumerable<Review> reviews)
+        {
+            int count = reviews.Count();
+
+            ReviewCountText.Text = count.ToString();
+
+            if (count == 0)
+            {
+                AverageRatingText.Text = "0.0";
+                return;
+            }
+
+            double average = reviews.Average(r => r.rating);
+
+            AverageRatingText.Text = average.ToString("0.0");
+        }
+
+        private void UpdateEmptyState(IEnumerable<Review> reviews)
+        {
+            EmptyStatePanel.Visibility = reviews.Any()
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
+
+        private void UpdateReviewUI()
+        {
+            var token = ApplicationData.Current.LocalSettings.Values["token"] as string;
+
+            bool loggedIn = !string.IsNullOrEmpty(token);
+
+            ReviewFormPanel.Visibility = loggedIn
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            SignInToReviewPanel.Visibility = loggedIn
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
     }
 }

@@ -107,6 +107,10 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AccountClass.cs" />
+    <Compile Include="Account.xaml.cs">
+      <DependentUpon>Account.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -116,6 +120,7 @@
       <DependentUpon>Apps.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppState.cs" />
+    <Compile Include="AuthService.cs" />
     <Compile Include="AutoUpdateService.cs" />
     <Compile Include="CategoriesPage.xaml.cs">
       <DependentUpon>CategoriesPage.xaml</DependentUpon>
@@ -148,6 +153,8 @@
       <DependentUpon>Personalization.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Review.cs" />
+    <Compile Include="ReviewService.cs" />
     <Compile Include="RootObject.cs" />
     <Compile Include="SelectedApp.xaml.cs">
       <DependentUpon>SelectedApp.xaml</DependentUpon>
@@ -215,6 +222,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Account.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
