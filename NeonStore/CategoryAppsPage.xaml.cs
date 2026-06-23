@@ -96,14 +96,18 @@ namespace NeonStore
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
-            string category = e.Parameter as string;
 
+            string category = e.Parameter as string;
             pageTitle.Text = category;
 
-            Apps = new ObservableCollection<AppItem>(
-                NeonStoreService.NeonStore
-                    .Where(a => a.Category == category)
-            );
+            var filtered = NeonStoreService.NeonStore
+                .Where(a => a.Category == category);
+
+            AllApps = new ObservableCollection<AppItem>(filtered);
+
+            Apps = new ObservableCollection<AppItem>(filtered);
+
+            ProjectsGrid.ItemsSource = Apps;
 
             this.DataContext = this;
         }
@@ -147,5 +151,37 @@ namespace NeonStore
                 System.Diagnostics.Debug.WriteLine("Refresh ERROR: " + ex.Message);
             }
         }
+
+        private void SearchBox_QueryChanged(SearchBox sender, SearchBoxQueryChangedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void SearchBox_QuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void FilterApps(string query)
+        {
+            if (AllApps == null) return;
+
+            query = (query ?? "").ToLower();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                ProjectsGrid.ItemsSource = AllApps;
+                return;
+            }
+
+            var filtered = AllApps.Where(app =>
+                !string.IsNullOrEmpty(app.Title) &&
+                app.Title.ToLower().Contains(query)
+            );
+
+            ProjectsGrid.ItemsSource = new ObservableCollection<AppItem>(filtered);
+        }
+
+        private ObservableCollection<AppItem> AllApps;
     }
 }

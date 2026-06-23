@@ -120,6 +120,11 @@ namespace NeonStore
                 System.Diagnostics.Debug.WriteLine("NeonStore: Manual refresh triggered");
 
                 await NeonStoreService.LoadAsync();
+                // cache full list for searching
+                // IMPORTANT: copy from NeonStoreService.NeonStore
+                AllApps = new ObservableCollection<AppItem>(NeonStoreService.NeonStore);
+
+                ProjectsGrid.ItemsSource = AllApps;
 
                 System.Diagnostics.Debug.WriteLine("NeonStore: Refresh complete ✔");
 
@@ -139,6 +144,40 @@ namespace NeonStore
             AppState.SelectedApp = app;
 
             Frame.Navigate(typeof(SelectedApp));
+        }
+
+        private ObservableCollection<AppItem> AllApps;
+
+        private void SearchBox_QueryChanged(SearchBox sender, SearchBoxQueryChangedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void SearchBox_QuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void FilterApps(string query)
+        {
+            var source = NeonStoreService.NeonStore;
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                ProjectsGrid.ItemsSource = source;
+                return;
+            }
+
+            query = query.ToLower();
+
+            var filtered = source.Where(app =>
+                (app.Title ?? "").ToLower().Contains(query) ||
+                (app.Description ?? "").ToLower().Contains(query) ||
+                (app.Publisher ?? "").ToLower().Contains(query) ||
+                (app.Category ?? "").ToLower().Contains(query)
+            );
+
+            ProjectsGrid.ItemsSource = new ObservableCollection<AppItem>(filtered);
         }
     }
 }

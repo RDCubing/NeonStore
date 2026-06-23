@@ -75,51 +75,65 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
 
-                            <Border Width="250"
-        Height="220"
-        Margin="8"
-        Background="#22000000">
+                            <!-- Windows 8 Style Tile -->
+                            <Grid Width="250"
+              Height="220"
+              Margin="8"
+              Background="Transparent">
 
-                                <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="140"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="130"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
+                                <!-- IMAGE (main visual focus) -->
+                                <Border Grid.Row="0"
+                    Background="#202020">
 
-                                    <!-- IMAGE -->
-                                    <Image Grid.Row="0"
-               Source="{Binding DetailImagePath}"
-               Stretch="UniformToFill"/>
+                                    <Image Source="{Binding DetailImagePath}"
+                       Stretch="UniformToFill"/>
 
-                                    <!-- TEXT CONTENT -->
-                                    <StackPanel Grid.Row="1"
-                    Margin="10,8,10,8">
+                                </Border>
 
-                                        <!-- TITLE -->
-                                        <TextBlock Text="{Binding Title}"
-                       FontSize="15"
-                       TextTrimming="CharacterEllipsis"/>
+                                <!-- TEXT AREA -->
+                                <StackPanel Grid.Row="1"
+                        Margin="10,8,10,8">
 
-                                        <!-- PUBLISHER -->
-                                        <TextBlock Text="{Binding Publisher}"
-                       FontSize="12"
-                       Foreground="#AAAAAA"
-                       Margin="0,3,0,0"/>
+                                    <!-- TITLE -->
+                                    <TextBlock Text="{Binding Title}"
+                           FontSize="16"
+                           FontWeight="Light"
+                           Foreground="White"
+                           TextTrimming="CharacterEllipsis"
+                           MaxLines="2"/>
 
-                                        <!-- DESCRIPTION -->
-                                        <TextBlock Text="{Binding Description}"
-                       FontSize="11"
-                       Foreground="#888888"
-                       Margin="0,4,0,0"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"/>
+                                    <!-- CATEGORY (NEW - Windows 8 style metadata) -->
+                                    <TextBlock Text="{Binding Category}"
+                           FontSize="11"
+                           Foreground="{StaticResource AccentBrush}"
+                           Margin="0,4,0,0"
+                           FontWeight="Light"/>
 
-                                    </StackPanel>
+                                    <!-- PUBLISHER -->
+                                    <TextBlock Text="{Binding Publisher}"
+                           FontSize="11"
+                           Foreground="#BFBFBF"
+                           Margin="0,3,0,0"
+                           TextTrimming="CharacterEllipsis"/>
 
-                                </Grid>
+                                    <!-- DESCRIPTION -->
+                                    <TextBlock Text="{Binding Description}"
+                           FontSize="11"
+                           Foreground="#8C8C8C"
+                           Margin="0,5,0,0"
+                           TextWrapping="Wrap"
+                           MaxLines="3"
+                           TextTrimming="CharacterEllipsis"/>
 
-                            </Border>
+                                </StackPanel>
+
+                            </Grid>
+
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>
@@ -220,10 +234,10 @@
                     VerticalAlignment="Center">
 
                         <!-- Logo -->
-                        <Image Source="Assets/StoreLogo.png"
-                   Width="50"
+                        <Image Source="ms-appx:///Assets/SmallLogo.png"
+                   Width="30"
                    Height="30"
-                   Margin="0,0,8,0"/>
+                   Margin="10,0,10,0"/>
 
                         <!-- Title -->
                         <TextBlock Text="NeonStore"
@@ -234,22 +248,9 @@
 
                     </StackPanel>
 
-                    <Button Click="Refresh_Click"
-                    Width="Auto"
-                    Height="64" Margin="10"
-                    BorderThickness="0">
-
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-
-                            <SymbolIcon Symbol="Refresh"
-                                 HorizontalAlignment="Center"/>
-
-                            <TextBlock Text="Refresh"
-                               HorizontalAlignment="Center"/>
-
-                        </StackPanel>
-
-                    </Button>
+                    <AppBarButton Icon="Refresh"
+                      Label="Refresh"
+                      Click="Refresh_Click"/>
                 </StackPanel>
 
             </Grid>
