@@ -6,6 +6,23 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded">
+    <Page.Resources>
+        <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
+        <Storyboard x:Name="SlideInStoryboard">
+
+            <!-- Slide animation -->
+            <DoubleAnimation
+            Storyboard.TargetName="MainPanelTransform"
+            Storyboard.TargetProperty="X"
+            From="200" To="0"
+            Duration="0:0:1.2"
+            EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
 
     <Grid>
         <Grid.Background>
@@ -36,6 +53,46 @@
     VerticalScrollMode="Disabled"
     VerticalScrollBarVisibility="Disabled">
             <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Left">
+                <StackPanel.RenderTransform>
+                    <TranslateTransform x:Name="MainPanelTransform"
+                            X="200"/>
+                </StackPanel.RenderTransform>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="50,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Suggested"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <!-- Description -->
+                    <StackPanel Grid.Row="1"
+            Margin="0,0,0,100">
+
+                        <Image Source="Assets/reviews.png"
+           Stretch="UniformToFill"
+           Margin="0,0,0,10"
+                               Height="400"/>
+
+                        <TextBlock Text="Did you know? You can now post reviews and rate apps in NeonStore! Just register and sign in here! And you'll be able to share your feedback with others!"
+               FontSize="18"
+               FontWeight="Light"
+               Foreground="White"
+               TextWrapping="Wrap"
+                                   Width="500" HorizontalAlignment="Left"/>
+
+                    </StackPanel>
+                </Grid>
                 <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="50,0,25,0">
                     <Grid.RowDefinitions>
@@ -480,7 +537,7 @@
 
                         <!-- Logo -->
                         <Image Source="ms-appx:///Assets/SmallLogo.png"
-                   Width="30"
+                   Width="30" Stretch="UniformToFill"
                    Height="30"
                    Margin="10,0,10,0"/>
 

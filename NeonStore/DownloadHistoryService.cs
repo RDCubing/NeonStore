@@ -20,12 +20,14 @@ namespace NeonStore
         public async void Add(DownloadItem item)
         {
             Downloads.Insert(0, item);
+            BadgeService.UpdateCount(Downloads.Count);
             await SaveAsync();
         }
 
         public async void Clear()
         {
             Downloads.Clear();
+            BadgeService.UpdateCount(0);
             await SaveAsync();
         }
 
@@ -63,6 +65,7 @@ namespace NeonStore
                     foreach (var item in items)
                         Downloads.Add(item);
                 }
+                BadgeService.UpdateCount(Downloads.Count);
             }
             catch
             {

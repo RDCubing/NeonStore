@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.5.26174.0" />
+  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.6.26177.0" />
   <Properties>
     <DisplayName>NeonStore</DisplayName>
     <PublisherDisplayName>GDC Productions</PublisherDisplayName>
@@ -29,5 +29,6 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="picturesLibrary" />
   </Capabilities>
 </Package>

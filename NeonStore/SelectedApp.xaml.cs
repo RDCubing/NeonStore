@@ -20,6 +20,8 @@ using Windows.Data.Xml.Dom;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Windows.Storage;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -101,6 +103,8 @@ namespace NeonStore
         /// and <see cref="Common.NavigationHelper.SaveState"/>.
         /// The navigation parameter is available in the LoadState method 
         /// in addition to page state preserved during an earlier session.
+        /// 
+        private DataTransferManager dataTransferManager;
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -112,6 +116,9 @@ namespace NeonStore
                 this.DataContext = app;
             }
 
+            dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataRequested;
+
             LoadReviews();
             UpdateReviewUI();
 
@@ -120,6 +127,11 @@ namespace NeonStore
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            if (dataTransferManager != null)
+            {
+                dataTransferManager.DataRequested -= DataRequested;
+            }
+
             navigationHelper.OnNavigatedFrom(e);
         }
 
@@ -159,6 +171,9 @@ namespace NeonStore
             PrivacyNoteText.Visibility = Visibility.Collapsed;
             DownloadProgressRing.Visibility = Visibility.Visible;
             DownloadProgressRing.IsActive = true;
+            DownloadProgressPanel.Visibility = Visibility.Visible;
+            DownloadProgressBar.Value = 0;
+            DownloadStatusText.Text = "Preparing download...";
 
             // allow UI to update before heavy work starts
             await Task.Delay(500);
@@ -170,9 +185,6 @@ namespace NeonStore
                     return;
 
                 var uri = new Uri(project.DownloadUrl);
-
-                // ✅ Notification: download started
-                ToastService.Show("Download started", project.Title, project.ImagePath);
 
                 var picker = new Windows.Storage.Pickers.FileSavePicker();
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Downloads;
@@ -192,13 +204,96 @@ namespace NeonStore
                 picker.FileTypeChoices.Add("File", new List<string> { extension });
 
                 var file = await picker.PickSaveFileAsync();
-                if (file == null) return;
+
+                if (file == null)
+                {
+                    DownloadProgressPanel.Visibility = Visibility.Collapsed;
+                    DownloadProgressRing.IsActive = false;
+                    DownloadProgressRing.Visibility = Visibility.Collapsed;
+                    DownloadStatusText.Text = "";
+
+                    return;
+                }
+
+                // ✅ Notification: download started
+                ToastService.Show("Download started", project.Title, project.ImagePath);
 
                 var client = new Windows.Web.Http.HttpClient();
 
-                var buffer = await client.GetBufferAsync(uri);
+                var response = await client.GetAsync(
+                    uri,
+                    Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
 
-                await Windows.Storage.FileIO.WriteBufferAsync(file, buffer);
+                ulong totalBytes = response.Content.Headers.ContentLength ?? 0;
+
+                var input = await response.Content.ReadAsInputStreamAsync();
+                var output = await file.OpenAsync(FileAccessMode.ReadWrite);
+
+                var reader = new Windows.Storage.Streams.DataReader(input);
+                var writer = new Windows.Storage.Streams.DataWriter(output);
+
+                const uint BufferSize = 8192;
+                ulong downloadedBytes = 0;
+
+                while (true)
+                {
+                    uint loaded = await reader.LoadAsync(BufferSize);
+
+                    if (loaded == 0)
+                        break;
+
+                    byte[] bytes = new byte[loaded];
+                    reader.ReadBytes(bytes);
+
+                    writer.WriteBytes(bytes);
+                    await writer.StoreAsync();
+
+                    downloadedBytes += loaded;
+
+                    if (totalBytes > 0)
+                    {
+                        double percent =
+                            (double)downloadedBytes / totalBytes * 100;
+
+                        double downloadedMB =
+                            downloadedBytes / 1024d / 1024d;
+
+                        double totalMB =
+                            totalBytes / 1024d / 1024d;
+
+                        DownloadProgressBar.Value = percent;
+
+                        DownloadStatusText.Text =
+                            string.Format(
+                                "{0:F1} MB / {1:F1} MB ({2:F0}%)",
+                                downloadedMB,
+                                totalMB,
+                                percent);
+                    }
+                }
+
+                await writer.FlushAsync();
+
+                DownloadProgressBar.Value = 100;
+
+                if (totalBytes > 0)
+                {
+                    double totalMB = totalBytes / 1024d / 1024d;
+
+                    DownloadStatusText.Text =
+                        string.Format(
+                            "{0:F1} MB / {0:F1} MB (100%)",
+                            totalMB);
+                }
+                else
+                {
+                    DownloadStatusText.Text = "Download complete";
+                }
+
+                reader.Dispose();
+                writer.Dispose();
+                input.Dispose();
+                output.Dispose();
 
                 // ✅ Notification: download completed
                 ToastService.Show("Download complete", project.Title, project.ImagePath);
@@ -231,6 +326,170 @@ namespace NeonStore
             {
                 DownloadProgressRing.IsActive = false;
                 DownloadProgressRing.Visibility = Visibility.Collapsed;
+
+                if (DownloadProgressPanel.Visibility == Visibility.Visible)
+                {
+                    if (DownloadStatusText.Text != "Download complete")
+                        DownloadStatusText.Text = "Ready";
+                }
+            }
+        }
+
+        private async void InstantDownload_Click(object sender, RoutedEventArgs e)
+        {
+            PrivacyNoteText.Visibility = Visibility.Collapsed;
+            DownloadProgressRing.Visibility = Visibility.Visible;
+            DownloadProgressRing.IsActive = true;
+            DownloadProgressPanel.Visibility = Visibility.Visible;
+            DownloadProgressBar.Value = 0;
+            DownloadStatusText.Text = "Preparing download...";
+
+            try
+            {
+                var project = this.DataContext as AppItem;
+                if (project?.DownloadUrl == null)
+                    return;
+
+                var uri = new Uri(project.DownloadUrl);
+
+                string fileName =
+                    Path.GetFileName(uri.LocalPath);
+
+                if (string.IsNullOrEmpty(fileName))
+                    fileName = project.Title + ".bin";
+
+                // Pictures\NeonStore
+                StorageFolder pictures =
+                    KnownFolders.PicturesLibrary;
+
+                StorageFolder neonStoreFolder =
+                    await pictures.CreateFolderAsync(
+                        "NeonStore",
+                        CreationCollisionOption.OpenIfExists);
+
+                StorageFile file =
+                    await neonStoreFolder.CreateFileAsync(
+                        fileName,
+                        CreationCollisionOption.GenerateUniqueName);
+
+                ToastService.Show(
+                    "Download started",
+                    project.Title,
+                    project.ImagePath);
+
+                var client = new Windows.Web.Http.HttpClient();
+
+                var response = await client.GetAsync(
+                    uri,
+                    Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
+
+                ulong totalBytes =
+                    response.Content.Headers.ContentLength ?? 0;
+
+                var input =
+                    await response.Content.ReadAsInputStreamAsync();
+
+                var output =
+                    await file.OpenAsync(FileAccessMode.ReadWrite);
+
+                var reader =
+                    new Windows.Storage.Streams.DataReader(input);
+
+                var writer =
+                    new Windows.Storage.Streams.DataWriter(output);
+
+                const uint BufferSize = 8192;
+                ulong downloadedBytes = 0;
+
+                while (true)
+                {
+                    uint loaded = await reader.LoadAsync(BufferSize);
+
+                    if (loaded == 0)
+                        break;
+
+                    byte[] bytes = new byte[loaded];
+                    reader.ReadBytes(bytes);
+
+                    writer.WriteBytes(bytes);
+                    await writer.StoreAsync();
+
+                    downloadedBytes += loaded;
+
+                    if (totalBytes > 0)
+                    {
+                        double percent =
+                            (double)downloadedBytes /
+                            totalBytes * 100;
+
+                        double downloadedMB =
+                            downloadedBytes / 1024d / 1024d;
+
+                        double totalMB =
+                            totalBytes / 1024d / 1024d;
+
+                        DownloadProgressBar.Value = percent;
+
+                        DownloadStatusText.Text =
+                            string.Format(
+                                "{0:F1} MB / {1:F1} MB ({2:F0}%)",
+                                downloadedMB,
+                                totalMB,
+                                percent);
+                    }
+                }
+
+                await writer.FlushAsync();
+
+                reader.Dispose();
+                writer.Dispose();
+                input.Dispose();
+                output.Dispose();
+
+                DownloadProgressBar.Value = 100;
+
+                if (totalBytes > 0)
+                {
+                    double totalMB = totalBytes / 1024d / 1024d;
+
+                    DownloadStatusText.Text =
+                        string.Format(
+                            "{0:F1} MB / {0:F1} MB (100%)",
+                            totalMB);
+                }
+                else
+                {
+                    DownloadStatusText.Text = "Download complete";
+                }
+
+                ToastService.Show(
+                    "Download complete",
+                    project.Title,
+                    project.ImagePath);
+
+                await Windows.System.Launcher.LaunchFileAsync(file);
+
+                DownloadHistoryService.Instance.Add(
+                    new DownloadItem
+                    {
+                        Title = project.Title,
+                        FileName = file.Name,
+                        DownloadUrl = project.DownloadUrl,
+                        ImagePath = project.ImagePath,
+                        DownloadedAt = DateTime.Now
+                    });
+            }
+            catch (Exception ex)
+            {
+                await new MessageDialog(
+                    ex.ToString(),
+                    "Crash Debug").ShowAsync();
+            }
+            finally
+            {
+                DownloadProgressRing.IsActive = false;
+                DownloadProgressRing.Visibility = Visibility.Collapsed;
+                DownloadStatusText.Text = "Ready";
             }
         }
 
@@ -357,6 +616,75 @@ namespace NeonStore
             SignInToReviewPanel.Visibility = loggedIn
                 ? Visibility.Collapsed
                 : Visibility.Visible;
+        }
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var app = this.DataContext as AppItem;
+
+            if (app == null)
+                return;
+
+            var request = args.Request;
+
+            request.Data.Properties.Title = app.Title;
+            request.Data.Properties.Description = app.Subtitle ?? app.Description;
+
+            string shareText =
+                app.Title + Environment.NewLine +
+                (app.Description ?? "") + Environment.NewLine +
+                Environment.NewLine +
+                "Download: " + app.DownloadUrl;
+
+            request.Data.SetText(shareText);
+
+            if (!string.IsNullOrEmpty(app.DownloadUrl))
+            {
+                request.Data.SetWebLink(new Uri(app.DownloadUrl));
+            }
+        }
+
+        private async void OpenInBrowser_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var app = this.DataContext as AppItem;
+
+                if (app == null || string.IsNullOrWhiteSpace(app.DownloadUrl))
+                    return;
+
+                await Windows.System.Launcher.LaunchUriAsync(
+                    new Uri(app.DownloadUrl));
+            }
+            catch (Exception ex)
+            {
+                await new MessageDialog(ex.Message, "Error").ShowAsync();
+            }
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
+            }
         }
     }
 }

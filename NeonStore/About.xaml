@@ -11,10 +11,7 @@
     d:DesignWidth="346" HeaderBackground="{StaticResource AccentBrush}">
 
     <SettingsFlyout.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#e9f0f3" Offset="0"/>
-            <GradientStop Color="#a2a5ac" Offset="1"/>
-        </LinearGradientBrush>
+        <ImageBrush ImageSource="Assets/SideStore.png" Stretch="UniformToFill"/>
     </SettingsFlyout.Background>
 
     <!-- This StackPanel acts as a root panel for vertical layout of the content sections -->
@@ -30,20 +27,24 @@
 
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" FontWeight="Bold" TextWrapping="Wrap">
                 <TextBlock.Text>
-                    NeonStore (version 1.5.26174.0)
+                    NeonStore (version 1.6.26177.0)
                 </TextBlock.Text>
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" TextWrapping="Wrap">
                 <TextBlock.Text>
-                    NeonStore is a simple Windows app store for browsing and downloading apps from the GeekHub ecosystem with a clean Metro-style interface.
+                    By using this program, you agree to Geek Devs Comm: REIMP (GDCR)'s rules, terms, guidelines and regulations.
                 </TextBlock.Text>
             </TextBlock>
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,0" TextWrapping="Wrap">
-                <TextBlock.Text>
-                    It also highlights featured apps and updates so you can quickly discover new and popular releases.
-                </TextBlock.Text>
-            </TextBlock>
+            <Button Content="Discord Server" Click="Discord_Click"
+        Background="{StaticResource AccentBrush}"
+        Foreground="White"
+        HorizontalAlignment="Stretch"
+        Margin="0,0,0,10"/>
+            <Button Content="Website" Click="Website_Click"
+        Background="{StaticResource AccentBrush}"
+        Foreground="White"
+        HorizontalAlignment="Stretch"/>
 
 
         </StackPanel>

@@ -23,11 +23,21 @@ namespace NeonStore
         {
             this.InitializeComponent();
             this.DataContext = DownloadHistoryService.Instance;
+            UpdateEmptyState();
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             DownloadHistoryService.Instance.Clear();
+            UpdateEmptyState();
+        }
+
+        private void UpdateEmptyState()
+        {
+            EmptyText.Visibility =
+                DownloadHistoryService.Instance.Downloads.Count == 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

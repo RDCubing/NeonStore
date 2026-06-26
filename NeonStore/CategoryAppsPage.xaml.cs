@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using Windows.Storage;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -175,13 +176,30 @@ namespace NeonStore
             }
 
             var filtered = AllApps.Where(app =>
-                !string.IsNullOrEmpty(app.Title) &&
-                app.Title.ToLower().Contains(query)
-            );
+    (app.Title ?? "").ToLower().Contains(query) ||
+    (app.Description ?? "").ToLower().Contains(query) ||
+    (app.Publisher ?? "").ToLower().Contains(query) ||
+    (app.Category ?? "").ToLower().Contains(query)
+);
 
             ProjectsGrid.ItemsSource = new ObservableCollection<AppItem>(filtered);
         }
 
         private ObservableCollection<AppItem> AllApps;
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -134,6 +135,21 @@ namespace NeonStore
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Refresh ERROR: " + ex.Message);
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
             }
         }
     }

@@ -8,11 +8,26 @@
     xmlns:common="using:NeonStore.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">My Application</x:String>
+        <Storyboard x:Name="SlideInStoryboard">
+
+            <!-- Slide animation -->
+            <DoubleAnimation
+            Storyboard.TargetName="MainPanelTransform"
+            Storyboard.TargetProperty="X"
+            From="200" To="0"
+            Duration="0:0:1.2"
+            EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
 
     <!--
@@ -64,6 +79,10 @@
               ItemClick="ProjectsGrid_ItemClick"
               ItemsSource="{Binding}"
               Margin="40,10,0,100">
+                    <GridView.RenderTransform>
+                        <TranslateTransform x:Name="MainPanelTransform"
+                            X="200"/>
+                    </GridView.RenderTransform>
 
                     <!-- WRAP LAYOUT -->
                     <GridView.ItemsPanel>
@@ -226,31 +245,57 @@
 
             <Grid Background="{StaticResource AccentBrush}">
 
-                <StackPanel Orientation="Horizontal">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- HEADER (Logo + Title) -->
+                <!-- LEFT SIDE: HEADER + BUTTONS -->
+                <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+                    <!-- HEADER -->
                     <StackPanel Orientation="Horizontal"
-                    Margin="10,10,10,5"
-                    VerticalAlignment="Center">
+                            Margin="10,10,10,5"
+                            VerticalAlignment="Center">
 
-                        <!-- Logo -->
                         <Image Source="ms-appx:///Assets/SmallLogo.png"
-                   Width="30"
-                   Height="30"
-                   Margin="10,0,10,0"/>
+                           Width="30"
+                           Height="30"
+                           Margin="10,0,10,0"/>
 
-                        <!-- Title -->
                         <TextBlock Text="NeonStore"
-                       Foreground="White"
-                       FontSize="18"
-                       VerticalAlignment="Center"
-                       FontWeight="Light"/>
-
+                               Foreground="White"
+                               FontSize="18"
+                               VerticalAlignment="Center"
+                               FontWeight="Light"/>
                     </StackPanel>
 
+                    <!-- BUTTONS (still LEFT) -->
                     <AppBarButton Icon="Refresh"
-                      Label="Refresh"
-                      Click="Refresh_Click"/>
+                              Label="Refresh"
+                              Click="Refresh_Click"/>
+
+                </StackPanel>
+
+                <!-- MIDDLE SPACER -->
+                <Grid Grid.Column="1"/>
+
+                <!-- RIGHT SIDE: SEARCH ONLY -->
+                <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="0,0,10,0">
+
+                    <SearchBox x:Name="SearchBox" QueryChanged="SearchBox_QueryChanged"
+QuerySubmitted="SearchBox_QuerySubmitted"
+                           Width="300"
+                           Height="32"
+                           PlaceholderText="Search top apps..." SearchHistoryEnabled="False"
+                           Margin="0,0,0,0"/>
+
                 </StackPanel>
 
             </Grid>

@@ -8,11 +8,26 @@
     xmlns:common="using:NeonStore.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">All Apps</x:String>
+        <Storyboard x:Name="SlideInStoryboard">
+
+            <!-- Slide animation -->
+            <DoubleAnimation
+            Storyboard.TargetName="MainPanelTransform"
+            Storyboard.TargetProperty="X"
+            From="200" To="0"
+            Duration="0:0:1.2"
+            EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
 
     <!--
@@ -62,6 +77,10 @@
                 <GridView x:Name="ProjectsGrid" IsItemClickEnabled="True" ItemClick="ProjectsGrid_ItemClick"
           ItemsSource="{Binding}"
           Margin="40,40,40,100">
+                    <GridView.RenderTransform>
+                        <TranslateTransform x:Name="MainPanelTransform"
+                            X="200"/>
+                    </GridView.RenderTransform>
 
                     <!-- ✅ Horizontal + only 2 rows -->
                     <GridView.ItemsPanel>
@@ -243,7 +262,7 @@
                             VerticalAlignment="Center">
 
                         <Image Source="ms-appx:///Assets/SmallLogo.png"
-                           Width="30"
+                           Width="30" Stretch="UniformToFill"
                            Height="30"
                            Margin="10,0,10,0"/>
 

@@ -41,6 +41,18 @@ namespace NeonStore
                 (bool?)ApplicationData.Current.LocalSettings.Values["UseStoreHeader"] ?? false;
 
             SetHeaderText(useStore ? "Store" : "NeonStore");
+
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
+            }
         }
 
 

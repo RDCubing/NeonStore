@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.System;
 
 // The Settings Flyout item template is documented at http://go.microsoft.com/fwlink/?LinkId=273769
 
@@ -22,6 +23,16 @@ namespace NeonStore
         public About()
         {
             this.InitializeComponent();
+        }
+
+        private async void Discord_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBsVhkcHT4"));
+        }
+
+        private async void Website_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://rdcubing.github.io"));
         }
     }
 }

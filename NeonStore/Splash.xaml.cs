@@ -36,6 +36,10 @@ namespace NeonStore
             "We made this to not look like exactly like 8.1 Store, it's just to combine our style!",
             "GeekHub Server Managers: Jack/Xylo, Alex and Triple K!",
             "Downloading a great masterpiece...",
+            "Damn bruh...",
+            "Download Project 9600 now! It's the best!",
+            "Most of the changes by Andrew, then other changes by Jack!",
+            "Fun fact: our services will spindown before the month even ends...",
             "Our JSON uses GitHub and Gist technology, open but fast!"
         };
 

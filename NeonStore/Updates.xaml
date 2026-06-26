@@ -10,10 +10,7 @@
     Title="Updates"
     d:DesignWidth="346" HeaderBackground="{StaticResource AccentBrush}">
     <SettingsFlyout.Background>
-        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-            <GradientStop Color="#E9F0F3" Offset="0"/>
-            <GradientStop Color="#A2A5AC" Offset="1"/>
-        </LinearGradientBrush>
+        <ImageBrush ImageSource="Assets/SideStore.png" Stretch="UniformToFill"/>
     </SettingsFlyout.Background>
 
     <!-- This StackPanel acts as a root panel for vertical layout of the content sections -->

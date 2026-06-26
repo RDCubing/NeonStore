@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using Windows.Web.Http;
 using Newtonsoft.Json;
+using Windows.Storage;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -178,6 +179,21 @@ namespace NeonStore
             );
 
             ProjectsGrid.ItemsSource = new ObservableCollection<AppItem>(filtered);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
+            }
         }
     }
 }

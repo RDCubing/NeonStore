@@ -29,6 +29,11 @@ namespace NeonStore
         ApplicationData.Current.LocalSettings.Values["UseStoreHeader"];
 
             StoreHeaderToggle.IsOn = value == null ? false : (bool)value;
+
+            object reduceMotion =
+    ApplicationData.Current.LocalSettings.Values["ReduceMotion"];
+
+            ReduceMotionToggle.IsOn = reduceMotion == null ? false : (bool)reduceMotion;
         }
 
         private void StoreHeaderToggle_Toggled(object sender, RoutedEventArgs e)
@@ -92,6 +97,12 @@ namespace NeonStore
             string hex = item.Tag.ToString();
 
             ColorService.SetAccentHex(hex);
+        }
+
+        private void ReduceMotionToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            ApplicationData.Current.LocalSettings.Values["ReduceMotion"] =
+                ReduceMotionToggle.IsOn;
         }
     }
 }

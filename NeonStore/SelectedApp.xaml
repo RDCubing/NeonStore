@@ -7,11 +7,26 @@
     xmlns:common="using:NeonStore.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">My Application</x:String>
+        <Storyboard x:Name="SlideInStoryboard">
+
+            <!-- Slide animation -->
+            <DoubleAnimation
+            Storyboard.TargetName="MainPanelTransform"
+            Storyboard.TargetProperty="X"
+            From="200" To="0"
+            Duration="0:0:1.2"
+            EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
 
     <!--
@@ -57,7 +72,11 @@
     VerticalScrollMode="Disabled"
     VerticalScrollBarVisibility="Disabled">
 
-            <Grid Margin="120,0,120,40">
+            <Grid Margin="120,0,120,0">
+                <Grid.RenderTransform>
+                    <TranslateTransform x:Name="MainPanelTransform"
+                            X="200"/>
+                </Grid.RenderTransform>
 
                 <!-- TWO COLUMNS -->
                 <Grid.ColumnDefinitions>
@@ -86,13 +105,57 @@
                         <!-- Download -->
                             <Button Content="Download" BorderThickness="0" Background="{StaticResource AccentBrush}"
                 Margin="0,0,12,0"
-                Click="OpenProject_Click"/>
+                Click="InstantDownload_Click"/>
+                            <!-- More Options -->
+                            <Button Content="More options..."
+            BorderThickness="0" Background="Gray"
+            Margin="0,0,12,0">
+
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+
+                                        <MenuFlyoutItem Text="Save As..."
+                    Click="OpenProject_Click"/>
+
+                                        <MenuFlyoutItem Text="Open in Browser"
+                    Click="OpenInBrowser_Click"/>
+
+                                        <MenuFlyoutSeparator/>
+
+                                        <MenuFlyoutItem Text="Share"
+                    Click="Share_Click"/>
+
+                                    </MenuFlyout>
+                                </Button.Flyout>
+
+                            </Button>
                             <!-- Progress -->
                             <ProgressRing x:Name="DownloadProgressRing"
                   Width="20" VerticalAlignment="Center"
-                  Height="20"
+                  Height="20" Foreground="{StaticResource AccentBrush}"
                   IsActive="False"
                   Visibility="Collapsed"/>
+                        </StackPanel>
+
+                        <!-- Download Progress -->
+                        <StackPanel x:Name="DownloadProgressPanel"
+            Visibility="Collapsed"
+            Margin="0,12,0,12">
+
+                            <!-- File size / percentage -->
+                            <TextBlock x:Name="DownloadStatusText"
+               Text="0 MB / 0 MB (0%)"
+               Foreground="#AAAAAA"
+               FontSize="12"
+               Margin="0,0,0,4"/>
+
+                            <!-- Progress bar -->
+                            <ProgressBar x:Name="DownloadProgressBar" Foreground="{StaticResource AccentBrush}"
+                 Height="4"
+                 Minimum="0"
+                 Maximum="100"
+                 Value="0"/>
+
                         </StackPanel>
 
                         <!-- Privacy note -->
@@ -505,7 +568,7 @@
                 <!-- ========================= -->
 
                 <Grid Grid.Column="2"
-          Margin="40,0,0,0">
+          Margin="40,0,0,50">
 
                     <!-- rows -->
                     <Grid.RowDefinitions>
@@ -738,12 +801,12 @@
 
                                             <TextBlock Text="★"
                        FontSize="16"
-                       Foreground="#FFD700"/>
+                       Foreground="{StaticResource AccentBrush}"/>
 
                                             <TextBlock Text="{Binding rating}"
                        Margin="4,0,0,0"
                        FontSize="14"
-                       Foreground="#FFD700"/>
+                       Foreground="{StaticResource AccentBrush}"/>
 
                                         </StackPanel>
 
@@ -883,4 +946,52 @@
 
         </ScrollViewer>
     </Grid>
+    <Page.BottomAppBar>
+        <AppBar IsSticky="True" IsOpen="False">
+
+            <Grid Background="{StaticResource AccentBrush}">
+
+                <StackPanel Orientation="Horizontal">
+
+                    <!-- HEADER (Logo + Title) -->
+                    <StackPanel Orientation="Horizontal"
+                    Margin="10,10,10,5"
+                    VerticalAlignment="Center">
+
+                        <!-- Logo -->
+                        <Image Source="ms-appx:///Assets/SmallLogo.png"
+                   Width="30" Stretch="UniformToFill"
+                   Height="30"
+                   Margin="10,0,10,0"/>
+
+                        <!-- Title -->
+                        <TextBlock Text="NeonStore"
+                       Foreground="White"
+                       FontSize="18"
+                       VerticalAlignment="Center"
+                       FontWeight="Light"/>
+
+                    </StackPanel>
+
+                    <AppBarButton Icon="Download"
+                      Label="Download"
+                      Click="InstantDownload_Click"/>
+
+                    <AppBarButton Icon="Save"
+                      Label="Save As..."
+                      Click="OpenProject_Click"/>
+
+                    <AppBarButton Icon="Globe"
+                      Label="Open in Browser"
+                      Click="OpenInBrowser_Click"/>
+
+                    <AppBarButton Icon="MailForward"
+                      Label="Share"
+                      Click="Share_Click"/>
+                </StackPanel>
+
+            </Grid>
+
+        </AppBar>
+    </Page.BottomAppBar>
 </Page>

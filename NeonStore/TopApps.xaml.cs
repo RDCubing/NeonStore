@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Collections.ObjectModel;
+using Windows.Storage;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -52,7 +54,10 @@ namespace NeonStore
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.navigationHelper.SaveState += navigationHelper_SaveState;
             this.DataContext = NeonStoreService.TopApps;
+            AllApps = new ObservableCollection<AppItem>(NeonStoreService.TopApps);
         }
+
+        private ObservableCollection<AppItem> AllApps;
 
         /// <summary>
         /// Populates the page with content passed during navigation. Any saved state is also
@@ -125,6 +130,9 @@ namespace NeonStore
                 System.Diagnostics.Debug.WriteLine("NeonStore: Manual refresh triggered");
 
                 await NeonStoreService.LoadAsync();
+                AllApps = new ObservableCollection<AppItem>(NeonStoreService.TopApps);
+
+                ProjectsGrid.ItemsSource = AllApps;
 
                 System.Diagnostics.Debug.WriteLine("NeonStore: Refresh complete ✔");
 
@@ -134,6 +142,53 @@ namespace NeonStore
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Refresh ERROR: " + ex.Message);
+            }
+        }
+
+        private void SearchBox_QueryChanged(SearchBox sender, SearchBoxQueryChangedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void SearchBox_QuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
+        {
+            FilterApps(sender.QueryText);
+        }
+
+        private void FilterApps(string query)
+        {
+            var source = NeonStoreService.TopApps;
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                ProjectsGrid.ItemsSource = source;
+                return;
+            }
+
+            query = query.ToLower();
+
+            var filtered = source.Where(app =>
+                (app.Title ?? "").ToLower().Contains(query) ||
+                (app.Description ?? "").ToLower().Contains(query) ||
+                (app.Publisher ?? "").ToLower().Contains(query) ||
+                (app.Category ?? "").ToLower().Contains(query)
+            );
+
+            ProjectsGrid.ItemsSource = new ObservableCollection<AppItem>(filtered);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool reduceMotion =
+    (bool?)ApplicationData.Current.LocalSettings.Values["ReduceMotion"] ?? false;
+
+            if (!reduceMotion)
+            {
+                SlideInStoryboard.Begin();
+            }
+            else
+            {
+                MainPanelTransform.X = 0;
             }
         }
     }
