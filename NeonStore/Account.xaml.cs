@@ -47,7 +47,7 @@ namespace NeonStore
                     ApplicationData.Current.LocalSettings.Values["token"] = token;
                     ApplicationData.Current.LocalSettings.Values["username"] = username;
 
-                    // Update UI (if available)
+                    // Update UI
                     LoginStatusText.Text = "Logged in as " + username;
                     LoginStatusText.Visibility = Visibility.Visible;
                     SignOutButton.Visibility = Visibility.Visible;
@@ -57,18 +57,25 @@ namespace NeonStore
 
                     this.Hide();
 
-                    await new MessageDialog("Welcome, " + username + "!").ShowAsync();
+                    await new MessageDialog(
+                        "Welcome, " + username + "!",
+                        "Login successful"
+                    ).ShowAsync();
                 }
                 else
                 {
                     await new MessageDialog(
-                        obj["error"]?.ToString() ?? "Login failed"
+                        obj["error"]?.ToString() ?? "Login failed",
+                        "Login failed"
                     ).ShowAsync();
                 }
             }
             catch (Exception ex)
             {
-                await new MessageDialog("Login error: " + ex.Message).ShowAsync();
+                await new MessageDialog(
+                    "Login error: " + ex.Message,
+                    "Login error"
+                ).ShowAsync();
             }
         }
 
@@ -76,7 +83,11 @@ namespace NeonStore
         {
             if (RegPasswordBox.Password != ConfirmPasswordBox.Password)
             {
-                await new MessageDialog("Passwords do not match").ShowAsync();
+                await new MessageDialog(
+                    "Passwords do not match",
+                    "Registration error"
+                ).ShowAsync();
+
                 return;
             }
 
@@ -90,11 +101,17 @@ namespace NeonStore
 
             if (obj["success"] != null)
             {
-                await new MessageDialog("Account created! You can now sign in.").ShowAsync();
+                await new MessageDialog(
+                    "Account created! You can now sign in.",
+                    "Registration successful"
+                ).ShowAsync();
             }
             else
             {
-                await new MessageDialog(obj["error"]?.ToString() ?? "Registration failed").ShowAsync();
+                await new MessageDialog(
+                    obj["error"]?.ToString() ?? "Registration failed",
+                    "Registration failed"
+                ).ShowAsync();
             }
         }
 

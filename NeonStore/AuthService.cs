@@ -36,7 +36,7 @@ namespace NeonStore
                 );
 
                 var response = await client.PostAsync(
-                    new Uri("https://neonstore-api.onrender.com/auth/login"),
+                    new Uri("https://gdcr.dankassassin368.com/ns-status/auth/login"),
                     content
                 );
 
@@ -76,7 +76,7 @@ namespace NeonStore
                 );
 
                 var response = await client.PostAsync(
-                    new Uri("https://neonstore-api.onrender.com/auth/register"),
+                    new Uri("https://gdcr.dankassassin368.com/ns-status/auth/register"),
                     content
                 );
 

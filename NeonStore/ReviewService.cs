@@ -14,7 +14,7 @@ namespace NeonStore
         public static async Task<string> GetReviews(string appId)
         {
             string url =
-                "https://neonstore-api.onrender.com/reviews/" +
+                "https://gdcr.dankassassin368.com/ns-status/reviews/" +
                 appId +
                 "?t=" +
                 DateTime.UtcNow.Ticks;
@@ -34,7 +34,7 @@ namespace NeonStore
         {
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                new System.Uri("https://neonstore-api.onrender.com/reviews")
+                new System.Uri("https://gdcr.dankassassin368.com/ns-status/reviews")
             );
 
             request.Content = new HttpStringContent(

@@ -9,9 +9,16 @@ namespace NeonStore
 {
     public static class UpdateDialog
     {
-        public static async Task<bool> ShowAsync(string title, string message, string changelog)
+        public static async Task<bool> ShowAsync(
+            string title,
+            string message,
+            string changelog)
         {
-            var dialog = new MessageDialog(message + "\n\nChanges:\n" + changelog, title);
+            var dialog = new MessageDialog(
+                message + "\n\n" + changelog)
+            {
+                Title = title
+            };
 
             dialog.Commands.Add(new UICommand("Update"));
             dialog.Commands.Add(new UICommand("Later"));
@@ -21,7 +28,7 @@ namespace NeonStore
 
             var result = await dialog.ShowAsync();
 
-            return result.Label == "Update";
+            return result == dialog.Commands[0];
         }
     }
 }

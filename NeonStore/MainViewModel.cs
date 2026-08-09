@@ -21,5 +21,44 @@ namespace NeonStore
 
         public ObservableCollection<AppItem> Apps
             => NeonStoreService.NeonStore;
+
+        public ObservableCollection<string> Categories
+            => NeonStoreService.Categories;
+
+        public ObservableCollection<AppItem> BooksReference
+        {
+            get
+            {
+                return new ObservableCollection<AppItem>(
+                    NeonStoreService.NeonStore
+                        .Where(app => app.Category == "Books/Reference")
+                        .Take(6)
+                );
+            }
+        }
+
+        public ObservableCollection<AppItem> News
+        {
+            get
+            {
+                return new ObservableCollection<AppItem>(
+                    NeonStoreService.NeonStore
+                        .Where(app => app.Category == "News")
+                        .Take(6)
+                );
+            }
+        }
+
+        public ObservableCollection<AppItem> Entertainment
+        {
+            get
+            {
+                return new ObservableCollection<AppItem>(
+                    NeonStoreService.NeonStore
+                        .Where(app => app.Category == "Entertainment")
+                        .Take(6)
+                );
+            }
+        }
     }
 }

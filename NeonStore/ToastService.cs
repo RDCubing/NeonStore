@@ -33,5 +33,18 @@ namespace NeonStore
             var toast = new ToastNotification(xml);
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+
+        public static void Show1(string title, string message)
+        {
+            var xml = ToastNotificationManager.GetTemplateContent(
+                ToastTemplateType.ToastText02);
+
+            var texts = xml.GetElementsByTagName("text");
+            texts[0].AppendChild(xml.CreateTextNode(title));
+            texts[1].AppendChild(xml.CreateTextNode(message));
+
+            var toast = new ToastNotification(xml);
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
+        }
     }
 }

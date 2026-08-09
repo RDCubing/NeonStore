@@ -241,7 +241,7 @@
         </Grid>
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsSticky="True" IsOpen="True">
+        <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="True">
 
             <Grid Background="{StaticResource AccentBrush}">
 

@@ -568,11 +568,11 @@
                 <!-- ========================= -->
 
                 <Grid Grid.Column="2"
-          Margin="40,0,0,50">
+          Margin="40,0,0,0">
 
                     <!-- rows -->
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="500"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
@@ -753,23 +753,16 @@
                Margin="0,0,0,10"/>
 
                     <!-- REVIEWS GRID -->
-                    <GridView Grid.Row="1"
+                    <ListView Grid.Row="1"
               x:Name="ReviewsGrid"
               SelectionMode="None"
-              ScrollViewer.HorizontalScrollMode="Enabled"
-              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-              ScrollViewer.VerticalScrollMode="Disabled"
-              ScrollViewer.VerticalScrollBarVisibility="Disabled">
-
-                        <!-- WRAP LAYOUT -->
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
+              ScrollViewer.HorizontalScrollMode="Disabled"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollMode="Enabled"
+              ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                         <!-- CARD -->
-                        <GridView.ItemTemplate>
+                        <ListView.ItemTemplate>
                             <DataTemplate>
 
                                 <Border Width="360"
@@ -832,8 +825,8 @@
                                 </Border>
 
                             </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
 
                             <Style TargetType="GridViewItem">
 
@@ -845,7 +838,7 @@
 
                                 <Setter Property="Template">
                                     <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewItem">
+                                        <ControlTemplate TargetType="ListViewItem">
 
                                             <Border x:Name="Root"
                             Background="{TemplateBinding Background}"
@@ -911,9 +904,9 @@
 
                             </Style>
 
-                        </GridView.ItemContainerStyle>
+                        </ListView.ItemContainerStyle>
 
-                    </GridView>
+                    </ListView>
                     <!-- WINDOWS 8 EMPTY STATE -->
                     <StackPanel x:Name="EmptyStatePanel"
             Grid.Row="1"
@@ -947,7 +940,7 @@
         </ScrollViewer>
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsSticky="True" IsOpen="False">
+        <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="False">
 
             <Grid Background="{StaticResource AccentBrush}">
 

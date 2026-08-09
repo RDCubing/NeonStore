@@ -75,291 +75,244 @@
                Margin="0,0,0,10"
                TextWrapping="Wrap"/>
 
-                    <!-- Description -->
-                    <StackPanel Grid.Row="1"
-            Margin="0,0,0,100">
+                    <!-- Windows 8 Style Tiles -->
+                    <ScrollViewer Grid.Row="1"
+              HorizontalScrollBarVisibility="Disabled"
+              VerticalScrollBarVisibility="Auto">
 
-                        <Image Source="Assets/reviews.png"
-           Stretch="UniformToFill"
-           Margin="0,0,0,10"
-                               Height="400"/>
+                        <ItemsControl>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal"
+                                              MaximumRowsOrColumns="3"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                        <TextBlock Text="Did you know? You can now post reviews and rate apps in NeonStore! Just register and sign in here! And you'll be able to share your feedback with others!"
-               FontSize="18"
-               FontWeight="Light"
-               Foreground="White"
-               TextWrapping="Wrap"
-                                   Width="500" HorizontalAlignment="Left"/>
+                            <Button Width="310" Click="CatApps_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Background="#FF8F6D13"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
 
-                    </StackPanel>
-                </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="50,0,25,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Categories"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
 
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Spotlight #1"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
+                                </Grid>
+                            </Button>
+                            <Button Width="310" Click="GoToApps_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0"
+                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
 
-                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-      Margin="0,0,0,100">
+                                    <!-- Tile image -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/bingshot.png"
+               Stretch="UniformToFill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
 
-                        <Button VerticalAlignment="Top"
-        Margin="0,0,0,0" BorderThickness="0"
-        Click="Chris_Click">
+                                    <!-- Dark Metro overlay -->
+                                    <Rectangle Fill="#66000000"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"/>
 
-                            <Grid Height="Auto" Width="825">
-                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/rlillo.png"
-               Stretch="UniformToFill"/>
+                                    <!-- Tile name -->
+                                    <TextBlock Text="All Apps"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
 
-                                <Rectangle Fill="#44000000"/>
+                                </Grid>
+                            </Button>
 
-                                <StackPanel VerticalAlignment="Bottom"
-            Margin="20"
-            Orientation="Horizontal">
 
-                                    <!-- LOGO -->
+
+
+
+                            <Button Width="310" Click="TopApps_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Background="{ThemeResource AccentBrush}"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile image -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/feed.png"
+               Stretch="UniformToFill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
+
+                                    <!-- Dark Metro overlay -->
+                                    <Rectangle Fill="#66000000"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"/>
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Top Apps"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
+                            <Button Width="310"
+                Height="150" Click="Accounts_Click"
+                Margin="0,0,4,4" Padding="0"
+                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Your Account"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
+                            <Button Width="310" Click="QuoteTile_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Background="{ThemeResource AccentBrush}"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile image -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quote.png"
+               Stretch="UniformToFill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
+
+                                    <!-- Dark Metro overlay -->
+                                    <Rectangle Fill="#66000000"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"/>
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Inspirational Bundle"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
+                            <Button Width="310" Click="OctoStore_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Background="{ThemeResource AccentBrush}"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile image -->
+                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octoshot.png"
+               Stretch="UniformToFill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
+
+                                    <!-- Dark Metro overlay -->
+                                    <Rectangle Fill="#66000000"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"/>
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Popular"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
+                            <Button Width="310" Click="Downloads_Click"
+                Height="150"
+                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                BorderThickness="0" Background="#FF9E3B3B">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Recent Downloads"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
+                            <Button Width="150" Click="Chris_Click"
+                Height="150" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                Margin="0,0,4,4" Padding="0"
+                Background="{ThemeResource AccentBrush}"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+
+                                    <!-- Tile image -->
                                     <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/chris.png"
-           Width="64"
-           Height="64"
-           Margin="0,0,12,0"
-           VerticalAlignment="Center"/>
+               Stretch="UniformToFill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
 
-                                    <!-- TEXT -->
-                                    <StackPanel>
+                                    <!-- Dark Metro overlay -->
+                                    <Rectangle Fill="#66000000"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"/>
 
-                                        <TextBlock Text="ChrisRLillo Music"
-                   Foreground="White"
-                   FontSize="44"
-                   FontWeight="Light"/>
-
-                                        <TextBlock Text="Chilean music in its peak"
-                   Foreground="#DDDDDD"
-                   FontSize="18"
-                   TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                </StackPanel>
-
-                            </Grid>
-
-                        </Button>
-
-                    </Grid>
-
-
-                </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="25,0,25,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Popular"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-      Margin="0,0,0,100">
-
-                        <Button VerticalAlignment="Top"
-        Margin="0,0,0,0" BorderThickness="0"
-        Click="OctoStore_Click">
-
-                            <Grid Height="Auto" Width="825">
-                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octoshot.png"
-               Stretch="UniformToFill"/>
-
-                                <Rectangle Fill="#44000000"/>
-
-                                <StackPanel VerticalAlignment="Bottom"
-            Margin="20"
-            Orientation="Horizontal">
-
-                                    <!-- LOGO -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octostore.png"
-           Width="64"
-           Height="64"
-           Margin="0,0,12,0"
-           VerticalAlignment="Center"/>
-
-                                    <!-- TEXT -->
-                                    <StackPanel>
-
-                                        <TextBlock Text="OctoStore"
-                   Foreground="White"
-                   FontSize="44"
-                   FontWeight="Light"/>
-
-                                        <TextBlock Text="Windows 8.1 Store, revived"
-                   Foreground="#DDDDDD"
-                   FontSize="18"
-                   TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                </StackPanel>
-
-                            </Grid>
-
-                        </Button>
-
-                    </Grid>
-
-
-                </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="25,0,25,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Inspirational Bundle"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-      Margin="0,0,0,100">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" VerticalAlignment="Top"
-        Margin="0,0,0,0" BorderThickness="0"
-        Click="QuoteTile_Click">
-
-                            <Grid Height="Auto" Width="825">
-                                <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quote.png"
-               Stretch="UniformToFill"/>
-
-                                <Rectangle Fill="#44000000"/>
-
-                                <StackPanel VerticalAlignment="Bottom"
-            Margin="20"
-            Orientation="Horizontal">
-
-                                    <!-- LOGO -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/q.png"
-           Width="64"
-           Height="64"
-           Margin="0,0,12,0"
-           VerticalAlignment="Center"/>
-
-                                    <!-- TEXT -->
-                                    <StackPanel>
-
-                                        <TextBlock Text="QuoteTile"
-                   Foreground="White"
-                   FontSize="44"
-                   FontWeight="Light"/>
-
-                                        <TextBlock Text="Seek inspiration from quotes"
-                   Foreground="#DDDDDD"
-                   FontSize="18"
-                   TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                </StackPanel>
-
-                            </Grid>
-
-                        </Button>
-
-                        <!-- RIGHT COLUMN (STACKED TILES) -->
-                        <Grid Grid.Column="1">
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <!-- Top square tile -->
-                            <Button Grid.Row="0"
-        Margin="0"
-        BorderThickness="0"
-        Width="220"
-        Height="220"
-        Click="QuoteTileLTS_Click" VerticalAlignment="Top" HorizontalAlignment="Left">
-
-                                <Grid>
-
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/lts.png"
-               Stretch="Uniform"/>
-                                    <TextBlock Text="QuoteTile LTS"
-                   Foreground="White"
-                   FontSize="18"
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Top exclusive"
+                   FontFamily="Segoe UI"
                    FontWeight="Light"
-                   HorizontalAlignment="Left"
+                   FontSize="12"
+                   Foreground="White"
                    VerticalAlignment="Bottom"
-                   Margin="10"/>
-
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
 
                                 </Grid>
-
                             </Button>
 
-                            <!-- Bottom square tile -->
-                            <Button Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
-            Margin="0"
-        BorderThickness="0"
-        Width="220"
-        Height="220"
-            Click="LiveText_Click" >
 
-                                <Grid>
+                        </ItemsControl>
+                    </ScrollViewer>
 
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/image-5.png"
-           Stretch="Uniform" Width="Auto"/>
-
-                                    <TextBlock Text="Live Text 8.1"
-                   Foreground="White"
-                   FontSize="18"
-                   FontWeight="Light"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Margin="10"/>
-
-                                </Grid>
-
-                            </Button>
-
-                        </Grid>
-
-                    </Grid>
-                    
-                    
                 </Grid>
-                
                 <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="25,0,25,0">
                     <Grid.RowDefinitions>
@@ -389,7 +342,488 @@
 
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Vertical"/>
+                                <ItemsWrapGrid Orientation="Vertical"
+                                               MaximumRowsOrColumns="2"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Width="160"
+            Height="210"
+            Background="Transparent"
+            Margin="5">
+
+                                    <Grid>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- IMAGE -->
+                                        <Image Grid.Row="0"
+                   Source="{Binding ImagePath}"
+                   Stretch="UniformToFill"/>
+
+                                        <!-- TITLE -->
+                                        <TextBlock Grid.Row="1"
+                       Text="{Binding Title}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="Light"
+                       Margin="8,8,8,0"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- PUBLISHER -->
+                                        <TextBlock Grid.Row="2"
+                       Text="{Binding Publisher}"
+                       Foreground="#AAAAAA"
+                       FontSize="11"
+                       Margin="8,4,8,8"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+
+                            <Style TargetType="GridViewItem">
+
+                                <!-- NORMAL -->
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+
+                                            <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            RenderTransformOrigin="0.5,0.5">
+
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                </Border.RenderTransform>
+
+                                                <ContentPresenter />
+
+                                                <VisualStateManager.VisualStateGroups>
+
+                                                    <VisualStateGroup x:Name="CommonStates">
+
+                                                        <!-- NORMAL -->
+                                                        <VisualState x:Name="Normal"/>
+
+                                                        <!-- POINTER OVER (HOVER) -->
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.85"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <!-- PRESSED -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.6"
+                                                         Duration="0:0:0.05"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                    </VisualStateGroup>
+
+                                                </VisualStateManager.VisualStateGroups>
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+                            </Style>
+
+                        </GridView.ItemContainerStyle>
+
+                    </GridView>
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="25,0,25,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Books/Reference"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <GridView Grid.Row="1" ItemsSource="{Binding BooksReference}"
+          IsItemClickEnabled="True"
+          ItemClick="AppsGrid_ItemClick"
+          Margin="0,0,0,100"
+          ScrollViewer.HorizontalScrollMode="Enabled"
+          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+          ScrollViewer.VerticalScrollMode="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Vertical"
+                                               MaximumRowsOrColumns="2"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Width="160"
+            Height="210"
+            Background="Transparent"
+            Margin="5">
+
+                                    <Grid>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- IMAGE -->
+                                        <Image Grid.Row="0"
+                   Source="{Binding ImagePath}"
+                   Stretch="UniformToFill"/>
+
+                                        <!-- TITLE -->
+                                        <TextBlock Grid.Row="1"
+                       Text="{Binding Title}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="Light"
+                       Margin="8,8,8,0"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- PUBLISHER -->
+                                        <TextBlock Grid.Row="2"
+                       Text="{Binding Publisher}"
+                       Foreground="#AAAAAA"
+                       FontSize="11"
+                       Margin="8,4,8,8"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+
+                            <Style TargetType="GridViewItem">
+
+                                <!-- NORMAL -->
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+
+                                            <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            RenderTransformOrigin="0.5,0.5">
+
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                </Border.RenderTransform>
+
+                                                <ContentPresenter />
+
+                                                <VisualStateManager.VisualStateGroups>
+
+                                                    <VisualStateGroup x:Name="CommonStates">
+
+                                                        <!-- NORMAL -->
+                                                        <VisualState x:Name="Normal"/>
+
+                                                        <!-- POINTER OVER (HOVER) -->
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.85"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <!-- PRESSED -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.6"
+                                                         Duration="0:0:0.05"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                    </VisualStateGroup>
+
+                                                </VisualStateManager.VisualStateGroups>
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+                            </Style>
+
+                        </GridView.ItemContainerStyle>
+
+                    </GridView>
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="25,0,25,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="News"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <GridView Grid.Row="1" ItemsSource="{Binding News}"
+          IsItemClickEnabled="True"
+          ItemClick="AppsGrid_ItemClick"
+          Margin="0,0,0,100"
+          ScrollViewer.HorizontalScrollMode="Enabled"
+          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+          ScrollViewer.VerticalScrollMode="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Vertical"
+                                               MaximumRowsOrColumns="2"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Width="160"
+            Height="210"
+            Background="Transparent"
+            Margin="5">
+
+                                    <Grid>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- IMAGE -->
+                                        <Image Grid.Row="0"
+                   Source="{Binding ImagePath}"
+                   Stretch="UniformToFill"/>
+
+                                        <!-- TITLE -->
+                                        <TextBlock Grid.Row="1"
+                       Text="{Binding Title}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="Light"
+                       Margin="8,8,8,0"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- PUBLISHER -->
+                                        <TextBlock Grid.Row="2"
+                       Text="{Binding Publisher}"
+                       Foreground="#AAAAAA"
+                       FontSize="11"
+                       Margin="8,4,8,8"
+                       TextTrimming="CharacterEllipsis"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+
+                            <Style TargetType="GridViewItem">
+
+                                <!-- NORMAL -->
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+
+                                            <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            RenderTransformOrigin="0.5,0.5">
+
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                </Border.RenderTransform>
+
+                                                <ContentPresenter />
+
+                                                <VisualStateManager.VisualStateGroups>
+
+                                                    <VisualStateGroup x:Name="CommonStates">
+
+                                                        <!-- NORMAL -->
+                                                        <VisualState x:Name="Normal"/>
+
+                                                        <!-- POINTER OVER (HOVER) -->
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.85"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                         To="1.05"
+                                                         Duration="0:0:0.1"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <!-- PRESSED -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+
+                                                                <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.6"
+                                                         Duration="0:0:0.05"/>
+
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                    </VisualStateGroup>
+
+                                                </VisualStateManager.VisualStateGroups>
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+                            </Style>
+
+                        </GridView.ItemContainerStyle>
+
+                    </GridView>
+                </Grid>
+                <!-- Welcome Section -->
+                <Grid Width="Auto" Margin="25,0,25,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Links header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Links list (fills space) -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="0"
+               Text="Entertainment"
+               FontSize="36"
+               FontWeight="Light"
+               Foreground="White"
+               Margin="0,0,0,10"
+               TextWrapping="Wrap"/>
+
+                    <GridView Grid.Row="1" ItemsSource="{Binding Entertainment}"
+          IsItemClickEnabled="True"
+          ItemClick="AppsGrid_ItemClick"
+          Margin="0,0,0,100"
+          ScrollViewer.HorizontalScrollMode="Enabled"
+          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+          ScrollViewer.VerticalScrollMode="Disabled"
+          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Vertical"
+                                               MaximumRowsOrColumns="2"/>
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
 
@@ -524,7 +958,7 @@
 
     </Grid>
     <Page.BottomAppBar>
-        <AppBar IsSticky="True" IsOpen="True">
+        <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="True">
 
             <Grid Background="{StaticResource AccentBrush}">
 

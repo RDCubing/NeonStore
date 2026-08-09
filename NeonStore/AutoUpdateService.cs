@@ -104,7 +104,7 @@ namespace NeonStore
 
                     await FileIO.WriteBufferAsync(file, buffer);
 
-                    ToastService.Show("Update downloaded", update.Name, null);
+                    ToastService.Show1("Update downloaded", update.Name);
 
                     var installDialog = new MessageDialog(
                         $"\"{file.Name}\" downloaded. Install now?");

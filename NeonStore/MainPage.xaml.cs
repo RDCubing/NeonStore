@@ -73,6 +73,16 @@ namespace NeonStore
             this.Frame.Navigate(typeof(CategoriesPage));
         }
 
+        private void CatGrid_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            string category = e.ClickedItem as string;
+
+            if (string.IsNullOrEmpty(category))
+                return;
+
+            Frame.Navigate(typeof(CategoryAppsPage), category);
+        }
+
         private void AppsGrid_ItemClick(object sender, ItemClickEventArgs e)
         {
             var app = (AppItem)e.ClickedItem;
@@ -105,6 +115,18 @@ namespace NeonStore
         private void OctoStore_Click(object sender, RoutedEventArgs e)
         {
             NavigateToApp("OctoStore");
+        }
+
+        private void Accounts_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new Account();
+            flyout.Show();
+        }
+
+        private void Downloads_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new Downloads();
+            flyout.Show();
         }
 
         private void NavigateToApp(string id)
