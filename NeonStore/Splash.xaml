@@ -13,7 +13,7 @@
         <Image
     x:Name="SplashLogo"
     Source="ms-appx:///Assets/SplashScreen.png"
-    Stretch="None" Width="620" Height="300"
+    Stretch="UniformToFill" Width="620" Height="300"
     HorizontalAlignment="Center"
     VerticalAlignment="Center"/>
         <!-- BOTTOM PROGRESS RING -->
