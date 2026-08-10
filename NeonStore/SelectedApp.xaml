@@ -828,7 +828,7 @@
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>
 
-                            <Style TargetType="GridViewItem">
+                            <Style TargetType="ListViewItem">
 
                                 <!-- NORMAL -->
                                 <Setter Property="Background" Value="Transparent"/>
