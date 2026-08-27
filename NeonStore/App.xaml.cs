@@ -90,6 +90,8 @@ namespace NeonStore
             Window.Current.Activate();
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
             ThemeManager.ApplyAccent();
+            // 1. Check JWT expiration on launch
+            await AuthService.LogoutIfExpired();
             await NeonStoreService.LoadAsync();
             await AutoUpdateService.CheckAsync();
             await DownloadHistoryService.Instance.LoadAsync();
@@ -174,11 +176,16 @@ namespace NeonStore
     })
 );
 
-            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
-                "languages",
-                "Languages",
-                handler => { new Languages().Show(); }
-            ));
+            args.Request.ApplicationCommands.Add(
+    new SettingsCommand("openuploader", "App Uploader", (p) =>
+    {
+        var frame = Window.Current.Content as Frame;
+        if (frame != null)
+        {
+            frame.Navigate(typeof(UploaderPage));
+        }
+    })
+);
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
                 "updates",

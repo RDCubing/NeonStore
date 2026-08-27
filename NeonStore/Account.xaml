@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     IconSource="Assets/SmallLogo.png"
     Title="Account"
-    d:DesignWidth="346" HeaderBackground="{StaticResource AccentBrush}" Loaded="SettingsFlyout_Loaded">
+    d:DesignWidth="346" HeaderBackground="{StaticResource AccentBrush}" Loaded="SettingsFlyout_Loaded" Unloaded="SettingsFlyout_Unloaded">
     <SettingsFlyout.Background>
         <ImageBrush ImageSource="Assets/SideStore.png" Stretch="UniformToFill"/>
     </SettingsFlyout.Background>
@@ -29,12 +29,24 @@
                 </TextBlock.Text>
             </TextBlock>
 
+            <!-- User Status Display -->
             <TextBlock x:Name="LoginStatusText"
-           Text="Not signed in"
-           FontSize="16"
-           Margin="0,0,0,15"
-           Visibility="Collapsed"/>
+                       Text="Not signed in"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#1F1F24"
+                       Margin="0,0,0,4"
+                       Visibility="Collapsed"/>
 
+            <!-- Expiration Countdown -->
+            <TextBlock x:Name="SessionExpiryText"
+                       Text=""
+                       FontSize="13"
+                       FontWeight="Light"
+                       Foreground="#555555"
+                       Margin="0,0,0,15"
+                       Visibility="Collapsed"/>
+            
             <Button x:Name="SignOutButton"
         Content="Sign Out"
         Background="#444444"

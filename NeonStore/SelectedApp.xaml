@@ -761,149 +761,135 @@
               ScrollViewer.VerticalScrollMode="Enabled"
               ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-                        <!-- CARD -->
+                        <!-- REVIEWS LIST -->
                         <ListView.ItemTemplate>
                             <DataTemplate>
-
-                                <Border Width="360"
-        Height="200"
-        Margin="8"
-        Padding="12"
-        Background="#22000000">
-
-                                    <Grid>
-
+                                <!-- Fixed-Width Metro Card (Width 480) with dynamic height expansion -->
+                                <Border Width="480"
+                Background="#FF1E1E22"
+                BorderBrush="{StaticResource AccentBrush}"
+                BorderThickness="4,0,0,0"
+                Margin="0,0,0,14"
+                Padding="22,18"
+                HorizontalAlignment="Left">
+                                    <Grid HorizontalAlignment="Stretch">
                                         <Grid.RowDefinitions>
+                                            <!-- Row 0: Username and Timestamp -->
                                             <RowDefinition Height="Auto"/>
+                                            <!-- Row 1: Star Rating -->
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <!-- Row 2: Review Body (Auto Expanding) -->
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <!-- Username -->
-                                        <TextBlock Grid.Row="0"
-                   Text="{Binding username}"
-                   FontSize="16"
-                   FontWeight="SemiBold"
-                   Foreground="White"/>
+                                        <!-- Row 0: Username and Timestamp Byline -->
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding username}"
+                               FontFamily="Segoe UI"
+                               FontWeight="SemiBold"
+                               FontSize="16"
+                               Foreground="White"/>
 
-                                        <!-- Rating -->
-                                        <StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    Margin="0,4,0,0">
+                                            <TextBlock Text=" • "
+                               FontFamily="Segoe UI"
+                               FontSize="13"
+                               Foreground="#55555A"
+                               Margin="6,0,6,0"
+                               VerticalAlignment="Center"/>
 
-                                            <TextBlock Text="★"
-                       FontSize="16"
-                       Foreground="{StaticResource AccentBrush}"/>
-
-                                            <TextBlock Text="{Binding rating}"
-                       Margin="4,0,0,0"
-                       FontSize="14"
-                       Foreground="{StaticResource AccentBrush}"/>
-
+                                            <TextBlock Text="{Binding updatedAt}"
+                               FontFamily="Segoe UI"
+                               FontWeight="Normal"
+                               FontSize="12"
+                               Foreground="#8E8E93"
+                               VerticalAlignment="Center"/>
                                         </StackPanel>
 
-                                        <!-- Comment -->
+                                        <!-- Row 1: Star Rating -->
+                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBlock Text="★"
+                               FontSize="15"
+                               Foreground="{StaticResource AccentBrush}"/>
+                                            <TextBlock Text="{Binding rating}"
+                               FontFamily="Segoe UI"
+                               FontWeight="SemiBold"
+                               FontSize="14"
+                               Foreground="{StaticResource AccentBrush}"
+                               Margin="4,0,0,0"/>
+                                        </StackPanel>
+
+                                        <!-- Row 2: Metro Review Content Body -->
                                         <TextBlock Grid.Row="2"
-                   Text="{Binding comment}"
-                   Margin="0,8,0,0"
-                   FontSize="13"
-                   Foreground="#DDDDDD"
-                   TextWrapping="Wrap"
-                   TextTrimming="CharacterEllipsis"
-                   MaxLines="4"/>
-
-                                        <!-- Footer -->
-                                        <TextBlock Grid.Row="3"
-                   Text="{Binding updatedAt}"
-                   FontSize="10"
-                   Foreground="#888888"
-                   Margin="0,8,0,0"/>
-
+                           Text="{Binding comment}"
+                           FontFamily="Segoe UI"
+                           FontWeight="Normal"
+                           FontSize="14"
+                           LineHeight="22"
+                           Foreground="#D2D2D7"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Stretch"
+                           Margin="0,10,0,0"/>
                                     </Grid>
-
                                 </Border>
-
                             </DataTemplate>
                         </ListView.ItemTemplate>
+
+                        <!-- Metro Container Style -->
                         <ListView.ItemContainerStyle>
-
                             <Style TargetType="ListViewItem">
-
-                                <!-- NORMAL -->
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Setter Property="VerticalContentAlignment" Value="Top"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListViewItem">
-
                                             <Border x:Name="Root"
                             Background="{TemplateBinding Background}"
                             BorderThickness="0"
                             RenderTransformOrigin="0.5,0.5">
-
                                                 <Border.RenderTransform>
                                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                                 </Border.RenderTransform>
 
-                                                <ContentPresenter />
+                                                <ContentPresenter/>
 
                                                 <VisualStateManager.VisualStateGroups>
-
                                                     <VisualStateGroup x:Name="CommonStates">
-
-                                                        <!-- NORMAL -->
                                                         <VisualState x:Name="Normal"/>
-
-                                                        <!-- POINTER OVER (HOVER) -->
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
+                                                         To="0.92"
                                                          Duration="0:0:0.1"/>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
                                                          Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
+                                                         To="1.015"
                                                          Duration="0:0:0.1"/>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
                                                          Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
+                                                         To="1.015"
                                                          Duration="0:0:0.1"/>
-
                                                             </Storyboard>
                                                         </VisualState>
-
-                                                        <!-- PRESSED -->
                                                         <VisualState x:Name="Pressed">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
+                                                         To="0.75"
                                                          Duration="0:0:0.05"/>
-
                                                             </Storyboard>
                                                         </VisualState>
-
                                                     </VisualStateGroup>
-
                                                 </VisualStateManager.VisualStateGroups>
-
                                             </Border>
-
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-
                             </Style>
-
                         </ListView.ItemContainerStyle>
 
                     </ListView>

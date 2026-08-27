@@ -33,8 +33,9 @@
             <ComboBox x:Name="AccentColorCombo"
           SelectionChanged="AccentColorCombo_SelectionChanged" Header="Accent color*"
           PlaceholderText="Choose Accent Color">
-
                 <ComboBoxItem Content="Teal" Tag="#0F4C4C"/>
+                <ComboBoxItem Content="Neon Violet" Tag="#200589"/>
+                <ComboBoxItem Content="Gray" Tag="#2d2d30"/>
                 <ComboBoxItem Content="Green" Tag="#008A00"/>
                 <ComboBoxItem Content="Mint Green" Tag="#22b14c"/>
                 <ComboBoxItem Content="Light Blue" Tag="#0081CC"/>

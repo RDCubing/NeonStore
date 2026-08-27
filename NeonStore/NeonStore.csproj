@@ -120,6 +120,8 @@
       <DependentUpon>Apps.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppState.cs" />
+    <Compile Include="AppSubmissionModel.cs" />
+    <Compile Include="AppSubmissionService.cs" />
     <Compile Include="AuthService.cs" />
     <Compile Include="AutoUpdateService.cs" />
     <Compile Include="BadgeService.cs" />
@@ -175,6 +177,9 @@
     <Compile Include="Updates.xaml.cs">
       <DependentUpon>Updates.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UploaderPage.xaml.cs">
+      <DependentUpon>UploaderPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
@@ -192,6 +197,7 @@
     <Content Include="Assets\Logo.scale-140.png" />
     <Content Include="Assets\Logo.scale-180.png" />
     <Content Include="Assets\Logo.scale-80.png" />
+    <Content Include="Assets\SideStore2.png" />
     <Content Include="Assets\SideStore.png" />
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SmallLogo.scale-140.png" />
@@ -208,6 +214,7 @@
     <Content Include="Assets\Square70x70Logo.scale-140.png" />
     <Content Include="Assets\Square70x70Logo.scale-180.png" />
     <Content Include="Assets\Square70x70Logo.scale-80.png" />
+    <Content Include="Assets\Store13.png" />
     <Content Include="Assets\Store1.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-140.png" />
@@ -273,6 +280,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Updates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UploaderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

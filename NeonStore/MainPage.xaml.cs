@@ -63,6 +63,11 @@ namespace NeonStore
             this.Frame.Navigate(typeof(Apps));
         }
 
+        private void UpApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(UploaderPage));
+        }
+
         private void TopApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(TopApps));

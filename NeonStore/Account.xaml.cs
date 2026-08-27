@@ -22,9 +22,96 @@ namespace NeonStore
 {
     public sealed partial class Account : SettingsFlyout
     {
+        private DispatcherTimer _sessionTimer;
         public Account()
         {
             this.InitializeComponent();
+            this.Unloaded += Account_Unloaded;
+        }
+
+        private async void SettingsFlyout_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Check whether the token has expired
+            bool expired = await AuthService.LogoutIfExpired();
+
+            UpdateUI();
+
+            if (AuthService.IsLoggedIn && !expired)
+            {
+                StartSessionCountdown();
+            }
+        }
+
+        private void Account_Unloaded(object sender, RoutedEventArgs e)
+        {
+            StopSessionCountdown();
+        }
+
+        private void UpdateUI()
+        {
+            var username = ApplicationData.Current.LocalSettings.Values["username"] as string;
+
+            if (!string.IsNullOrEmpty(username) && AuthService.IsLoggedIn)
+            {
+                LoginStatusText.Text = "Logged in as " + username;
+                LoginStatusText.Visibility = Visibility.Visible;
+                SessionExpiryText.Visibility = Visibility.Visible;
+                SignOutButton.Visibility = Visibility.Visible;
+
+                SignInButton.Visibility = Visibility.Collapsed;
+                RegisterButton.Visibility = Visibility.Collapsed;
+
+                UpdateExpiryCountdown();
+            }
+            else
+            {
+                StopSessionCountdown();
+
+                LoginStatusText.Visibility = Visibility.Collapsed;
+                SessionExpiryText.Visibility = Visibility.Collapsed;
+                SignOutButton.Visibility = Visibility.Collapsed;
+
+                SignInButton.Visibility = Visibility.Visible;
+                RegisterButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void StartSessionCountdown()
+        {
+            StopSessionCountdown();
+            UpdateExpiryCountdown();
+
+            _sessionTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _sessionTimer.Tick += SessionTimer_Tick;
+            _sessionTimer.Start();
+        }
+
+        private void StopSessionCountdown()
+        {
+            if (_sessionTimer != null)
+            {
+                _sessionTimer.Stop();
+                _sessionTimer = null;
+            }
+        }
+
+        private async void SessionTimer_Tick(object sender, object e)
+        {
+            if (AuthService.IsTokenExpired())
+            {
+                StopSessionCountdown();
+                await AuthService.LogoutIfExpired();
+                UpdateUI();
+            }
+            else
+            {
+                UpdateExpiryCountdown();
+            }
+        }
+
+        private void UpdateExpiryCountdown()
+        {
+            SessionExpiryText.Text = $"Session expires in: {AuthService.GetFormattedRemainingTokenTime()}";
         }
 
         private async void Login_Click(object sender, RoutedEventArgs e)
@@ -41,20 +128,23 @@ namespace NeonStore
                 if (obj["token"] != null)
                 {
                     string token = obj["token"].ToString();
-                    string username = obj["username"].ToString();
+                    string username = obj["username"]?.ToString() ?? UsernameBox.Text;
 
                     // Save session
                     ApplicationData.Current.LocalSettings.Values["token"] = token;
                     ApplicationData.Current.LocalSettings.Values["username"] = username;
 
-                    // Update UI
-                    LoginStatusText.Text = "Logged in as " + username;
-                    LoginStatusText.Visibility = Visibility.Visible;
-                    SignOutButton.Visibility = Visibility.Visible;
+                    // Update UI and start timer
+                    UpdateUI();
+                    StartSessionCountdown();
 
-                    SignInButton.Visibility = Visibility.Collapsed;
-                    RegisterButton.Visibility = Visibility.Collapsed;
+                    // Close input flyout & reset input
+                    if (SignInButton.Flyout != null)
+                    {
+                        SignInButton.Flyout.Hide();
+                    }
 
+                    PasswordBox.Password = "";
                     this.Hide();
 
                     await new MessageDialog(
@@ -101,6 +191,15 @@ namespace NeonStore
 
             if (obj["success"] != null)
             {
+                if (RegisterButton.Flyout != null)
+                {
+                    RegisterButton.Flyout.Hide();
+                }
+
+                UsernameBox.Text = RegUsernameBox.Text;
+                RegPasswordBox.Password = "";
+                ConfirmPasswordBox.Password = "";
+
                 await new MessageDialog(
                     "Account created! You can now sign in.",
                     "Registration successful"
@@ -121,12 +220,10 @@ namespace NeonStore
             ApplicationData.Current.LocalSettings.Values.Remove("token");
             ApplicationData.Current.LocalSettings.Values.Remove("username");
 
-            // Reset UI
-            LoginStatusText.Visibility = Visibility.Collapsed;
-            SignOutButton.Visibility = Visibility.Collapsed;
+            StopSessionCountdown();
 
-            SignInButton.Visibility = Visibility.Visible;
-            RegisterButton.Visibility = Visibility.Visible;
+            // Reset UI
+            UpdateUI();
 
             UsernameBox.Text = "";
             PasswordBox.Password = "";
@@ -143,28 +240,9 @@ namespace NeonStore
             flyout.Hide();
         }
 
-        private void SettingsFlyout_Loaded(object sender, RoutedEventArgs e)
+        private void SettingsFlyout_Unloaded(object sender, RoutedEventArgs e)
         {
-            var username = ApplicationData.Current.LocalSettings.Values["username"] as string;
-
-            if (!string.IsNullOrEmpty(username))
-            {
-                LoginStatusText.Text = "Logged in as " + username;
-
-                LoginStatusText.Visibility = Visibility.Visible;
-                SignOutButton.Visibility = Visibility.Visible;
-
-                SignInButton.Visibility = Visibility.Collapsed;
-                RegisterButton.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                LoginStatusText.Visibility = Visibility.Collapsed;
-                SignOutButton.Visibility = Visibility.Collapsed;
-
-                SignInButton.Visibility = Visibility.Visible;
-                RegisterButton.Visibility = Visibility.Visible;
-            }
+            StopSessionCountdown();
         }
     }
 }
