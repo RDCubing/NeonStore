@@ -124,6 +124,7 @@
     <Compile Include="AppSubmissionService.cs" />
     <Compile Include="AuthService.cs" />
     <Compile Include="AutoUpdateService.cs" />
+    <Compile Include="AvatarFallbackConverter.cs" />
     <Compile Include="BadgeService.cs" />
     <Compile Include="CategoriesPage.xaml.cs">
       <DependentUpon>CategoriesPage.xaml</DependentUpon>
@@ -165,6 +166,7 @@
     <Compile Include="Splash.xaml.cs">
       <DependentUpon>Splash.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StringToVisibilityConverter.cs" />
     <Compile Include="ThemeManager.cs" />
     <Compile Include="TileService.cs" />
     <Compile Include="ToastService.cs" />
@@ -218,6 +220,7 @@
     <Content Include="Assets\Store1.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-140.png" />
+    <Content Include="Assets\user-200.png" />
     <Content Include="Assets\whatsnew.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-140.png" />

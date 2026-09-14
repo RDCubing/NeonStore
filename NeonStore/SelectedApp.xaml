@@ -11,6 +11,7 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <local:AvatarFallbackConverter x:Key="AvatarFallbackConverter" />
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">My Application</x:String>
         <Storyboard x:Name="SlideInStoryboard">
@@ -645,29 +646,51 @@
                         <StackPanel x:Name="ReviewFormPanel">
 
                             <TextBox x:Name="ReviewCommentBox"
-                     PlaceholderText="Write your review..."
-                     AcceptsReturn="True"
-                     Height="120"
-                     TextWrapping="Wrap"/>
+             PlaceholderText="Write your review..."
+             AcceptsReturn="True"
+             Height="120"
+             TextWrapping="Wrap"/>
 
                             <ComboBox x:Name="ReviewRatingBox"
-                      Header="Rating"
-                      Margin="0,10,0,0"
-                      SelectedIndex="4">
-
+              Header="Rating"
+              Margin="0,10,0,0"
+              SelectedIndex="4">
                                 <ComboBoxItem Content="1"/>
                                 <ComboBoxItem Content="2"/>
                                 <ComboBoxItem Content="3"/>
                                 <ComboBoxItem Content="4"/>
                                 <ComboBoxItem Content="5"/>
-
                             </ComboBox>
 
-                            <Button Content="Submit Review"
-                    Margin="0,10,0,0"
-                    Background="{StaticResource AccentBrush}"
-                    Foreground="White" BorderThickness="0"
-                    Click="SubmitReview_Click"/>
+                            <!-- Displayed when the user has NOT reviewed yet -->
+                            <Button x:Name="SubmitReviewBtn"
+            Content="Submit Review"
+            Margin="0,10,0,0"
+            Background="{StaticResource AccentBrush}"
+            Foreground="White" 
+            BorderThickness="0"
+            Click="SubmitReview_Click"/>
+
+                            <!-- Displayed when an existing review by the user is detected -->
+                            <StackPanel x:Name="ExistingReviewActionsPanel" 
+                Orientation="Horizontal" 
+                Margin="0,10,0,0" 
+                Visibility="Collapsed">
+                                <Button x:Name="UpdateReviewBtn"
+                Content="Update Review"
+                Background="{StaticResource AccentBrush}"
+                Foreground="White" 
+                BorderThickness="0"
+                Margin="0,0,10,0"
+                Click="SubmitReview_Click"/>
+
+                                <Button x:Name="DeleteReviewBtn"
+                Content="Delete Review"
+                Background="#D9534F"
+                Foreground="White" 
+                BorderThickness="0"
+                Click="DeleteReview_Click"/>
+                            </StackPanel>
 
                         </StackPanel>
 
@@ -762,74 +785,85 @@
               ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                         <!-- REVIEWS LIST -->
+                        <!-- REVIEWS LIST -->
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <!-- Fixed-Width Metro Card (Width 480) with dynamic height expansion -->
-                                <Border Width="480"
-                Background="#FF1E1E22"
-                BorderBrush="{StaticResource AccentBrush}"
-                BorderThickness="4,0,0,0"
-                Margin="0,0,0,14"
-                Padding="22,18"
+                                <!-- Authentic Compact Metro Review Tile (No side bar, flat background, strict typographic hierarchy) -->
+                                <Border Width="380"
+                Background="#FF1A1A1E"
+                Margin="0,0,0,18"
+                Padding="16,14"
                 HorizontalAlignment="Left">
-                                    <Grid HorizontalAlignment="Stretch">
-                                        <Grid.RowDefinitions>
-                                            <!-- Row 0: Username and Timestamp -->
-                                            <RowDefinition Height="Auto"/>
-                                            <!-- Row 1: Star Rating -->
-                                            <RowDefinition Height="Auto"/>
-                                            <!-- Row 2: Review Body (Auto Expanding) -->
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical">
 
-                                        <!-- Row 0: Username and Timestamp Byline -->
-                                        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding username}"
+                                        <!-- 1. Top: Compact Square Avatar Tile (Pure XAML Fallback) -->
+                                        <Grid Width="48"
+                      Height="48"
+                      HorizontalAlignment="Left"
+                      Margin="0,0,0,10">
+                                            <!-- Layer 1: Default Fallback Asset -->
+                                            <Image Source="ms-appx:///Assets/user-200.png"
+                           Stretch="UniformToFill"
+                           Width="48"
+                           Height="48"/>
+                                            <!-- Layer 2: Discord/Web Avatar -->
+                                            <Image Source="{Binding avatar}"
+                           Stretch="UniformToFill"
+                           Width="48"
+                           Height="48"/>
+                                        </Grid>
+
+                                        <!-- 2. Reviewer Name (Segoe UI Semilight / Metro Heading Style) -->
+                                        <TextBlock Text="{Binding username}"
+                           FontFamily="Segoe UI"
+                           FontWeight="SemiLight"
+                           FontSize="18"
+                           Foreground="White"
+                           TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- 3. Sub-header Metadata Line: Star Rating & Timestamp -->
+                                        <StackPanel Orientation="Horizontal" Margin="0,3,0,8" VerticalAlignment="Center">
+                                            <!-- Star Rating Indicator -->
+                                            <TextBlock Text="★"
+                               FontSize="13"
+                               Foreground="{StaticResource AccentBrush}"
+                               VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding rating}"
                                FontFamily="Segoe UI"
                                FontWeight="SemiBold"
-                               FontSize="16"
-                               Foreground="White"/>
-
-                                            <TextBlock Text=" • "
-                               FontFamily="Segoe UI"
                                FontSize="13"
-                               Foreground="#55555A"
-                               Margin="6,0,6,0"
+                               Foreground="{StaticResource AccentBrush}"
+                               Margin="3,0,6,0"
                                VerticalAlignment="Center"/>
 
+                                            <!-- Bullet Separator -->
+                                            <TextBlock Text="•"
+                               FontFamily="Segoe UI"
+                               FontSize="11"
+                               Foreground="#666666"
+                               Margin="0,0,6,0"
+                               VerticalAlignment="Center"/>
+
+                                            <!-- Date -->
                                             <TextBlock Text="{Binding updatedAt}"
                                FontFamily="Segoe UI"
                                FontWeight="Normal"
-                               FontSize="12"
+                               FontSize="11"
                                Foreground="#8E8E93"
                                VerticalAlignment="Center"/>
                                         </StackPanel>
 
-                                        <!-- Row 1: Star Rating -->
-                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
-                                            <TextBlock Text="★"
-                               FontSize="15"
-                               Foreground="{StaticResource AccentBrush}"/>
-                                            <TextBlock Text="{Binding rating}"
-                               FontFamily="Segoe UI"
-                               FontWeight="SemiBold"
-                               FontSize="14"
-                               Foreground="{StaticResource AccentBrush}"
-                               Margin="4,0,0,0"/>
-                                        </StackPanel>
-
-                                        <!-- Row 2: Metro Review Content Body -->
-                                        <TextBlock Grid.Row="2"
-                           Text="{Binding comment}"
+                                        <!-- 4. Review Body (Clean flat Metro body text) -->
+                                        <TextBlock Text="{Binding comment}"
                            FontFamily="Segoe UI"
                            FontWeight="Normal"
-                           FontSize="14"
-                           LineHeight="22"
-                           Foreground="#D2D2D7"
+                           FontSize="13"
+                           LineHeight="18"
+                           Foreground="#CCCCCC"
                            TextWrapping="Wrap"
-                           HorizontalAlignment="Stretch"
-                           Margin="0,10,0,0"/>
-                                    </Grid>
+                           HorizontalAlignment="Stretch"/>
+
+                                    </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>

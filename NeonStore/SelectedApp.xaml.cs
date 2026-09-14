@@ -35,6 +35,8 @@ namespace NeonStore
 
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        // 1. Add a page-level field to track the user's existing review
+        private Review myExistingReview = null;
 
         /// <summary>
         /// This can be changed to a strongly typed view model.
@@ -495,6 +497,7 @@ namespace NeonStore
 
         #endregion
 
+        // 2. Update LoadReviews to check if the current user already has a review
         private async void LoadReviews()
         {
             try
@@ -503,33 +506,45 @@ namespace NeonStore
                 if (app == null) return;
 
                 string json = await ReviewService.GetReviews(app.Id);
-
                 var arr = JArray.Parse(json);
-
                 var list = new ObservableCollection<Review>();
 
                 var currentUserId = ApplicationData.Current.LocalSettings.Values["userId"] as string;
+                var currentUsername = ApplicationData.Current.LocalSettings.Values["username"] as string;
+
+                myExistingReview = null;
 
                 foreach (var item in arr)
                 {
-                    list.Add(new Review
+                    var r = new Review
                     {
                         _id = item["_id"]?.ToString(),
                         userId = item["userId"]?.ToString(),
                         username = item["username"]?.ToString(),
+                        avatar = item["avatar"]?.ToString(),
                         rating = int.Parse(item["rating"]?.ToString() ?? "0"),
                         comment = item["comment"]?.ToString(),
                         appId = item["appId"]?.ToString(),
                         createdAt = DateTime.Parse(item["createdAt"]?.ToString() ?? DateTime.MinValue.ToString()),
                         updatedAt = DateTime.Parse(item["updatedAt"]?.ToString() ?? DateTime.MinValue.ToString())
-                    });
+                    };
+
+                    // Detect if this review belongs to the currently signed-in user
+                    if ((!string.IsNullOrEmpty(currentUserId) && r.userId == currentUserId) ||
+                        (!string.IsNullOrEmpty(currentUsername) && r.username == currentUsername))
+                    {
+                        myExistingReview = r;
+                    }
+
+                    list.Add(r);
                 }
 
                 ReviewsGrid.ItemsSource = list;
-
                 UpdateReviewStatistics(list);
-
                 UpdateEmptyState(list);
+
+                // Adjust form controls based on whether a review exists
+                UpdateReviewFormState();
 
                 System.Diagnostics.Debug.WriteLine("[REVIEWS LOADED] " + list.Count);
             }
@@ -539,6 +554,56 @@ namespace NeonStore
             }
         }
 
+        // 3. Helper to toggle buttons and pre-fill form fields
+        private void UpdateReviewFormState()
+        {
+            if (myExistingReview != null)
+            {
+                // Pre-fill fields with existing review data
+                ReviewCommentBox.Text = myExistingReview.comment ?? "";
+                ReviewRatingBox.SelectedIndex = Math.Max(0, Math.Min(4, myExistingReview.rating - 1));
+
+                SubmitReviewBtn.Visibility = Visibility.Collapsed;
+                ExistingReviewActionsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SubmitReviewBtn.Visibility = Visibility.Visible;
+                ExistingReviewActionsPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // 4. Add the Delete Review Click handler
+        private async void DeleteReview_Click(object sender, RoutedEventArgs e)
+        {
+            if (myExistingReview == null) return;
+
+            var confirmDialog = new MessageDialog("Are you sure you want to delete your review?", "Delete Review");
+            confirmDialog.Commands.Add(new UICommand("Delete"));
+            confirmDialog.Commands.Add(new UICommand("Cancel"));
+
+            var choice = await confirmDialog.ShowAsync();
+            if (choice.Label != "Delete") return;
+
+            // Inside DeleteReview_Click in SelectedApp.xaml.cs
+            var token = ApplicationData.Current.LocalSettings.Values["token"] as string;
+            if (string.IsNullOrEmpty(token)) return;
+
+            // Pass the appId (e.g., myExistingReview.appId), NOT myExistingReview._id
+            bool deleted = await ReviewService.DeleteReview(token, myExistingReview.appId);
+
+            if (deleted)
+            {
+                ReviewCommentBox.Text = "";
+                ReviewRatingBox.SelectedIndex = 4;
+                myExistingReview = null;
+                LoadReviews();
+            }
+            else
+            {
+                await new MessageDialog("Failed to delete review. Please try again.", "Error").ShowAsync();
+            }
+        }
         private async void SubmitReview_Click(object sender, RoutedEventArgs e)
         {
             try

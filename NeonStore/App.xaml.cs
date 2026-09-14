@@ -22,6 +22,7 @@ using Windows.System;
 using Newtonsoft.Json;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using Windows.UI.Popups;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -158,6 +159,51 @@ namespace NeonStore
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override async void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                var protocolArgs = (ProtocolActivatedEventArgs)args;
+                Uri uri = protocolArgs.Uri;
+
+                // Handles neonstore://auth?token=...&username=...&avatar=...
+                if (uri.Host.Equals("auth", StringComparison.OrdinalIgnoreCase))
+                {
+                    var decoder = new Windows.Foundation.WwwFormUrlDecoder(uri.Query);
+
+                    string token = null;
+                    string username = null;
+                    string avatar = null;
+
+                    foreach (var entry in decoder)
+                    {
+                        if (entry.Name == "token") token = entry.Value;
+                        else if (entry.Name == "username") username = Uri.UnescapeDataString(entry.Value);
+                        else if (entry.Name == "avatar") avatar = Uri.UnescapeDataString(entry.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        // Save session credentials
+                        AuthService.SaveSession(token, username, avatar);
+
+                        // Fetch latest live data from /me
+                        await AuthService.SyncProfileAsync();
+
+                        // Bring app window to focus
+                        Window.Current.Activate();
+
+                        await new MessageDialog(
+                            $"Welcome back, {AuthService.CurrentUsername}!",
+                            "Discord Sign In Successful"
+                        ).ShowAsync();
+                    }
+                }
+            }
         }
 
         private void OnCommandsRequested(Windows.UI.ApplicationSettings.SettingsPane sender,

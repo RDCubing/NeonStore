@@ -151,6 +151,17 @@ namespace NeonStore
             Frame.Navigate(typeof(SelectedApp), app);
         }
 
+        private void Tile_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            string targetId = button?.Tag as string;
+
+            if (!string.IsNullOrEmpty(targetId))
+            {
+                NavigateToApp(targetId);
+            }
+        }
+
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             try

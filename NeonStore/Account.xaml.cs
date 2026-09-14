@@ -1,44 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Newtonsoft.Json.Linq;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Popups;
 using Windows.Storage;
-
-// The Settings Flyout item template is documented at http://go.microsoft.com/fwlink/?LinkId=273769
+using Newtonsoft.Json.Linq;
 
 namespace NeonStore
 {
     public sealed partial class Account : SettingsFlyout
     {
         private DispatcherTimer _sessionTimer;
+
         public Account()
         {
             this.InitializeComponent();
             this.Unloaded += Account_Unloaded;
+            // Refresh UI automatically if Window gains focus after browser sign-in
+            Window.Current.Activated += Current_Activated;
+        }
+
+        private void Current_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            {
+                UpdateUI();
+            }
         }
 
         private async void SettingsFlyout_Loaded(object sender, RoutedEventArgs e)
         {
-            // Check whether the token has expired
+            // Check token expiration first
             bool expired = await AuthService.LogoutIfExpired();
 
+            // Instant optimistic render from local settings
             UpdateUI();
 
             if (AuthService.IsLoggedIn && !expired)
             {
                 StartSessionCountdown();
+
+                // Hydrate live profile (avatar and updated username) from backend /me
+                bool synced = await AuthService.SyncProfileAsync();
+                if (synced)
+                {
+                    UpdateUI();
+                }
             }
         }
 
@@ -47,32 +54,66 @@ namespace NeonStore
             StopSessionCountdown();
         }
 
-        private void UpdateUI()
+        private async void UpdateUI()
         {
             var username = ApplicationData.Current.LocalSettings.Values["username"] as string;
+            var avatarUrl = ApplicationData.Current.LocalSettings.Values["avatar"] as string;
 
             if (!string.IsNullOrEmpty(username) && AuthService.IsLoggedIn)
             {
+                ProfilePanel.Visibility = Visibility.Visible;
                 LoginStatusText.Text = "Logged in as " + username;
-                LoginStatusText.Visibility = Visibility.Visible;
-                SessionExpiryText.Visibility = Visibility.Visible;
                 SignOutButton.Visibility = Visibility.Visible;
 
                 SignInButton.Visibility = Visibility.Collapsed;
                 RegisterButton.Visibility = Visibility.Collapsed;
+                DiscordSignInButton.Visibility = Visibility.Collapsed;
+
+                // Handle profile picture visibility and Discord CDN normalization
+                if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    try
+                    {
+                        if (avatarUrl.Contains("cdn.discordapp.com") && !avatarUrl.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                        {
+                            avatarUrl = avatarUrl.Split('?')[0] + ".png?size=128";
+                        }
+
+                        ProfileAvatarBrush.ImageSource = new BitmapImage(new Uri(avatarUrl));
+                        ProfileAvatarContainer.Visibility = Visibility.Visible;
+                    }
+                    catch
+                    {
+                        ProfileAvatarContainer.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    ProfileAvatarBrush.ImageSource = null;
+                    ProfileAvatarContainer.Visibility = Visibility.Collapsed;
+                }
 
                 UpdateExpiryCountdown();
+
+                // Fetch and display user's review count
+                int reviewCount = await AuthService.GetUserReviewCountAsync();
+                UserReviewCountText.Text = reviewCount.ToString();
             }
             else
             {
                 StopSessionCountdown();
 
-                LoginStatusText.Visibility = Visibility.Collapsed;
-                SessionExpiryText.Visibility = Visibility.Collapsed;
+                ProfilePanel.Visibility = Visibility.Collapsed;
+                ProfileAvatarContainer.Visibility = Visibility.Collapsed;
+                ProfileAvatarBrush.ImageSource = null;
                 SignOutButton.Visibility = Visibility.Collapsed;
+
+                // Reset review count when logged out
+                UserReviewCountText.Text = "0";
 
                 SignInButton.Visibility = Visibility.Visible;
                 RegisterButton.Visibility = Visibility.Visible;
+                DiscordSignInButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -111,7 +152,27 @@ namespace NeonStore
 
         private void UpdateExpiryCountdown()
         {
-            SessionExpiryText.Text = $"Session expires in: {AuthService.GetFormattedRemainingTokenTime()}";
+            SessionExpiryText.Text = $"Expires: {AuthService.GetFormattedRemainingTokenTime()}";
+        }
+
+        private async void DiscordSignIn_Click(object sender, RoutedEventArgs e)
+        {
+            bool launched = await AuthService.LoginWithDiscordAsync();
+
+            if (launched)
+            {
+                await new MessageDialog(
+                    "Discord sign-in has opened in your default browser. Complete your login there to continue.",
+                    "Opening Browser"
+                ).ShowAsync();
+            }
+            else
+            {
+                await new MessageDialog(
+                    "Could not open the browser for Discord sign in.",
+                    "Sign In Failed"
+                ).ShowAsync();
+            }
         }
 
         private async void Login_Click(object sender, RoutedEventArgs e)
@@ -127,18 +188,9 @@ namespace NeonStore
 
                 if (obj["token"] != null)
                 {
-                    string token = obj["token"].ToString();
-                    string username = obj["username"]?.ToString() ?? UsernameBox.Text;
-
-                    // Save session
-                    ApplicationData.Current.LocalSettings.Values["token"] = token;
-                    ApplicationData.Current.LocalSettings.Values["username"] = username;
-
-                    // Update UI and start timer
                     UpdateUI();
                     StartSessionCountdown();
 
-                    // Close input flyout & reset input
                     if (SignInButton.Flyout != null)
                     {
                         SignInButton.Flyout.Hide();
@@ -148,7 +200,7 @@ namespace NeonStore
                     this.Hide();
 
                     await new MessageDialog(
-                        "Welcome, " + username + "!",
+                        "Welcome, " + (AuthService.CurrentUsername ?? UsernameBox.Text) + "!",
                         "Login successful"
                     ).ShowAsync();
                 }
@@ -216,28 +268,21 @@ namespace NeonStore
 
         private void ConfirmSignOut_Click(object sender, RoutedEventArgs e)
         {
-            // Clear stored session
-            ApplicationData.Current.LocalSettings.Values.Remove("token");
-            ApplicationData.Current.LocalSettings.Values.Remove("username");
-
+            AuthService.Logout();
             StopSessionCountdown();
 
-            // Reset UI
             UpdateUI();
 
             UsernameBox.Text = "";
             PasswordBox.Password = "";
 
-            // close flyout + settings
             this.Hide();
         }
 
         private void CancelSignOut_Click(object sender, RoutedEventArgs e)
         {
-            // just close flyout automatically
-            var btn = SignOutButton;
-            var flyout = btn.Flyout;
-            flyout.Hide();
+            var flyout = SignOutButton.Flyout;
+            if (flyout != null) flyout.Hide();
         }
 
         private void SettingsFlyout_Unloaded(object sender, RoutedEventArgs e)

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.8.26239.0" />
+  <Identity Name="3561e06f-2df6-4cef-bc80-74735f278fd2" Publisher="CN=Andrew" Version="1.9.26257.0" />
   <Properties>
     <DisplayName>NeonStore</DisplayName>
     <PublisherDisplayName>GDCR Productions</PublisherDisplayName>
@@ -25,6 +25,13 @@
         </m2:DefaultTile>
         <m2:SplashScreen Image="Assets\SplashScreen.png" />
       </m2:VisualElements>
+      <Extensions>
+        <Extension Category="windows.protocol">
+          <Protocol Name="neonstore">
+            <DisplayName>NeonStore Auth Protocol</DisplayName>
+          </Protocol>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

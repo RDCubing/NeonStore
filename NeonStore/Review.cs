@@ -11,6 +11,7 @@ namespace NeonStore
         public string _id { get; set; }
         public string userId { get; set; }
         public string username { get; set; }
+        public string avatar { get; set; }
         public int rating { get; set; }
         public string comment { get; set; }
         public string appId { get; set; }
