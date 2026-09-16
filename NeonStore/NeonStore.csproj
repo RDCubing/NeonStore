@@ -166,6 +166,9 @@
     <Compile Include="Splash.xaml.cs">
       <DependentUpon>Splash.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SpotlightControl.xaml.cs">
+      <DependentUpon>SpotlightControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StringToVisibilityConverter.cs" />
     <Compile Include="ThemeManager.cs" />
     <Compile Include="TileService.cs" />
@@ -275,6 +278,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Splash.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SpotlightControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

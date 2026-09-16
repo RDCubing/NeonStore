@@ -79,28 +79,32 @@
         </Grid>
         <!-- Main Body -->
         <Grid Grid.Row="1">
-            <!-- Unauthenticated Banner -->
-            <StackPanel x:Name="AuthRequiredPanel" Margin="120,20,0,0"
-                        VerticalAlignment="Top" 
-                        HorizontalAlignment="Left" 
-                        Visibility="Collapsed">
+            <!-- Unauthenticated Metro Banner -->
+            <StackPanel x:Name="AuthRequiredPanel" 
+            Margin="120,40,0,0"
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Visibility="Collapsed">
                 <StackPanel.RenderTransform>
-                    <TranslateTransform x:Name="MainPanelTransform"
-                            X="200"/>
+                    <TranslateTransform x:Name="MainPanelTransform" X="200"/>
                 </StackPanel.RenderTransform>
-                <TextBlock Text="SIGN IN REQUIRED" 
-                           FontFamily="Segoe UI Light" 
-                           FontSize="36" 
-                           CharacterSpacing="50"
-                           TextWrapping="NoWrap"
-                           Margin="0,0,0,8"/>
-                <TextBlock Text="Please sign in from the Account charms/menu to access the submission portal." 
-                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                           FontFamily="Segoe UI" 
-                           FontSize="16" 
-                           Opacity="0.75" 
-                           TextWrapping="Wrap"
-                           MaxWidth="550"/>
+
+                <!-- Metro Section Header: Lowercase, pure Segoe UI Light, tight baseline -->
+                <TextBlock Text="sign in required" 
+               FontFamily="Segoe UI Light" 
+               FontSize="42" 
+               FontWeight="Light"
+               Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+               Margin="0,0,0,12"/>
+
+                <!-- Metro Body Text: Segoe UI Regular, 15pt standard body size, subdued foreground brush instead of raw opacity -->
+                <TextBlock Text="Please sign in from the Settings charm to access the submission portal." 
+               FontFamily="Segoe UI" 
+               FontSize="15" 
+               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+               TextWrapping="Wrap"
+               MaxWidth="480"
+               LineHeight="20"/>
             </StackPanel>
 
             <!-- Submission Form Panel -->

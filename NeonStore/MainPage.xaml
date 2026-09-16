@@ -68,127 +68,15 @@
 
                     <!-- Title -->
                     <TextBlock Grid.Row="0"
-               Text="Inspirational Bundle"
+               Text="Spotlight"
                FontSize="36"
                FontWeight="Light"
                Foreground="White"
                Margin="0,0,0,10"
                TextWrapping="Wrap"/>
-                    <!-- Seamless Interlocking Tile Cluster (150x150px, 0px gap, Clickable + Metro Press Effect) -->
-                    <Canvas Grid.Row="1" Width="600" Height="450" VerticalAlignment="Top">
-
-                        <Canvas.Resources>
-                            <!-- Metro Button Style: Strips default chrome and adds the signature scale/press tilt -->
-                            <Style x:Key="MetroTileButtonStyle" TargetType="Button">
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="Normal"/>
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="RootGrid"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0.88" Duration="0:0:0.1"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleX"
-                                                             To="0.96" Duration="0:0:0.05"/>
-                                                                <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleY"
-                                                             To="0.96" Duration="0:0:0.05"/>
-                                                                <DoubleAnimation Storyboard.TargetName="RootGrid"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0.75" Duration="0:0:0.05"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Disabled"/>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-
-                                                <Grid.RenderTransform>
-                                                    <ScaleTransform x:Name="ScaleTransform" CenterX="75" CenterY="75"/>
-                                                </Grid.RenderTransform>
-
-                                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Canvas.Resources>
-
-                        <!-- Column 0: AeroQuotes (X: 0, Y: 150) -->
-                        <Button Canvas.Left="0" Canvas.Top="150" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="Aero Quotes"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/AeroQuotes_glass_ico.png" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Column 1: Image 5 (X: 150, Y: 75) -->
-                        <Button Canvas.Left="150" Canvas.Top="75" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="Live Text 8.1"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/image-5.png" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Column 1: Q (X: 150, Y: 225) -->
-                        <Button Canvas.Left="150" Canvas.Top="225" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="QuoteTile"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/q.png" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Column 2: Q Special (X: 300, Y: 0) -->
-                        <Button Canvas.Left="300" Canvas.Top="0" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="QuoteTile Special"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/qspecial.png" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Column 2: QuoteTile Lite (X: 300, Y: 150) -->
-                        <Button Canvas.Left="300" Canvas.Top="150" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="QuoteTile Lite"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quotetilelite.png" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Column 3: LTS (X: 450, Y: 100) -->
-                        <Button Canvas.Left="450" Canvas.Top="100" 
-        Width="150" Height="150" 
-        Background="{StaticResource AccentBrush}"
-        Style="{StaticResource MetroTileButtonStyle}"
-        Tag="QuoteTile LTS"
-        Click="Tile_Click">
-                            <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/lts.png" Stretch="Uniform"/>
-                        </Button>
-
-                    </Canvas>
-
+                    <local:SpotlightControl Grid.Row="1"
+                        VerticalAlignment="Top"
+                        Margin="0,20,0,0"/>
                 </Grid>
                 <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="50,0,0,0">
@@ -217,7 +105,7 @@
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapGrid Orientation="Horizontal"
-                                              MaximumRowsOrColumns="3"/>
+                                              MaximumRowsOrColumns="2"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
 
@@ -284,7 +172,32 @@
 
                                 </Grid>
                             </Button>
+                            <Button Width="310"
+                Height="150" Click="Accounts_Click"
+                Margin="0,0,4,4" Padding="0"
+                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                BorderThickness="0">
+                                <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
 
+                                    <SymbolIcon Symbol="People"
+                    Foreground="White"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top" Margin="16">
+                                    </SymbolIcon>
+
+                                    <!-- Tile name -->
+                                    <TextBlock Text="Your Account"
+                   FontFamily="Segoe UI"
+                   FontWeight="Light"
+                   FontSize="24"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="12,0,12,10"/>
+
+                                </Grid>
+                            </Button>
 
 
 
@@ -325,104 +238,7 @@
 
                                 </Grid>
                             </Button>
-                            <Button Width="310"
-                Height="150" Click="Accounts_Click"
-                Margin="0,0,4,4" Padding="0"
-                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <SymbolIcon Symbol="People"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Your Account"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            <Button Width="310" Click="QuoteTile_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                Background="{ThemeResource AccentBrush}"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <!-- Tile image -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quote.png"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-
-                                    <!-- Dark Metro overlay -->
-                                    <Rectangle Fill="#66000000"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"/>
-                                    <SymbolIcon Symbol="Like"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Inspirational Bundle"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            <Button Width="310" Click="OctoStore_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                Background="{ThemeResource AccentBrush}"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <!-- Tile image -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/octoshot.png"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-
-                                    <!-- Dark Metro overlay -->
-                                    <Rectangle Fill="#66000000"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"/>
-                                    <SymbolIcon Symbol="Favorite"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Popular"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
+                            
                             <Button Width="310" Click="Downloads_Click"
                 Height="150"
                 Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"

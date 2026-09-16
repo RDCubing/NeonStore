@@ -103,6 +103,8 @@ namespace NeonStore
 
         private DispatcherTimer tileTimer;
 
+        private static int _tileUpdateStep = 0;
+
         private void UpdateRandomTopAppTile()
         {
             var topApps = NeonStoreService.NeonStore
@@ -112,15 +114,62 @@ namespace NeonStore
             if (topApps.Count == 0)
                 return;
 
+            var updater = TileUpdateManager.CreateTileUpdaterForApplication();
+            updater.EnableNotificationQueue(true);
+            updater.Clear(); // Flush old queue items so the order is respected
+
             Random random = new Random();
 
-            var app = topApps[random.Next(topApps.Count)];
+            // Retrieve and flip the state (alternates: false -> true -> false...)
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            bool startWithTwo = (bool)(localSettings.Values["TileAlternateState"] ?? false);
+            localSettings.Values["TileAlternateState"] = !startWithTwo;
 
-            TileUpdateManager
-                .CreateTileUpdaterForApplication()
-                .EnableNotificationQueue(true);
+            // Helper: Push Single Featured App Tile (Method 1)
+            Action<string> pushSingleAppTile = (tag) =>
+            {
+                var singleApp = topApps[random.Next(topApps.Count)];
+                TileService.UpdateTile(singleApp, tag);
+            };
 
-            TileService.UpdateTile(app);
+            // Helper: Push Category List Tile (Method 2)
+            Action<string> pushCategoryTile = (tag) =>
+            {
+                var categories = NeonStoreService.NeonStore
+                    .Select(a => a.Category)
+                    .Where(c => !string.IsNullOrEmpty(c))
+                    .Distinct()
+                    .ToList();
+
+                if (categories.Count > 0)
+                {
+                    string randomCat = categories[random.Next(categories.Count)];
+                    var categoryApps = NeonStoreService.NeonStore
+                        .Where(a => a.Category == randomCat)
+                        .OrderBy(_ => random.Next())
+                        .Take(3)
+                        .ToList();
+
+                    TileService.UpdateTopAppsTile(categoryApps, randomCat, tag);
+                }
+                else
+                {
+                    pushSingleAppTile(tag);
+                }
+            };
+
+            if (!startWithTwo)
+            {
+                // Order: 1, then 2
+                pushSingleAppTile("Queue1");
+                pushCategoryTile("Queue2");
+            }
+            else
+            {
+                // Order: 2, then 1
+                pushCategoryTile("Queue1");
+                pushSingleAppTile("Queue2");
+            }
         }
 
         private void StartTileRotation()

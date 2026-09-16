@@ -1,0 +1,312 @@
+﻿<UserControl
+    x:Class="NeonStore.SpotlightControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NeonStore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="480"
+    d:DesignWidth="850">
+
+    <UserControl.Resources>
+        <Style x:Key="MetroTileButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="RootGrid"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.88" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="0.96" Duration="0:0:0.05"/>
+                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="0.96" Duration="0:0:0.05"/>
+                                            <DoubleAnimation Storyboard.TargetName="RootGrid"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.75" Duration="0:0:0.05"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ScaleTransform" CenterX="17" CenterY="17"/>
+                            </Grid.RenderTransform>
+
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Indicator Motion Storyboard -->
+        <Storyboard x:Name="IndicatorMoveStoryboard">
+            <DoubleAnimation x:Name="IndicatorAnimation"
+                             Storyboard.TargetName="IndicatorTransform"
+                             Storyboard.TargetProperty="Y"
+                             Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!-- Content Slide Up -->
+        <Storyboard x:Name="SlideUpStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ContentTransform"
+                             Storyboard.TargetProperty="Y"
+                             From="40" To="0" Duration="0:0:0.28">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="MainContentContainer"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.22"/>
+        </Storyboard>
+
+        <!-- Content Slide Down -->
+        <Storyboard x:Name="SlideDownStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ContentTransform"
+                             Storyboard.TargetProperty="Y"
+                             From="-40" To="0" Duration="0:0:0.28">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="MainContentContainer"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.22"/>
+        </Storyboard>
+
+        <!-- Content Cross-Fade (Used when jumping > 1 item) -->
+        <Storyboard x:Name="FadeStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ContentTransform"
+                             Storyboard.TargetProperty="Y"
+                             To="0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetName="MainContentContainer"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.35">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid Background="Transparent" Height="460" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="46"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 1. DYNAMIC VERTICAL SELECTOR STRIP -->
+        <ScrollViewer x:Name="StripScrollViewer"
+                      Grid.Column="0"
+                      Height="460"
+                      VerticalAlignment="Top"
+                      HorizontalScrollMode="Disabled"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollMode="Enabled"
+                      VerticalScrollBarVisibility="Hidden">
+
+            <Grid x:Name="StripContainer" VerticalAlignment="Top" Margin="2,2,0,2">
+                <!-- Animated Selection Border Indicator -->
+                <Border x:Name="SelectionIndicator"
+                        Width="38" Height="38"
+                        BorderBrush="#FFFFFF"
+                        BorderThickness="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsHitTestVisible="False">
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="IndicatorTransform" X="0" Y="0"/>
+                    </Border.RenderTransform>
+                </Border>
+
+                <!-- Stack of items: Slot 0 (Mosaic) + Dynamic Apps -->
+                <StackPanel Orientation="Vertical" Margin="2,2,0,2">
+                    <Button x:Name="CollectionStripBtn"
+        Style="{StaticResource MetroTileButtonStyle}"
+        Width="34" Height="34" Margin="0,0,0,4"
+        Background="{StaticResource AccentBrush}" Tag="0" Click="StripItem_Click">
+                        <SymbolIcon Symbol="ViewAll" Foreground="White"/>
+                    </Button>
+
+                    <ItemsControl x:Name="StripAppsItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource MetroTileButtonStyle}"
+                                        Width="34" Height="34" Margin="0,0,0,4"
+                                        Background="{StaticResource AccentBrush}"
+                                        Click="DynamicStripItem_Click">
+                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- 2. ANIMATED MAIN SPOTLIGHT CONTAINER -->
+        <Grid x:Name="MainContentContainer" Grid.Column="1" Margin="20,0,0,0" Height="460" VerticalAlignment="Top">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="ContentTransform" Y="0"/>
+            </Grid.RenderTransform>
+
+            <!-- MODE A: INTERLOCKING TILES COLLECTION VIEW (Index 0) -->
+            <Grid x:Name="CollectionView" Visibility="Visible" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Canvas Grid.Row="0" Width="480" Height="360" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Button Canvas.Left="0" Canvas.Top="120" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="Aero Quotes" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/AeroQuotes_glass_ico.png" Stretch="Uniform"/>
+                    </Button>
+
+                    <Button Canvas.Left="120" Canvas.Top="60" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="Live Text 8.1" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/image-5.png" Stretch="Uniform"/>
+                    </Button>
+
+                    <Button Canvas.Left="120" Canvas.Top="180" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="QuoteTile" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/q.png" Stretch="Uniform"/>
+                    </Button>
+
+                    <Button Canvas.Left="240" Canvas.Top="0" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="QuoteTile Special" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/qspecial.png" Stretch="Uniform"/>
+                    </Button>
+
+                    <Button Canvas.Left="240" Canvas.Top="120" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="QuoteTile Lite" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/quotetilelite.png" Stretch="Uniform"/>
+                    </Button>
+
+                    <Button Canvas.Left="360" Canvas.Top="80" Width="120" Height="120" 
+                            Background="{StaticResource AccentBrush}" Style="{StaticResource MetroTileButtonStyle}"
+                            Tag="QuoteTile LTS" Click="Tile_Click">
+                        <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/lts.png" Stretch="Uniform"/>
+                    </Button>
+                </Canvas>
+
+                <StackPanel Grid.Row="1" Margin="0,12,0,0">
+                    <TextBlock Text="Inspirational Bundle"
+                               FontFamily="Segoe UI Light"
+                               FontWeight="Light"
+                               FontSize="26"
+                               Foreground="White"/>
+                    <TextBlock Text="Apps collection: Productivity &amp; Quotes"
+                               FontFamily="Segoe UI"
+                               FontWeight="Light"
+                               FontSize="13"
+                               Foreground="White"
+                               Opacity="0.8"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- MODE B: APP SHOWCASE BILLBOARD VIEW (Index 1..N) -->
+            <Grid x:Name="AppBillboardView" Visibility="Collapsed" Width="620" Height="460" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="340"/>
+                    <RowDefinition Height="120"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Width="620" Height="340" HorizontalAlignment="Left" Background="#1B1B1E">
+                    <Button Style="{StaticResource MetroTileButtonStyle}" Click="Billboard_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Image x:Name="BillboardImage" Stretch="UniformToFill"/>
+                    </Button>
+                </Border>
+
+                <Grid Grid.Row="1" Margin="0,-36,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            x:Name="AppIconBorder"
+                            Width="110" Height="110"
+                            Background="{StaticResource AccentBrush}">
+                        <Button Style="{StaticResource MetroTileButtonStyle}" Click="Billboard_Click">
+                            <Image x:Name="AppIconImage" Stretch="UniformToFill"/>
+                        </Button>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="16,0,0,6">
+                        <TextBlock x:Name="AppNameText"
+                                   Text="App Name"
+                                   FontFamily="Segoe UI Light"
+                                   FontWeight="Light"
+                                   FontSize="22"
+                                   Foreground="White"/>
+
+                        <TextBlock x:Name="AppCategoryText"
+                                   Text="Category"
+                                   FontFamily="Segoe UI"
+                                   FontWeight="Light"
+                                   FontSize="14"
+                                   Foreground="White"
+                                   Opacity="0.8"
+                                   Margin="0,2,0,3"/>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock x:Name="AppPriceText"
+                                       Text="Free"
+                                       FontFamily="Segoe UI"
+                                       FontWeight="Light"
+                                       FontSize="13"
+                                       Foreground="White"
+                                       Opacity="0.8"
+                                       Margin="0,0,10,0"/>
+
+                            <TextBlock Text="★"
+                                       FontFamily="Segoe UI Symbol"
+                                       FontSize="13"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,4,0"/>
+
+                            <TextBlock x:Name="AppRatingCountText"
+                                       Text="Top App"
+                                       FontFamily="Segoe UI"
+                                       FontWeight="Light"
+                                       FontSize="13"
+                                       Foreground="White"
+                                       Opacity="0.7"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>
