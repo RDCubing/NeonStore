@@ -466,91 +466,229 @@ namespace NeonStore
                         project.ImagePath);
                 }
 
-                // --- SIDELOAD / PROTOCOL CHECK ---
-                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                bool useExperimentalSideload = false;
+                // --- SIDELOAD PROTOCOL EXECUTION ---
+                string ext = Path.GetExtension(file.Name) ?? string.Empty;
+                bool isAppxPackage = ext.Equals(".appx", StringComparison.OrdinalIgnoreCase) ||
+                                     ext.Equals(".appxbundle", StringComparison.OrdinalIgnoreCase);
 
-                if (localSettings.Values.ContainsKey("UseExperimentalSideload"))
+                if (!isAppxPackage)
                 {
-                    useExperimentalSideload = (bool)localSettings.Values["UseExperimentalSideload"];
+                    var invalidPkgDialog = new Windows.UI.Popups.MessageDialog(
+                        string.Format("'{0}' is not a modern application package (.appx or .appxbundle).\n\nOpening with the default system handler instead.", file.Name),
+                        "Unsupported Package Type");
+
+                    invalidPkgDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
+                    await invalidPkgDialog.ShowAsync();
+
+                    await Windows.System.Launcher.LaunchFileAsync(file);
+                    return;
                 }
 
-                if (useExperimentalSideload)
+                string taskId = Guid.NewGuid().ToString("N");
+                DownloadStatusText.Text = "Connecting to helper...";
+
+                // Ensure the helper is in Pictures\NeonStore so the user can easily run it
+                try
                 {
-                    // Check if file is a modern Windows 8.1 app package
-                    string ext = Path.GetExtension(file.Name) ?? string.Empty;
-                    bool isAppxPackage = ext.Equals(".appx", StringComparison.OrdinalIgnoreCase) ||
-                                         ext.Equals(".appxbundle", StringComparison.OrdinalIgnoreCase);
-
-                    if (!isAppxPackage)
+                    var installedLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
+                    IStorageItem pkgItem = await installedLocation.TryGetItemAsync("NeonStore.Helper.exe");
+                    StorageFile packagedHelper = pkgItem as StorageFile;
+                    if (packagedHelper != null)
                     {
-                        var invalidPkgDialog = new Windows.UI.Popups.MessageDialog(
-                            string.Format("'{0}' is not a modern application package (.appx or .appxbundle).\n\nOpening with the default system handler instead.", file.Name),
-                            "Unsupported Package Type");
-
-                        invalidPkgDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
-                        await invalidPkgDialog.ShowAsync();
-
-                        await Windows.System.Launcher.LaunchFileAsync(file);
-                        return;
+                        await packagedHelper.CopyAsync(neonStoreFolder, "NeonStore.Helper.exe", NameCollisionOption.ReplaceExisting);
                     }
+                }
+                catch { }
 
-                    string taskId = Guid.NewGuid().ToString("N");
-                    DownloadStatusText.Text = "Connecting to helper...";
+                // Launch helper protocol
+                string uriString = string.Format(
+                    "neonstore-helper://install?path={0}&taskId={1}",
+                    Uri.EscapeDataString(file.Path),
+                    Uri.EscapeDataString(taskId));
 
-                    // Ensure the helper is in Pictures\NeonStore so the user can easily run it
-                    try
-                    {
-                        var installedLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
-                        IStorageItem pkgItem = await installedLocation.TryGetItemAsync("NeonStore.Helper.exe");
-                        StorageFile packagedHelper = pkgItem as StorageFile;
-                        if (packagedHelper != null)
-                        {
-                            await packagedHelper.CopyAsync(neonStoreFolder, "NeonStore.Helper.exe", NameCollisionOption.ReplaceExisting);
-                        }
-                    }
-                    catch { }
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(uriString));
 
-                    // Launch helper protocol
-                    string uriString = string.Format(
-                        "neonstore-helper://install?path={0}&taskId={1}",
-                        Uri.EscapeDataString(file.Path),
-                        Uri.EscapeDataString(taskId));
+                // Monitor progress with early handshake timeout
+                bool helperResponded = await MonitorSideloadProgressAsync(neonStoreFolder, taskId);
 
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri(uriString));
-
-                    // Monitor progress with early handshake timeout
-                    bool helperResponded = await MonitorSideloadProgressAsync(neonStoreFolder, taskId);
-
-                    if (helperResponded)
-                    {
-                        ToastService.Show(
-                            "App installed successfully",
-                            project.Title,
-                            project.ImagePath);
-                    }
-                    else
-                    {
-                        var setupDialog = new Windows.UI.Popups.MessageDialog(
-                                                    "NeonStore Helper is not active or hasn't been set up yet.\n\n" +
-                                                    "To complete setup:\n" +
-                                                    "1. Open File Explorer on your Desktop.\n" +
-                                                    "2. Navigate to: Pictures -> NeonStore\n" +
-                                                    "3. Double-click 'NeonStore.Helper.exe' and approve the UAC prompt.\n" +
-                                                    "4. Return to NeonStore and tap Download again.\n\n" +
-                                                    "If the helper is already set up, the deployment likely encountered an issue. Check the status text above the progress bar to see what went wrong.",
-                                                    "Sideload Helper Setup Required");
-
-                        setupDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
-
-                        await setupDialog.ShowAsync();
-                    }
+                if (helperResponded)
+                {
+                    ToastService.Show(
+                        "App installed successfully",
+                        project.Title,
+                        project.ImagePath);
                 }
                 else
                 {
-                    // Fallback / standard execution
-                    await Windows.System.Launcher.LaunchFileAsync(file);
+                    var setupDialog = new Windows.UI.Popups.MessageDialog(
+                        "NeonStore Helper is not active or hasn't been set up yet.\n\n" +
+                        "To complete setup:\n" +
+                        "1. Open File Explorer on your Desktop.\n" +
+                        "2. Navigate to: Pictures -> NeonStore\n" +
+                        "3. Double-click 'NeonStore.Helper.exe' and approve the UAC prompt.\n" +
+                        "4. Return to NeonStore and tap Download again.\n\n" +
+                        "If the helper is already set up, the deployment likely encountered an issue. Check the status text above the progress bar to see what went wrong.",
+                        "Sideload Helper Setup Required");
+
+                    setupDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
+
+                    await setupDialog.ShowAsync();
                 }
+
+                DownloadHistoryService.Instance.Add(
+                    new DownloadItem
+                    {
+                        Title = project.Title,
+                        FileName = file.Name,
+                        DownloadUrl = project.DownloadUrl,
+                        ImagePath = project.ImagePath,
+                        DownloadedAt = DateTime.Now
+                    });
+            }
+            catch (Exception ex)
+            {
+                await new MessageDialog(
+                    ex.ToString(),
+                    "Crash Debug").ShowAsync();
+            }
+            finally
+            {
+                DownloadProgressRing.IsActive = false;
+                DownloadProgressRing.Visibility = Visibility.Collapsed;
+                DownloadStatusText.Text = "Ready";
+            }
+        }
+
+        private async void OldDownload_Click(object sender, RoutedEventArgs e)
+        {
+            PrivacyNoteText.Visibility = Visibility.Collapsed;
+            DownloadProgressRing.Visibility = Visibility.Visible;
+            DownloadProgressRing.IsActive = true;
+            DownloadProgressPanel.Visibility = Visibility.Visible;
+            DownloadProgressBar.Value = 0;
+            DownloadStatusText.Text = "Checking local files...";
+
+            try
+            {
+                var project = this.DataContext as AppItem;
+                if (project?.DownloadUrl == null)
+                    return;
+
+                var uri = new Uri(project.DownloadUrl);
+
+                string fileName = Path.GetFileName(uri.LocalPath);
+                if (string.IsNullOrEmpty(fileName))
+                    fileName = project.Title + ".bin";
+
+                // Pictures\NeonStore
+                StorageFolder pictures = KnownFolders.PicturesLibrary;
+                StorageFolder neonStoreFolder = await pictures.CreateFolderAsync(
+                    "NeonStore",
+                    CreationCollisionOption.OpenIfExists);
+
+                // Check if file already exists locally
+                StorageFile file = null;
+                IStorageItem existingItem = await neonStoreFolder.TryGetItemAsync(fileName);
+                bool alreadyDownloaded = false;
+
+                if (existingItem is StorageFile)
+                {
+                    file = (StorageFile)existingItem;
+                    var basicProps = await file.GetBasicPropertiesAsync();
+
+                    // Verify file is not empty (e.g. from an aborted previous download)
+                    if (basicProps.Size > 0)
+                    {
+                        alreadyDownloaded = true;
+                        DownloadProgressBar.Value = 100;
+                        DownloadStatusText.Text = "Using existing download";
+                    }
+                }
+
+                // If not found locally, proceed with download
+                if (!alreadyDownloaded)
+                {
+                    DownloadStatusText.Text = "Preparing download...";
+
+                    file = await neonStoreFolder.CreateFileAsync(
+                        fileName,
+                        CreationCollisionOption.OpenIfExists);
+
+                    ToastService.Show(
+                        "Download started",
+                        project.Title,
+                        project.ImagePath);
+
+                    var client = new Windows.Web.Http.HttpClient();
+                    var response = await client.GetAsync(
+                        uri,
+                        Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
+
+                    ulong totalBytes = response.Content.Headers.ContentLength ?? 0;
+
+                    var input = await response.Content.ReadAsInputStreamAsync();
+                    var output = await file.OpenAsync(FileAccessMode.ReadWrite);
+
+                    var reader = new Windows.Storage.Streams.DataReader(input);
+                    var writer = new Windows.Storage.Streams.DataWriter(output);
+
+                    const uint BufferSize = 8192;
+                    ulong downloadedBytes = 0;
+
+                    while (true)
+                    {
+                        uint loaded = await reader.LoadAsync(BufferSize);
+                        if (loaded == 0)
+                            break;
+
+                        byte[] bytes = new byte[loaded];
+                        reader.ReadBytes(bytes);
+                        writer.WriteBytes(bytes);
+                        await writer.StoreAsync();
+
+                        downloadedBytes += loaded;
+
+                        if (totalBytes > 0)
+                        {
+                            double percent = (double)downloadedBytes / totalBytes * 100;
+                            double downloadedMB = downloadedBytes / 1024d / 1024d;
+                            double totalMB = totalBytes / 1024d / 1024d;
+
+                            DownloadProgressBar.Value = percent;
+                            DownloadStatusText.Text = string.Format(
+                                "{0:F1} MB / {1:F1} MB ({2:F0}%)",
+                                downloadedMB,
+                                totalMB,
+                                percent);
+                        }
+                    }
+
+                    await writer.FlushAsync();
+                    reader.Dispose();
+                    writer.Dispose();
+                    input.Dispose();
+                    output.Dispose();
+
+                    DownloadProgressBar.Value = 100;
+
+                    if (totalBytes > 0)
+                    {
+                        double totalMB = totalBytes / 1024d / 1024d;
+                        DownloadStatusText.Text = string.Format("{0:F1} MB / {0:F1} MB (100%)", totalMB);
+                    }
+                    else
+                    {
+                        DownloadStatusText.Text = "Download complete";
+                    }
+
+                    ToastService.Show(
+                        "Download complete",
+                        project.Title,
+                        project.ImagePath);
+                }
+
+                // --- DIRECT LAUNCH WITH SYSTEM SHELL ---
+                await Windows.System.Launcher.LaunchFileAsync(file);
 
                 DownloadHistoryService.Instance.Add(
                     new DownloadItem

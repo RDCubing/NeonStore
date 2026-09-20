@@ -120,6 +120,9 @@
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
 
+                                        <MenuFlyoutItem Text="Download (legacy)"
+                                                        Click="OldDownload_Click"/>
+
                                         <MenuFlyoutItem Text="Save As..."
                                                         Click="OpenProject_Click"/>
 
