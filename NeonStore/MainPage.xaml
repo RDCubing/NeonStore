@@ -58,7 +58,7 @@
                             X="200"/>
                 </StackPanel.RenderTransform>
                 <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="50,0,0,0">
+                <Grid Width="Auto" Margin="50,0,25,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <!-- Links header -->
@@ -77,228 +77,6 @@
                     <local:SpotlightControl Grid.Row="1"
                         VerticalAlignment="Top"
                         Margin="0,20,0,0"/>
-                </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="50,0,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Suggested"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <!-- Windows 8 Style Tiles -->
-                    <ScrollViewer Grid.Row="1"
-              HorizontalScrollBarVisibility="Disabled"
-              VerticalScrollBarVisibility="Auto">
-
-                        <ItemsControl>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapGrid Orientation="Horizontal"
-                                              MaximumRowsOrColumns="2"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-
-                            <Button Width="310" Click="CatApps_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                Background="#FF8F6D13"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <SymbolIcon Symbol="Bookmarks"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Categories"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            <Button Width="310" Click="GoToApps_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0"
-                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <!-- Tile image -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/bingshot.png"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-
-                                    <!-- Dark Metro overlay -->
-                                    <Rectangle Fill="#66000000"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"/>
-
-                                    <SymbolIcon Symbol="AllApps"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="All Apps"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            <Button Width="310"
-                Height="150" Click="Accounts_Click"
-                Margin="0,0,4,4" Padding="0"
-                Background="{ThemeResource AccentBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <SymbolIcon Symbol="People"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Your Account"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-
-
-
-
-                            <Button Width="310" Click="TopApps_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                Background="{ThemeResource AccentBrush}"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <!-- Tile image -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/feed.png"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-
-                                    <!-- Dark Metro overlay -->
-                                    <Rectangle Fill="#66000000"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"/>
-                                    <SymbolIcon Symbol="Favorite"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Top Apps"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            
-                            <Button Width="310" Click="Downloads_Click"
-                Height="150"
-                Margin="0,0,4,4" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                BorderThickness="0" Background="#FF9E3B3B">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <SymbolIcon Symbol="Download"
-                    Foreground="White"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" Margin="16">
-                                    </SymbolIcon>
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Recent Downloads"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="24"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-                            <Button Width="150" Click="Chris_Click"
-                Height="150" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                Margin="0,0,4,4" Padding="0"
-                Background="{ThemeResource AccentBrush}"
-                BorderThickness="0">
-                                <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                                    <!-- Tile image -->
-                                    <Image Source="https://raw.githubusercontent.com/RDCubing/geekhubapi/main/Images/chris.png"
-               Stretch="UniformToFill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-
-                                    <!-- Dark Metro overlay -->
-                                    <Rectangle Fill="#66000000"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"/>
-
-                                    <!-- Tile name -->
-                                    <TextBlock Text="Top exclusive"
-                   FontFamily="Segoe UI"
-                   FontWeight="Light"
-                   FontSize="12"
-                   Foreground="White"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   Margin="12,0,12,10"/>
-
-                                </Grid>
-                            </Button>
-
-
-                        </ItemsControl>
-                    </ScrollViewer>
-
                 </Grid>
                 <!-- Welcome Section -->
                 <Grid Width="Auto" Margin="25,0,25,0">
@@ -329,74 +107,80 @@
 
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
+                                <!-- Authentic Windows 8 vertical column layout wrapping horizontally -->
                                 <ItemsWrapGrid Orientation="Vertical"
-                                               MaximumRowsOrColumns="2"/>
+                           MaximumRowsOrColumns="6"/>
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
 
                         <GridView.ItemTemplate>
                             <DataTemplate>
+                                <!-- Metro Compact Row Tile (Square App Icon + Metadata Stack) -->
+                                <Grid Width="280" Height="68" Margin="0,4,24,4" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <Border Width="160"
-            Height="210"
-            Background="Transparent"
-            Margin="5">
+                                    <!-- 1. Square Icon Tile -->
+                                    <Border Grid.Column="0" 
+                        Width="60" 
+                        Height="60" 
+                        Background="{StaticResource AccentBrush}"
+                        VerticalAlignment="Center">
+                                        <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                                    </Border>
 
-                                    <Grid>
+                                    <!-- 2. App Metadata Stack -->
+                                    <StackPanel Grid.Column="1" 
+                            VerticalAlignment="Center" 
+                            Margin="12,0,0,0">
 
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                                        <!-- Title -->
+                                        <TextBlock Text="{Binding Title}"
+                               Foreground="White"
+                               FontFamily="Segoe UI"
+                               FontSize="15"
+                               FontWeight="Normal"
+                               TextTrimming="CharacterEllipsis"
+                               MaxLines="1"/>
 
-                                        <!-- IMAGE -->
-                                        <Image Grid.Row="0"
-                   Source="{Binding ImagePath}"
-                   Stretch="UniformToFill"/>
+                                        <!-- Status / Price (e.g. Free) -->
+                                        <TextBlock Text="Free"
+                               Foreground="#C8C8C8"
+                               FontFamily="Segoe UI"
+                               FontSize="12"
+                               Margin="0,2,0,0"
+                               TextTrimming="CharacterEllipsis"/>
 
-                                        <!-- TITLE -->
-                                        <TextBlock Grid.Row="1"
-                       Text="{Binding Title}"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="Light"
-                       Margin="8,8,8,0"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                        <!-- PUBLISHER -->
-                                        <TextBlock Grid.Row="2"
-                       Text="{Binding Publisher}"
-                       Foreground="#AAAAAA"
-                       FontSize="11"
-                       Margin="8,4,8,8"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                    </Grid>
-
-                                </Border>
-
+                                        <!-- Category / Subtitle -->
+                                        <TextBlock Text="{Binding Category}"
+                               Foreground="#8E8E93"
+                               FontFamily="Segoe UI"
+                               FontSize="11"
+                               Margin="0,1,0,0"
+                               TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
+
                         <GridView.ItemContainerStyle>
-
                             <Style TargetType="GridViewItem">
-
-                                <!-- NORMAL -->
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="GridViewItem">
-
                                             <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="0"
+                                RenderTransformOrigin="0.5,0.5">
                                                 <Border.RenderTransform>
                                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                                 </Border.RenderTransform>
@@ -404,60 +188,40 @@
                                                 <ContentPresenter />
 
                                                 <VisualStateManager.VisualStateGroups>
-
                                                     <VisualStateGroup x:Name="CommonStates">
-
-                                                        <!-- NORMAL -->
                                                         <VisualState x:Name="Normal"/>
-
-                                                        <!-- POINTER OVER (HOVER) -->
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.85"
+                                                             Duration="0:0:0.1"/>
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
+                                                             Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                             To="1.02"
+                                                             Duration="0:0:0.1"/>
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
+                                                             Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                             To="1.02"
+                                                             Duration="0:0:0.1"/>
                                                             </Storyboard>
                                                         </VisualState>
-
-                                                        <!-- PRESSED -->
                                                         <VisualState x:Name="Pressed">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.65"
+                                                             Duration="0:0:0.05"/>
                                                             </Storyboard>
                                                         </VisualState>
-
                                                     </VisualStateGroup>
-
                                                 </VisualStateManager.VisualStateGroups>
-
                                             </Border>
-
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-
                             </Style>
-
                         </GridView.ItemContainerStyle>
-
                     </GridView>
                 </Grid>
                 <!-- Welcome Section -->
@@ -978,6 +742,10 @@
                     <AppBarButton Icon="Bookmarks"
                       Label="Categories"
                       Click="CatApps_Click"/>
+
+                    <AppBarButton Icon="People"
+                      Label="Publishers"
+                      Click="Pub_Click"/>
 
                     <AppBarButton Icon="Favorite"
                       Label="Top Apps"

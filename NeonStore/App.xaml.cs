@@ -295,8 +295,8 @@ namespace NeonStore
             ));
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
-                "personalization",
-                "Personalization",
+                "settings",
+                "Settings",
                 handler => { new Personalization().Show(); }
             ));
 
@@ -304,6 +304,12 @@ namespace NeonStore
                 "account",
                 "Account",
                 handler => { new Account().Show(); }
+            ));
+
+            args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(
+                "feedback",
+                "Send Feedback",
+                handler => { new Feedback().Show(); }
             ));
 
             args.Request.ApplicationCommands.Add(new Windows.UI.ApplicationSettings.SettingsCommand(

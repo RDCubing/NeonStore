@@ -68,6 +68,11 @@ namespace NeonStore
             this.Frame.Navigate(typeof(UploaderPage));
         }
 
+        private void Pub_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(Publishers));
+        }
+
         private void TopApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(TopApps));
@@ -76,6 +81,12 @@ namespace NeonStore
         private void CatApps_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(CategoriesPage));
+        }
+
+        private void Settings_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var flyout = new Personalization();
+            flyout.Show();
         }
 
         private void CatGrid_ItemClick(object sender, ItemClickEventArgs e)

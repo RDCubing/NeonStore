@@ -1,0 +1,98 @@
+﻿<SettingsFlyout
+    x:Class="NeonStore.Feedback"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NeonStore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    IconSource="Assets/SmallLogo.png"
+    Title="Feedback"
+    d:DesignWidth="346" 
+    HeaderBackground="{StaticResource AccentBrush}">
+
+    <SettingsFlyout.Background>
+        <ImageBrush ImageSource="Assets/SideStore.png" Stretch="UniformToFill"/>
+    </SettingsFlyout.Background>
+
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+        <!-- Content Section 1 -->
+        <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+            <!-- Section Header -->
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
+                       Text="Send Feedback" 
+                       FontSize="28" 
+                       Margin="0,0,0,16"/>
+
+            <!-- STATE A: Account Required Notice Only (No Buttons) -->
+            <StackPanel x:Name="AccountRequiredPanel" Visibility="Collapsed">
+                <TextBlock Text="An account is required to send feedback to NeonStore." Style="{StaticResource BodyTextBlockStyle}" 
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,10"/>
+
+                <TextBlock Text="Please open Settings (Win + I) and select Accounts to sign in." Style="{StaticResource BodyTextBlockStyle}" 
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- STATE B: Feedback Form (Shown when logged in) -->
+            <StackPanel x:Name="FeedbackFormPanel" Visibility="Visible">
+
+                <ComboBox x:Name="FeedbackTypeComboBox" 
+                          Header="Category of Feedback"
+                          HorizontalAlignment="Stretch" 
+                          SelectedIndex="0" 
+                          Margin="0,0,0,12">
+                    <ComboBoxItem Content="General Feedback"/>
+                    <ComboBoxItem Content="Bug Report"/>
+                    <ComboBoxItem Content="Feature Request"/>
+                    <ComboBoxItem Content="Other"/>
+                </ComboBox>
+
+                <ComboBox x:Name="RatingComboBox" 
+                          HorizontalAlignment="Stretch" 
+                          SelectedIndex="0" 
+                          Header="Rating (optional)"
+                          Margin="0,0,0,12">
+                    <ComboBoxItem Content="No rating"/>
+                    <ComboBoxItem Content="5 - Excellent"/>
+                    <ComboBoxItem Content="4 - Good"/>
+                    <ComboBoxItem Content="3 - Average"/>
+                    <ComboBoxItem Content="2 - Poor"/>
+                    <ComboBoxItem Content="1 - Terrible"/>
+                </ComboBox>
+
+                <TextBox x:Name="FeedbackTextBox"
+                         Height="130" 
+                         Header="Your Comments"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         PlaceholderText="Describe your experience here..."
+                         Margin="0,0,0,16"/>
+
+                <!-- Progress Indicator -->
+                <ProgressBar x:Name="SubmissionProgressBar" 
+                             IsIndeterminate="True" 
+                             Visibility="Collapsed" 
+                             Margin="0,0,0,10"/>
+
+                <!-- Status Message Text -->
+                <TextBlock x:Name="StatusTextBlock" Style="{StaticResource BodyTextBlockStyle}" 
+                           TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           Margin="0,0,0,12"/>
+
+                <!-- Submit Button -->
+                <Button x:Name="SubmitFeedbackButton"
+                        Content="Submit Feedback"
+                        HorizontalAlignment="Stretch"
+                        Background="{StaticResource AccentBrush}"
+                        Foreground="White"
+                        Click="SubmitFeedbackButton_Click"/>
+            </StackPanel>
+
+        </StackPanel>
+
+    </StackPanel>
+</SettingsFlyout>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Windows.Web.Http;
@@ -15,13 +16,17 @@ namespace NeonStore
             = new ObservableCollection<AppItem>();
 
         public static ObservableCollection<AppItem> TopApps { get; }
-    = new ObservableCollection<AppItem>();
+            = new ObservableCollection<AppItem>();
 
         public static ObservableCollection<AppItem> OtherApps { get; }
-    = new ObservableCollection<AppItem>();
+            = new ObservableCollection<AppItem>();
 
         public static ObservableCollection<string> Categories { get; }
-    = new ObservableCollection<string>();
+            = new ObservableCollection<string>();
+
+        // PUBLISHERS (NEW)
+        public static ObservableCollection<string> Publishers { get; }
+            = new ObservableCollection<string>();
 
         public static async Task LoadAsync()
         {
@@ -46,35 +51,42 @@ namespace NeonStore
                 }
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                CoreDispatcherPriority.Normal,
-                () =>
-                {
-                    NeonStore.Clear();
-                    TopApps.Clear();
-                    OtherApps.Clear();
-                    Categories.Clear();
-
-                    foreach (var app in data.NeonStore)
+                    CoreDispatcherPriority.Normal,
+                    () =>
                     {
-                        NeonStore.Add(app);
+                        NeonStore.Clear();
+                        TopApps.Clear();
+                        OtherApps.Clear();
+                        Categories.Clear();
+                        Publishers.Clear();
 
-                // TOP APPS
-                if (app.TopApp == "Yes")
-                            TopApps.Add(app);
-                        else
-                            OtherApps.Add(app);
-
-                // CATEGORY (NEW)
-                if (!string.IsNullOrEmpty(app.Category))
+                        foreach (var app in data.NeonStore)
                         {
-                            if (!Categories.Contains(app.Category))
-                                Categories.Add(app.Category);
+                            NeonStore.Add(app);
+
+                            // TOP APPS
+                            if (app.TopApp == "Yes")
+                                TopApps.Add(app);
+                            else
+                                OtherApps.Add(app);
+
+                            // CATEGORY
+                            if (!string.IsNullOrEmpty(app.Category))
+                            {
+                                if (!Categories.Contains(app.Category))
+                                    Categories.Add(app.Category);
+                            }
+
+                            // PUBLISHER (NEW)
+                            if (!string.IsNullOrEmpty(app.Publisher))
+                            {
+                                if (!Publishers.Contains(app.Publisher))
+                                    Publishers.Add(app.Publisher);
+                            }
+
+                            Debug.WriteLine("Added: " + app.Title);
                         }
-
-                        Debug.WriteLine("Added: " + app.Title);
-                    }
-                });
-
+                    });
 
                 Debug.WriteLine("NeonStoreService: Done ✔");
             }
@@ -82,6 +94,21 @@ namespace NeonStore
             {
                 Debug.WriteLine("NeonStoreService ERROR: " + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Retrieves all apps registered to a specific publisher.
+        /// </summary>
+        public static ObservableCollection<AppItem> GetAppsByPublisher(string publisherName)
+        {
+            if (string.IsNullOrEmpty(publisherName))
+                return new ObservableCollection<AppItem>();
+
+            var filtered = NeonStore
+                .Where(a => string.Equals(a.Publisher, publisherName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return new ObservableCollection<AppItem>(filtered);
         }
     }
 }

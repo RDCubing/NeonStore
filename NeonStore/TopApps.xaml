@@ -78,7 +78,7 @@
               IsItemClickEnabled="True"
               ItemClick="ProjectsGrid_ItemClick"
               ItemsSource="{Binding}"
-              Margin="40,10,0,100">
+              Margin="40,10,0,40">
                     <GridView.RenderTransform>
                         <TranslateTransform x:Name="MainPanelTransform"
                             X="200"/>
@@ -93,66 +93,64 @@
 
                     <GridView.ItemTemplate>
                         <DataTemplate>
-
-                            <!-- Windows 8 Style Tile -->
-                            <Grid Width="250"
-              Height="220"
-              Margin="8"
-              Background="Transparent">
-
+                            <!-- Windows 8.1 Transparent Banner Tile (Compact Footprint: 260 x 215) -->
+                            <Grid Width="260" Height="215" Margin="0,0,18,18" Background="Transparent">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="140"/>
+                                    <!-- 1. Banner Image Container -->
+                                    <RowDefinition Height="130"/>
+                                    <!-- 2. Text Information Stack -->
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- IMAGE (main visual focus) -->
-                                <Border Grid.Row="0"
-                    Background="#202020">
-
+                                <!-- IMAGE -->
+                                <Border Grid.Row="0" Background="#18181A">
                                     <Image Source="{Binding DetailImagePath}"
                        Stretch="UniformToFill"/>
-
                                 </Border>
 
                                 <!-- TEXT AREA -->
-                                <StackPanel Grid.Row="1"
-                        Margin="10,8,10,8">
+                                <StackPanel Grid.Row="1" Margin="0,6,0,0">
 
-                                    <!-- TITLE -->
+                                    <!-- Title -->
                                     <TextBlock Text="{Binding Title}"
-                           FontSize="16"
-                           FontWeight="Light"
+                           FontFamily="Segoe UI"
+                           FontSize="15"
+                           FontWeight="SemiLight"
                            Foreground="White"
                            TextTrimming="CharacterEllipsis"
-                           MaxLines="2"/>
+                           MaxLines="1"/>
 
-                                    <!-- CATEGORY (NEW - Windows 8 style metadata) -->
+                                    <!-- Category -->
                                     <TextBlock Text="{Binding Category}"
+                           FontFamily="Segoe UI"
                            FontSize="11"
+                           FontWeight="Normal"
                            Foreground="{StaticResource AccentBrush}"
-                           Margin="0,4,0,0"
-                           FontWeight="Light"/>
-
-                                    <!-- PUBLISHER -->
-                                    <TextBlock Text="{Binding Publisher}"
-                           FontSize="11"
-                           Foreground="#BFBFBF"
-                           Margin="0,3,0,0"
+                           Margin="0,2,0,0"
                            TextTrimming="CharacterEllipsis"/>
 
-                                    <!-- DESCRIPTION -->
-                                    <TextBlock Text="{Binding Description}"
+                                    <!-- Publisher -->
+                                    <TextBlock Text="{Binding Publisher}"
+                           FontFamily="Segoe UI"
                            FontSize="11"
-                           Foreground="#8C8C8C"
-                           Margin="0,5,0,0"
-                           TextWrapping="Wrap"
-                           MaxLines="3"
+                           FontWeight="Normal"
+                           Foreground="#8E8E93"
+                           Margin="0,1,0,0"
+                           TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Description with Ellipsis -->
+                                    <TextBlock Text="{Binding Description}"
+                           FontFamily="Segoe UI"
+                           FontSize="11"
+                           FontWeight="Normal"
+                           LineHeight="15"
+                           Foreground="#80FFFFFF"
+                           Margin="0,4,0,0"
+                           TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"/>
 
                                 </StackPanel>
-
                             </Grid>
-
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>

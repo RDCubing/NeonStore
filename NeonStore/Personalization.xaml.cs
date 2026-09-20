@@ -34,6 +34,17 @@ namespace NeonStore
     ApplicationData.Current.LocalSettings.Values["ReduceMotion"];
 
             ReduceMotionToggle.IsOn = reduceMotion == null ? false : (bool)reduceMotion;
+            object experimentalSideload =
+    ApplicationData.Current.LocalSettings.Values["UseExperimentalSideload"];
+
+            SideloadToggle.IsOn = experimentalSideload == null ? false : (bool)experimentalSideload;
+
+        }
+
+        private void SideloadToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            ApplicationData.Current.LocalSettings.Values["UseExperimentalSideload"] =
+                SideloadToggle.IsOn;
         }
 
         private void StoreHeaderToggle_Toggled(object sender, RoutedEventArgs e)

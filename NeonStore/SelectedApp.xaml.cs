@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
+using Windows.System;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -344,7 +345,7 @@ namespace NeonStore
             DownloadProgressRing.IsActive = true;
             DownloadProgressPanel.Visibility = Visibility.Visible;
             DownloadProgressBar.Value = 0;
-            DownloadStatusText.Text = "Preparing download...";
+            DownloadStatusText.Text = "Checking local files...";
 
             try
             {
@@ -354,122 +355,202 @@ namespace NeonStore
 
                 var uri = new Uri(project.DownloadUrl);
 
-                string fileName =
-                    Path.GetFileName(uri.LocalPath);
-
+                string fileName = Path.GetFileName(uri.LocalPath);
                 if (string.IsNullOrEmpty(fileName))
                     fileName = project.Title + ".bin";
 
                 // Pictures\NeonStore
-                StorageFolder pictures =
-                    KnownFolders.PicturesLibrary;
+                StorageFolder pictures = KnownFolders.PicturesLibrary;
+                StorageFolder neonStoreFolder = await pictures.CreateFolderAsync(
+                    "NeonStore",
+                    CreationCollisionOption.OpenIfExists);
 
-                StorageFolder neonStoreFolder =
-                    await pictures.CreateFolderAsync(
-                        "NeonStore",
+                // Check if file already exists locally
+                StorageFile file = null;
+                IStorageItem existingItem = await neonStoreFolder.TryGetItemAsync(fileName);
+                bool alreadyDownloaded = false;
+
+                if (existingItem is StorageFile)
+                {
+                    file = (StorageFile)existingItem;
+                    var basicProps = await file.GetBasicPropertiesAsync();
+
+                    // Verify file is not empty (e.g. from an aborted previous download)
+                    if (basicProps.Size > 0)
+                    {
+                        alreadyDownloaded = true;
+                        DownloadProgressBar.Value = 100;
+                        DownloadStatusText.Text = "Using existing download";
+                    }
+                }
+
+                // If not found locally, proceed with download
+                if (!alreadyDownloaded)
+                {
+                    DownloadStatusText.Text = "Preparing download...";
+
+                    file = await neonStoreFolder.CreateFileAsync(
+                        fileName,
                         CreationCollisionOption.OpenIfExists);
 
-                StorageFile file =
-                    await neonStoreFolder.CreateFileAsync(
-                        fileName,
-                        CreationCollisionOption.GenerateUniqueName);
+                    ToastService.Show(
+                        "Download started",
+                        project.Title,
+                        project.ImagePath);
 
-                ToastService.Show(
-                    "Download started",
-                    project.Title,
-                    project.ImagePath);
+                    var client = new Windows.Web.Http.HttpClient();
+                    var response = await client.GetAsync(
+                        uri,
+                        Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
 
-                var client = new Windows.Web.Http.HttpClient();
+                    ulong totalBytes = response.Content.Headers.ContentLength ?? 0;
 
-                var response = await client.GetAsync(
-                    uri,
-                    Windows.Web.Http.HttpCompletionOption.ResponseHeadersRead);
+                    var input = await response.Content.ReadAsInputStreamAsync();
+                    var output = await file.OpenAsync(FileAccessMode.ReadWrite);
 
-                ulong totalBytes =
-                    response.Content.Headers.ContentLength ?? 0;
+                    var reader = new Windows.Storage.Streams.DataReader(input);
+                    var writer = new Windows.Storage.Streams.DataWriter(output);
 
-                var input =
-                    await response.Content.ReadAsInputStreamAsync();
+                    const uint BufferSize = 8192;
+                    ulong downloadedBytes = 0;
 
-                var output =
-                    await file.OpenAsync(FileAccessMode.ReadWrite);
-
-                var reader =
-                    new Windows.Storage.Streams.DataReader(input);
-
-                var writer =
-                    new Windows.Storage.Streams.DataWriter(output);
-
-                const uint BufferSize = 8192;
-                ulong downloadedBytes = 0;
-
-                while (true)
-                {
-                    uint loaded = await reader.LoadAsync(BufferSize);
-
-                    if (loaded == 0)
-                        break;
-
-                    byte[] bytes = new byte[loaded];
-                    reader.ReadBytes(bytes);
-
-                    writer.WriteBytes(bytes);
-                    await writer.StoreAsync();
-
-                    downloadedBytes += loaded;
-
-                    if (totalBytes > 0)
+                    while (true)
                     {
-                        double percent =
-                            (double)downloadedBytes /
-                            totalBytes * 100;
+                        uint loaded = await reader.LoadAsync(BufferSize);
+                        if (loaded == 0)
+                            break;
 
-                        double downloadedMB =
-                            downloadedBytes / 1024d / 1024d;
+                        byte[] bytes = new byte[loaded];
+                        reader.ReadBytes(bytes);
+                        writer.WriteBytes(bytes);
+                        await writer.StoreAsync();
 
-                        double totalMB =
-                            totalBytes / 1024d / 1024d;
+                        downloadedBytes += loaded;
 
-                        DownloadProgressBar.Value = percent;
+                        if (totalBytes > 0)
+                        {
+                            double percent = (double)downloadedBytes / totalBytes * 100;
+                            double downloadedMB = downloadedBytes / 1024d / 1024d;
+                            double totalMB = totalBytes / 1024d / 1024d;
 
-                        DownloadStatusText.Text =
-                            string.Format(
+                            DownloadProgressBar.Value = percent;
+                            DownloadStatusText.Text = string.Format(
                                 "{0:F1} MB / {1:F1} MB ({2:F0}%)",
                                 downloadedMB,
                                 totalMB,
                                 percent);
+                        }
                     }
+
+                    await writer.FlushAsync();
+                    reader.Dispose();
+                    writer.Dispose();
+                    input.Dispose();
+                    output.Dispose();
+
+                    DownloadProgressBar.Value = 100;
+
+                    if (totalBytes > 0)
+                    {
+                        double totalMB = totalBytes / 1024d / 1024d;
+                        DownloadStatusText.Text = string.Format("{0:F1} MB / {0:F1} MB (100%)", totalMB);
+                    }
+                    else
+                    {
+                        DownloadStatusText.Text = "Download complete";
+                    }
+
+                    ToastService.Show(
+                        "Download complete",
+                        project.Title,
+                        project.ImagePath);
                 }
 
-                await writer.FlushAsync();
+                // --- SIDELOAD / PROTOCOL CHECK ---
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                bool useExperimentalSideload = false;
 
-                reader.Dispose();
-                writer.Dispose();
-                input.Dispose();
-                output.Dispose();
-
-                DownloadProgressBar.Value = 100;
-
-                if (totalBytes > 0)
+                if (localSettings.Values.ContainsKey("UseExperimentalSideload"))
                 {
-                    double totalMB = totalBytes / 1024d / 1024d;
+                    useExperimentalSideload = (bool)localSettings.Values["UseExperimentalSideload"];
+                }
 
-                    DownloadStatusText.Text =
-                        string.Format(
-                            "{0:F1} MB / {0:F1} MB (100%)",
-                            totalMB);
+                if (useExperimentalSideload)
+                {
+                    // Check if file is a modern Windows 8.1 app package
+                    string ext = Path.GetExtension(file.Name) ?? string.Empty;
+                    bool isAppxPackage = ext.Equals(".appx", StringComparison.OrdinalIgnoreCase) ||
+                                         ext.Equals(".appxbundle", StringComparison.OrdinalIgnoreCase);
+
+                    if (!isAppxPackage)
+                    {
+                        var invalidPkgDialog = new Windows.UI.Popups.MessageDialog(
+                            string.Format("'{0}' is not a modern application package (.appx or .appxbundle).\n\nOpening with the default system handler instead.", file.Name),
+                            "Unsupported Package Type");
+
+                        invalidPkgDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
+                        await invalidPkgDialog.ShowAsync();
+
+                        await Windows.System.Launcher.LaunchFileAsync(file);
+                        return;
+                    }
+
+                    string taskId = Guid.NewGuid().ToString("N");
+                    DownloadStatusText.Text = "Connecting to helper...";
+
+                    // Ensure the helper is in Pictures\NeonStore so the user can easily run it
+                    try
+                    {
+                        var installedLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
+                        IStorageItem pkgItem = await installedLocation.TryGetItemAsync("NeonStore.Helper.exe");
+                        StorageFile packagedHelper = pkgItem as StorageFile;
+                        if (packagedHelper != null)
+                        {
+                            await packagedHelper.CopyAsync(neonStoreFolder, "NeonStore.Helper.exe", NameCollisionOption.ReplaceExisting);
+                        }
+                    }
+                    catch { }
+
+                    // Launch helper protocol
+                    string uriString = string.Format(
+                        "neonstore-helper://install?path={0}&taskId={1}",
+                        Uri.EscapeDataString(file.Path),
+                        Uri.EscapeDataString(taskId));
+
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(uriString));
+
+                    // Monitor progress with early handshake timeout
+                    bool helperResponded = await MonitorSideloadProgressAsync(neonStoreFolder, taskId);
+
+                    if (helperResponded)
+                    {
+                        ToastService.Show(
+                            "App installed successfully",
+                            project.Title,
+                            project.ImagePath);
+                    }
+                    else
+                    {
+                        var setupDialog = new Windows.UI.Popups.MessageDialog(
+                                                    "NeonStore Helper is not active or hasn't been set up yet.\n\n" +
+                                                    "To complete setup:\n" +
+                                                    "1. Open File Explorer on your Desktop.\n" +
+                                                    "2. Navigate to: Pictures -> NeonStore\n" +
+                                                    "3. Double-click 'NeonStore.Helper.exe' and approve the UAC prompt.\n" +
+                                                    "4. Return to NeonStore and tap Download again.\n\n" +
+                                                    "If the helper is already set up, the deployment likely encountered an issue. Check the status text above the progress bar to see what went wrong.",
+                                                    "Sideload Helper Setup Required");
+
+                        setupDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
+
+                        await setupDialog.ShowAsync();
+                    }
                 }
                 else
                 {
-                    DownloadStatusText.Text = "Download complete";
+                    // Fallback / standard execution
+                    await Windows.System.Launcher.LaunchFileAsync(file);
                 }
-
-                ToastService.Show(
-                    "Download complete",
-                    project.Title,
-                    project.ImagePath);
-
-                await Windows.System.Launcher.LaunchFileAsync(file);
 
                 DownloadHistoryService.Instance.Add(
                     new DownloadItem
@@ -494,7 +575,79 @@ namespace NeonStore
                 DownloadStatusText.Text = "Ready";
             }
         }
+        private async System.Threading.Tasks.Task<bool> MonitorSideloadProgressAsync(StorageFolder folder, string taskId)
+        {
+            string statusFileName = string.Format("status_{0}.txt", taskId);
+            bool finished = false;
+            bool helperStarted = false;
+            int timeoutSeconds = 60;
+            int handshakeTimeoutSeconds = 6;
+            DateTime startTime = DateTime.Now;
 
+            while (!finished)
+            {
+                await System.Threading.Tasks.Task.Delay(300);
+
+                double elapsed = (DateTime.Now - startTime).TotalSeconds;
+
+                if (!helperStarted && elapsed > handshakeTimeoutSeconds)
+                {
+                    DownloadStatusText.Text = "Helper failed to start.";
+                    return false;
+                }
+
+                if (elapsed > timeoutSeconds)
+                {
+                    DownloadStatusText.Text = "Sideloading timed out.";
+                    return false;
+                }
+
+                try
+                {
+                    IStorageItem item = await folder.TryGetItemAsync(statusFileName);
+                    StorageFile statusFile = item as StorageFile;
+
+                    if (statusFile != null)
+                    {
+                        helperStarted = true;
+                        string content = await FileIO.ReadTextAsync(statusFile);
+
+                        if (!string.IsNullOrWhiteSpace(content))
+                        {
+                            string[] parts = content.Split('|');
+                            if (parts.Length >= 4)
+                            {
+                                int percent;
+                                int.TryParse(parts[0], out percent);
+                                string message = parts[1];
+                                bool isComplete = parts[2].Equals("True", StringComparison.OrdinalIgnoreCase);
+                                bool isError = parts[3].Equals("True", StringComparison.OrdinalIgnoreCase);
+
+                                DownloadProgressBar.Value = percent;
+                                DownloadStatusText.Text = message;
+
+                                if (isComplete || isError)
+                                {
+                                    finished = true;
+                                    try { await statusFile.DeleteAsync(StorageDeleteOption.PermanentDelete); } catch { }
+                                    return !isError;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        DownloadStatusText.Text = string.Format("Waiting for helper... ({0:F0}s)", handshakeTimeoutSeconds - elapsed);
+                    }
+                }
+                catch
+                {
+                    // Temporary file lock catch
+                }
+            }
+
+            return true;
+        }
         #endregion
 
         // 2. Update LoadReviews to check if the current user already has a review
@@ -561,13 +714,17 @@ namespace NeonStore
             {
                 // Pre-fill fields with existing review data
                 ReviewCommentBox.Text = myExistingReview.comment ?? "";
-                ReviewRatingBox.SelectedIndex = Math.Max(0, Math.Min(4, myExistingReview.rating - 1));
+                _selectedRating = Math.Max(1, Math.Min(5, myExistingReview.rating));
+                UpdateInputStarDisplay(_selectedRating);
 
                 SubmitReviewBtn.Visibility = Visibility.Collapsed;
                 ExistingReviewActionsPanel.Visibility = Visibility.Visible;
             }
             else
             {
+                _selectedRating = 5;
+                UpdateInputStarDisplay(_selectedRating);
+
                 SubmitReviewBtn.Visibility = Visibility.Visible;
                 ExistingReviewActionsPanel.Visibility = Visibility.Collapsed;
             }
@@ -595,7 +752,8 @@ namespace NeonStore
             if (deleted)
             {
                 ReviewCommentBox.Text = "";
-                ReviewRatingBox.SelectedIndex = 4;
+                _selectedRating = 5;
+                UpdateInputStarDisplay(_selectedRating);
                 myExistingReview = null;
                 LoadReviews();
             }
@@ -604,6 +762,58 @@ namespace NeonStore
                 await new MessageDialog("Failed to delete review. Please try again.", "Error").ShowAsync();
             }
         }
+
+        // Default rating is 5
+        private int _selectedRating = 5;
+
+        private void RatingStar_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var clickedStar = sender as TextBlock;
+            if (clickedStar?.Tag != null)
+            {
+                int rating;
+                if (int.TryParse(clickedStar.Tag.ToString(), out rating))
+                {
+                    _selectedRating = rating;
+                    UpdateInputStarDisplay(_selectedRating);
+                }
+            }
+        }
+
+        private void Publisher_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as HyperlinkButton;
+            string publisher = button?.Content as string;
+
+            if (!string.IsNullOrWhiteSpace(publisher))
+            {
+                Frame.Navigate(typeof(PublisherPage), publisher);
+            }
+        }
+
+        private void UpdateInputStarDisplay(int rating)
+        {
+            var stars = new[] { InputStar1, InputStar2, InputStar3, InputStar4, InputStar5 };
+            var activeBrush = (Windows.UI.Xaml.Media.Brush)Application.Current.Resources["AccentBrush"];
+            var inactiveBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(60, 255, 255, 255));
+
+            for (int i = 0; i < stars.Length; i++)
+            {
+                if (i < rating)
+                {
+                    stars[i].Text = "\uE1CF"; // Filled star
+                    stars[i].Foreground = activeBrush;
+                    stars[i].Opacity = 1.0;
+                }
+                else
+                {
+                    stars[i].Text = "\uE1CE"; // Outline star
+                    stars[i].Foreground = inactiveBrush;
+                    stars[i].Opacity = 0.5;
+                }
+            }
+        }
+
         private async void SubmitReview_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -619,12 +829,10 @@ namespace NeonStore
 
                 var app = this.DataContext as AppItem;
 
-                int rating = int.Parse(((ComboBoxItem)ReviewRatingBox.SelectedItem).Content.ToString());
-
                 var bodyObj = new
                 {
                     appId = app.Id,
-                    rating = rating,
+                    rating = _selectedRating,
                     comment = ReviewCommentBox.Text
                 };
 
@@ -646,21 +854,108 @@ namespace NeonStore
 
         private void UpdateReviewStatistics(IEnumerable<Review> reviews)
         {
-            int count = reviews.Count();
+            if (reviews == null)
+                return;
 
-            ReviewCountText.Text = count.ToString();
+            var list = reviews.ToList();
+            int totalCount = list.Count;
+            ReviewCountText.Text = totalCount.ToString();
 
-            if (count == 0)
+            if (totalCount == 0)
             {
                 AverageRatingText.Text = "0.0";
+                UpdateStarDisplay(0);
+                ResetBars();
                 return;
             }
 
-            double average = reviews.Average(r => r.rating);
+            // Safely extract numeric ratings regardless of backing type
+            var parsedRatings = new List<double>();
+            foreach (var rev in list)
+            {
+                double val = 0;
+                if (double.TryParse(rev.rating.ToString(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out val))
+                {
+                    // If the backend uses 0-10 or 0-100 scales, normalize to 1-5
+                    if (val > 5.0 && val <= 10.0) val = val / 2.0;
+                    else if (val > 10.0) val = (val / 100.0) * 5.0;
 
-            AverageRatingText.Text = average.ToString("0.0");
+                    parsedRatings.Add(val);
+                }
+            }
+
+            if (parsedRatings.Count == 0)
+            {
+                AverageRatingText.Text = "0.0";
+                UpdateStarDisplay(0);
+                ResetBars();
+                return;
+            }
+
+            double average = parsedRatings.Average();
+            AverageRatingText.Text = average.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+            UpdateStarDisplay(average);
+
+            // Count reviews per bracket (1 to 5)
+            int count5 = parsedRatings.Count(r => r >= 4.5);
+            int count4 = parsedRatings.Count(r => r >= 3.5 && r < 4.5);
+            int count3 = parsedRatings.Count(r => r >= 2.5 && r < 3.5);
+            int count2 = parsedRatings.Count(r => r >= 1.5 && r < 2.5);
+            int count1 = parsedRatings.Count(r => r < 1.5);
+
+            // Update count labels
+            Count5Text.Text = count5.ToString();
+            Count4Text.Text = count4.ToString();
+            Count3Text.Text = count3.ToString();
+            Count2Text.Text = count2.ToString();
+            Count1Text.Text = count1.ToString();
+
+            // Set bar widths (Total width = 120px)
+            const double MaxBarWidth = 120.0;
+            SetBarWidth(Bar5, (double)count5 / totalCount, MaxBarWidth);
+            SetBarWidth(Bar4, (double)count4 / totalCount, MaxBarWidth);
+            SetBarWidth(Bar3, (double)count3 / totalCount, MaxBarWidth);
+            SetBarWidth(Bar2, (double)count2 / totalCount, MaxBarWidth);
+            SetBarWidth(Bar1, (double)count1 / totalCount, MaxBarWidth);
         }
 
+        private void SetBarWidth(Windows.UI.Xaml.Shapes.Rectangle bar, double ratio, double maxWidth)
+        {
+            bar.Width = Math.Max(0, ratio * maxWidth);
+        }
+
+        private void ResetBars()
+        {
+            Count5Text.Text = Count4Text.Text = Count3Text.Text = Count2Text.Text = Count1Text.Text = "0";
+            Bar5.Width = Bar4.Width = Bar3.Width = Bar2.Width = Bar1.Width = 0;
+        }
+
+        private void UpdateStarDisplay(double rating)
+        {
+            // Round to nearest whole star (4.7 -> 5 stars; 4.2 -> 4 stars)
+            int filledStars = (int)Math.Round(rating);
+            var stars = new[] { Star1, Star2, Star3, Star4, Star5 };
+
+            // Active accent color (or bright green/white) vs muted gray
+            var activeBrush = (Windows.UI.Xaml.Media.Brush)Application.Current.Resources["AccentBrush"];
+            var inactiveBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(60, 255, 255, 255));
+
+            for (int i = 0; i < stars.Length; i++)
+            {
+                if (i < filledStars)
+                {
+                    stars[i].Text = "\uE1CF"; // Filled star
+                    stars[i].Foreground = activeBrush;
+                    stars[i].Opacity = 1.0;
+                }
+                else
+                {
+                    stars[i].Text = "\uE1CE"; // Outline star
+                    stars[i].Foreground = inactiveBrush;
+                    stars[i].Opacity = 0.5;
+                }
+            }
+        }
         private void UpdateEmptyState(IEnumerable<Review> reviews)
         {
             EmptyStatePanel.Visibility = reviews.Any()

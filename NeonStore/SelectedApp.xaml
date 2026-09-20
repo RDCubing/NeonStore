@@ -92,6 +92,9 @@
                 <!-- LEFT COLUMN -->
                 <!-- ========================= -->
 
+                <!-- ========================= -->
+                <!-- COLUMN 0 (Download + Other Apps) -->
+                <!-- ========================= -->
                 <Grid Grid.Column="0">
 
                     <Grid.RowDefinitions>
@@ -99,32 +102,34 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- TOP (fixed content) -->
+                    <!-- TOP (Download & Actions) -->
                     <StackPanel Grid.Row="0">
 
                         <StackPanel Orientation="Horizontal">
-                        <!-- Download -->
-                            <Button Content="Download" BorderThickness="0" Background="{StaticResource AccentBrush}"
-                Margin="0,0,12,0"
-                Click="InstantDownload_Click"/>
+                            <Button x:Name="InstantDownloadBtn"
+        Content="Download" 
+        BorderThickness="0" 
+        Background="{StaticResource AccentBrush}"
+        Margin="0,0,12,0"
+        Click="InstantDownload_Click"/>
                             <!-- More Options -->
                             <Button Content="More options..."
-            BorderThickness="0" Background="Gray"
-            Margin="0,0,12,0">
+                                    BorderThickness="0" Background="Gray"
+                                    Margin="0,0,12,0">
 
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
 
                                         <MenuFlyoutItem Text="Save As..."
-                    Click="OpenProject_Click"/>
+                                                        Click="OpenProject_Click"/>
 
                                         <MenuFlyoutItem Text="Open in Browser"
-                    Click="OpenInBrowser_Click"/>
+                                                        Click="OpenInBrowser_Click"/>
 
                                         <MenuFlyoutSeparator/>
 
                                         <MenuFlyoutItem Text="Share"
-                    Click="Share_Click"/>
+                                                        Click="Share_Click"/>
 
                                     </MenuFlyout>
                                 </Button.Flyout>
@@ -132,438 +137,247 @@
                             </Button>
                             <!-- Progress -->
                             <ProgressRing x:Name="DownloadProgressRing"
-                  Width="20" VerticalAlignment="Center"
-                  Height="20" Foreground="{StaticResource AccentBrush}"
-                  IsActive="False"
-                  Visibility="Collapsed"/>
+                                          Width="20" VerticalAlignment="Center"
+                                          Height="20" Foreground="{StaticResource AccentBrush}"
+                                          IsActive="False"
+                                          Visibility="Collapsed"/>
                         </StackPanel>
 
                         <!-- Download Progress -->
                         <StackPanel x:Name="DownloadProgressPanel"
-            Visibility="Collapsed"
-            Margin="0,12,0,12">
+                                    Visibility="Collapsed"
+                                    Margin="0,12,0,12">
 
                             <!-- File size / percentage -->
                             <TextBlock x:Name="DownloadStatusText"
-               Text="0 MB / 0 MB (0%)"
-               Foreground="#AAAAAA"
-               FontSize="12"
-               Margin="0,0,0,4"/>
+                                       Text="0 MB / 0 MB (0%)"
+                                       Foreground="#AAAAAA"
+                                       FontSize="12" TextWrapping="Wrap"
+                                       Margin="0,0,0,4"/>
 
                             <!-- Progress bar -->
                             <ProgressBar x:Name="DownloadProgressBar" Foreground="{StaticResource AccentBrush}"
-                 Height="4"
-                 Minimum="0"
-                 Maximum="100"
-                 Value="0"/>
+                                         Height="4"
+                                         Minimum="0"
+                                         Maximum="100"
+                                         Value="0"/>
 
                         </StackPanel>
 
-                        <!-- Privacy note -->
+                        <!-- Privacy notes -->
                         <TextBlock x:Name="PrivacyNoteText" Text="When you install an app, you agree to the Terms of Use and any additional terms."
-                   Foreground="White"
-                   FontSize="12"
-                   TextWrapping="Wrap"
-                   Margin="0,12,0,18"/>
-                        
-                        <!-- Privacy note -->
+                                   Foreground="White"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,12,0,18"/>
+
                         <TextBlock Text="This app has permission to use some features of your PC that might affect your privacy."
-                   Foreground="White"
-                   FontSize="12"
-                   TextWrapping="Wrap"
-                   Margin="0,12,0,18"/>
+                                   Foreground="White"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,18"/>
 
                         <!-- Separator -->
                         <Rectangle Height="1"
-                   Fill="#33FFFFFF"
-                   Margin="0,0,0,18"/>
+                                   Fill="#33FFFFFF"
+                                   Margin="0,0,0,18"/>
 
                     </StackPanel>
 
-                    <!-- BOTTOM (scrollable content) -->
-                    <ScrollViewer Grid.Row="1"
-                  VerticalScrollBarVisibility="Auto"
-                  VerticalScrollMode="Enabled"
-                  HorizontalScrollMode="Disabled"
-                  ZoomMode="Disabled">
+                    <!-- BOTTOM (Other Apps list directly under download section) -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Other Apps"
+                                   Grid.Row="0"
+                                   Foreground="White"
+                                   FontSize="28"
+                                   FontWeight="Light"
+                                   Margin="0,0,0,10"/>
+
+                        <ListView Grid.Row="1"
+                                  ItemsSource="{Binding OtherApps, ElementName=pageRoot}"
+                                  ItemClick="OtherApps_ItemClick"
+                                  IsItemClickEnabled="True"
+                                  SelectionMode="None"
+                                  ScrollViewer.VerticalScrollMode="Auto"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ScrollViewer.HorizontalScrollMode="Disabled"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8"
+                                            Background="Transparent"
+                                            Padding="10">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- IMAGE -->
+                                            <Border Grid.Column="0"
+                                                    Width="50"
+                                                    Height="50">
+                                                <Image Source="{Binding ImagePath}"
+                                                       Stretch="UniformToFill"/>
+                                            </Border>
+
+                                            <!-- TEXT -->
+                                            <StackPanel Grid.Column="1"
+                                                        Margin="10,0,0,0"
+                                                        VerticalAlignment="Center">
+
+                                                <TextBlock Text="{Binding Title}"
+                                                           Foreground="White"
+                                                           FontSize="16"
+                                                           TextTrimming="CharacterEllipsis"/>
+
+                                                <TextBlock Text="{Binding Publisher}"
+                                                           Foreground="#AAAAAA"
+                                                           FontSize="12"
+                                                           TextTrimming="CharacterEllipsis"/>
+
+                                            </StackPanel>
+
+                                        </Grid>
+
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="10,6"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewItem">
+                                                <Border x:Name="Root"
+                                                        Background="{TemplateBinding Background}"
+                                                        RenderTransformOrigin="0.5,0.5">
+
+                                                    <Border.RenderTransform>
+                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                    </Border.RenderTransform>
+
+                                                    <ContentPresenter />
+
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="0.85"
+                                                                                     Duration="0:0:0.1"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                                     Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                                     To="1.03"
+                                                                                     Duration="0:0:0.1"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                                     Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                                     To="1.03"
+                                                                                     Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="0.6"
+                                                                                     Duration="0:0:0.05"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+
+                        </ListView>
+                    </Grid>
+
+                </Grid>
+
+                <!-- ========================= -->
+                <!-- COLUMN 1 (App Details)    -->
+                <!-- ========================= -->
+                <Grid Grid.Column="1" Margin="40,0,0,0">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  VerticalScrollMode="Enabled"
+                                  HorizontalScrollMode="Disabled"
+                                  ZoomMode="Disabled">
 
                         <StackPanel>
 
                             <!-- Subtitle -->
                             <TextBlock Text="{Binding Subtitle}"
-                       FontSize="26"
-                       FontWeight="Light"
-                       Foreground="White"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,25"/>
+                                       FontSize="26"
+                                       FontWeight="Light"
+                                       Foreground="White"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,25"/>
 
                             <!-- Description header -->
                             <TextBlock Text="Description"
-                       FontSize="28"
-                       FontWeight="Light"
-                       Foreground="White"
-                       Margin="0,0,0,18"/>
+                                       FontSize="28"
+                                       FontWeight="Light"
+                                       Foreground="White"
+                                       Margin="0,0,0,18"/>
 
                             <!-- Description body -->
                             <TextBlock Text="{Binding Description}"
-                       Foreground="#AAAAAA"
-                       FontSize="18"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,18"/>
+                                       Foreground="#AAAAAA"
+                                       FontSize="18"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,18"/>
 
                             <!-- Version -->
                             <TextBlock Text="Version:"
-                       FontSize="28"
-                       FontWeight="Light"
-                       Foreground="White"
-                       Margin="0,0,0,18"/>
+                                       FontSize="28"
+                                       FontWeight="Light"
+                                       Foreground="White"
+                                       Margin="0,0,0,18"/>
 
                             <TextBlock Text="{Binding Version}"
-                       Foreground="#AAAAAA"
-                       FontSize="48"
-                       FontWeight="Light"
-                       Margin="0,0,0,18"/>
+                                       Foreground="#AAAAAA"
+                                       FontSize="48"
+                                       FontWeight="Light"
+                                       Margin="0,0,0,18"/>
 
-                            <!-- Framework -->
+                            <!-- Minimum Supported OS -->
                             <TextBlock Text="Minimum Supported OS:"
-                       FontSize="28"
-                       FontWeight="Light"
-                       Foreground="White"
-                       Margin="0,0,0,18"/>
+                                       FontSize="28"
+                                       FontWeight="Light"
+                                       Foreground="White"
+                                       Margin="0,0,0,18"/>
 
                             <TextBlock Text="{Binding Framework}"
-                       Foreground="#AAAAAA"
-                       FontSize="48"
-                       FontWeight="Light"
-                       Margin="0,0,0,18"/>
+                                       Foreground="#AAAAAA"
+                                       FontSize="48"
+                                       FontWeight="Light"
+                                       Margin="0,0,0,18"/>
 
                         </StackPanel>
 
                     </ScrollViewer>
 
                 </Grid>
-
-                <!-- ========================= -->
-                <!-- MIDDLE COLUMN -->
-                <!-- ========================= -->
-                <Grid Grid.Column="1"  Margin="40,0,0,0">
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- ========================= -->
-                    <Grid Grid.Row="0">
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- HEADER (fixed, NOT scrolling) -->
-                        <TextBlock Text="Top Apps"
-               Grid.Row="0"
-               Foreground="White"
-               FontSize="28"
-               FontWeight="Light"
-               Margin="0,0,0,10"/>
-
-                        <!-- SCROLLABLE LIST ONLY -->
-                        <ListView Grid.Row="1"
-              ItemsSource="{Binding TopApps, ElementName=pageRoot}"
-              ItemClick="OtherApps_ItemClick"
-              IsItemClickEnabled="True"
-              SelectionMode="None"
-              ScrollViewer.VerticalScrollMode="Auto"
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
-              ScrollViewer.HorizontalScrollMode="Disabled"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="0,0,0,8"
-                        Background="Transparent"
-                        Padding="10">
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- IMAGE -->
-                                            <Border Grid.Column="0"
-                                Width="50"
-                                Height="50">
-                                                <Image Source="{Binding ImagePath}"
-                                   Stretch="UniformToFill"/>
-                                            </Border>
-
-                                            <!-- TEXT -->
-                                            <StackPanel Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    VerticalAlignment="Center">
-
-                                                <TextBlock Text="{Binding Title}"
-                                       Foreground="White"
-                                       FontSize="16"
-                                       TextTrimming="CharacterEllipsis"/>
-
-                                                <TextBlock Text="{Binding Publisher}"
-                                       Foreground="#AAAAAA"
-                                       FontSize="12"
-                                       TextTrimming="CharacterEllipsis"/>
-
-                                            </StackPanel>
-
-                                        </Grid>
-
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-
-                                <Style TargetType="ListViewItem">
-
-                                    <!-- BASE STYLE -->
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Padding" Value="10,6"/>
-
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-
-                                                <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            RenderTransformOrigin="0.5,0.5">
-
-                                                    <Border.RenderTransform>
-                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                    </Border.RenderTransform>
-
-                                                    <ContentPresenter />
-
-                                                    <VisualStateManager.VisualStateGroups>
-
-                                                        <VisualStateGroup x:Name="CommonStates">
-
-                                                            <!-- NORMAL -->
-                                                            <VisualState x:Name="Normal"/>
-
-                                                            <!-- HOVER -->
-                                                            <VisualState x:Name="PointerOver">
-                                                                <Storyboard>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.03"
-                                                         Duration="0:0:0.1"/>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.03"
-                                                         Duration="0:0:0.1"/>
-
-                                                                </Storyboard>
-                                                            </VisualState>
-
-                                                            <!-- PRESSED -->
-                                                            <VisualState x:Name="Pressed">
-                                                                <Storyboard>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
-                                                                </Storyboard>
-                                                            </VisualState>
-
-                                                        </VisualStateGroup>
-
-                                                    </VisualStateManager.VisualStateGroups>
-
-                                                </Border>
-
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-
-                                </Style>
-
-                            </ListView.ItemContainerStyle>
-
-                        </ListView>
-
-                    </Grid>
-
-                    <!-- SEPARATOR BETWEEN SECTIONS -->
-                    <Rectangle Grid.Row="1"
-           Height="1"
-           Fill="#33FFFFFF"
-           Margin="0,10,0,10"/>
-
-                    <!-- ========================= -->
-                    <Grid Grid.Row="2">
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- HEADER (fixed) -->
-                        <TextBlock Text="Other Apps"
-               Grid.Row="0"
-               Foreground="White"
-               FontSize="28"
-               FontWeight="Light"
-               Margin="0,10,0,10"/>
-
-                        <!-- SCROLLABLE LIST ONLY -->
-                        <ListView Grid.Row="1"
-              ItemsSource="{Binding OtherApps, ElementName=pageRoot}"
-              ItemClick="OtherApps_ItemClick"
-              IsItemClickEnabled="True"
-              SelectionMode="None"
-              ScrollViewer.VerticalScrollMode="Auto"
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
-              ScrollViewer.HorizontalScrollMode="Disabled"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="0,0,0,8"
-                        Background="Transparent"
-                        Padding="10">
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- IMAGE -->
-                                            <Border Grid.Column="0"
-                                Width="50"
-                                Height="50">
-                                                <Image Source="{Binding ImagePath}"
-                                   Stretch="UniformToFill"/>
-                                            </Border>
-
-                                            <!-- TEXT -->
-                                            <StackPanel Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    VerticalAlignment="Center">
-
-                                                <TextBlock Text="{Binding Title}"
-                                       Foreground="White"
-                                       FontSize="16"
-                                       TextTrimming="CharacterEllipsis"/>
-
-                                                <TextBlock Text="{Binding Publisher}"
-                                       Foreground="#AAAAAA"
-                                       FontSize="12"
-                                       TextTrimming="CharacterEllipsis"/>
-
-                                            </StackPanel>
-
-                                        </Grid>
-
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-
-                                <Style TargetType="ListViewItem">
-
-                                    <!-- BASE STYLE -->
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Padding" Value="10,6"/>
-
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-
-                                                <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            RenderTransformOrigin="0.5,0.5">
-
-                                                    <Border.RenderTransform>
-                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                    </Border.RenderTransform>
-
-                                                    <ContentPresenter />
-
-                                                    <VisualStateManager.VisualStateGroups>
-
-                                                        <VisualStateGroup x:Name="CommonStates">
-
-                                                            <!-- NORMAL -->
-                                                            <VisualState x:Name="Normal"/>
-
-                                                            <!-- HOVER -->
-                                                            <VisualState x:Name="PointerOver">
-                                                                <Storyboard>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.03"
-                                                         Duration="0:0:0.1"/>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.03"
-                                                         Duration="0:0:0.1"/>
-
-                                                                </Storyboard>
-                                                            </VisualState>
-
-                                                            <!-- PRESSED -->
-                                                            <VisualState x:Name="Pressed">
-                                                                <Storyboard>
-
-                                                                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
-                                                                </Storyboard>
-                                                            </VisualState>
-
-                                                        </VisualStateGroup>
-
-                                                    </VisualStateManager.VisualStateGroups>
-
-                                                </Border>
-
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-
-                                </Style>
-
-                            </ListView.ItemContainerStyle>
-
-                        </ListView>
-
-                    </Grid>
-
-                </Grid>
-
                 <!-- ========================= -->
                 <!-- RIGHT COLUMN -->
                 <!-- ========================= -->
@@ -610,19 +424,24 @@
 
                     <!-- PUBLISHER AREA -->
                     <Border Grid.Row="1"
-                Background="#22000000"
-                Padding="20">
+        Background="#22000000"
+        Padding="20">
 
                         <StackPanel>
 
                             <TextBlock Text="Publisher"
-                           Foreground="#AAAAAA"
-                           FontSize="12"/>
+                   Foreground="#AAAAAA"
+                   FontSize="12"/>
 
-                            <TextBlock Text="{Binding Publisher}"
-                           Foreground="White"
-                           FontSize="22"
-                           FontWeight="Light"/>
+                            <!-- Hyperlink replacing the static TextBlock -->
+                            <HyperlinkButton Content="{Binding Publisher}"
+                         Click="Publisher_Click"
+                         Foreground="White"
+                         FontSize="22"
+                         FontWeight="Light"
+                         Padding="0"
+                         Margin="0,4,0,0"
+                         HorizontalAlignment="Left"/>
 
                         </StackPanel>
 
@@ -648,19 +467,24 @@
                             <TextBox x:Name="ReviewCommentBox"
              PlaceholderText="Write your review..."
              AcceptsReturn="True"
-             Height="120"
+             Height="60"
              TextWrapping="Wrap"/>
 
-                            <ComboBox x:Name="ReviewRatingBox"
-              Header="Rating"
-              Margin="0,10,0,0"
-              SelectedIndex="4">
-                                <ComboBoxItem Content="1"/>
-                                <ComboBoxItem Content="2"/>
-                                <ComboBoxItem Content="3"/>
-                                <ComboBoxItem Content="4"/>
-                                <ComboBoxItem Content="5"/>
-                            </ComboBox>
+                            <!-- YOUR RATING (Interactive Stars) -->
+                            <StackPanel Margin="0,12,0,0">
+                                <TextBlock Text="Your rating"
+                           Foreground="#CFCFCF"
+                           FontSize="14"
+                           Margin="0,0,0,6"/>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="InputStar1" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="30" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" Tag="1" Tapped="RatingStar_Tapped"/>
+                                    <TextBlock x:Name="InputStar2" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="30" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" Tag="2" Tapped="RatingStar_Tapped"/>
+                                    <TextBlock x:Name="InputStar3" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="30" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" Tag="3" Tapped="RatingStar_Tapped"/>
+                                    <TextBlock x:Name="InputStar4" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="30" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" Tag="4" Tapped="RatingStar_Tapped"/>
+                                    <TextBlock x:Name="InputStar5" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="30" Foreground="{StaticResource AccentBrush}" Margin="0,0,8,0" Tag="5" Tapped="RatingStar_Tapped"/>
+                                </StackPanel>
+                            </StackPanel>
 
                             <!-- Displayed when the user has NOT reviewed yet -->
                             <Button x:Name="SubmitReviewBtn"
@@ -711,47 +535,108 @@
 
                         </StackPanel>
 
-                        <StackPanel Margin="0,30,0,0">
+                        <StackPanel Margin="0,20,0,0" Width="260" HorizontalAlignment="Left">
 
-                            <!-- Section Header -->
-                            <TextBlock Text="REVIEW STATISTICS"
-                   FontSize="16"
+                            <!-- Big Rating Header -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,6">
+                                <TextBlock x:Name="AverageRatingText"
+                   Text="5.0"
+                   FontSize="64"
                    FontWeight="Light"
-                   Foreground="#B0B0B0"
-                   Margin="0,0,0,20"/>
+                   Foreground="White"
+                   LineHeight="60"
+                   VerticalAlignment="Bottom"/>
+                                <TextBlock Text="average rating"
+                   FontSize="14"
+                   Foreground="#CFCFCF"
+                   Margin="10,0,0,12"
+                   VerticalAlignment="Bottom"/>
+                            </StackPanel>
 
-                            <!-- Statistics Row -->
-                            <Grid>
+                            <!-- Top Separator -->
+                            <Rectangle Height="1" Fill="#55FFFFFF" Margin="0,0,0,8"/>
+
+                            <!-- Star Icons (Uses Segoe UI Symbol font) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                                <TextBlock x:Name="Star1" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="26" Foreground="{StaticResource AccentBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="Star2" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="26" Foreground="{StaticResource AccentBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="Star3" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="26" Foreground="{StaticResource AccentBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="Star4" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="26" Foreground="{StaticResource AccentBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="Star5" Text="&#xE1CF;" FontFamily="Segoe UI Symbol" FontSize="26" Foreground="{StaticResource AccentBrush}" Margin="0,0,6,0"/>
+                            </StackPanel>
+
+                            <!-- Ratings Count Header -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,6">
+                                <TextBlock x:Name="ReviewCountText"
+                   Text="0"
+                   FontSize="32"
+                   FontWeight="Normal"
+                   Foreground="White"
+                   VerticalAlignment="Bottom"/>
+                                <TextBlock Text="ratings"
+                   FontSize="14"
+                   Foreground="#CFCFCF"
+                   Margin="8,0,0,4"
+                   VerticalAlignment="Bottom"/>
+                            </StackPanel>
+
+                            <!-- Ratings Separator -->
+                            <Rectangle Height="1" Fill="#55FFFFFF" Margin="0,0,0,12"/>
+
+                            <!-- Breakdown Bars (5 to 1) -->
+                            <Grid Margin="0,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="65"/>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Average Rating -->
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock x:Name="AverageRatingText"
-                           Text="4.8"
-                           FontSize="56"
-                           FontWeight="Light"
-                           Foreground="{StaticResource AccentBrush}"/>
+                                <!-- 5 stars -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="5 stars" Foreground="#CFCFCF" FontSize="14" VerticalAlignment="Center" Margin="0,3"/>
+                                <Grid Grid.Row="0" Grid.Column="1" Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                                    <Rectangle Fill="#33FFFFFF" Height="12" Width="120" HorizontalAlignment="Left"/>
+                                    <Rectangle x:Name="Bar5" Fill="{StaticResource AccentBrush}" Height="12" Width="0" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <TextBlock Grid.Row="0" Grid.Column="2" x:Name="Count5Text" Text="0" Foreground="#CFCFCF" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-                                    <TextBlock Text="Average Rating"
-                           FontSize="16"
-                           Foreground="#CFCFCF"/>
-                                </StackPanel>
+                                <!-- 4 stars -->
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="4 stars" Foreground="#CFCFCF" FontSize="14" VerticalAlignment="Center" Margin="0,3"/>
+                                <Grid Grid.Row="1" Grid.Column="1" Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                                    <Rectangle Fill="#33FFFFFF" Height="12" Width="120" HorizontalAlignment="Left"/>
+                                    <Rectangle x:Name="Bar4" Fill="{StaticResource AccentBrush}" Height="12" Width="0" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <TextBlock Grid.Row="1" Grid.Column="2" x:Name="Count4Text" Text="0" Foreground="#CFCFCF" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-                                <!-- Review Count -->
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock x:Name="ReviewCountText"
-                           Text="245"
-                           FontSize="56"
-                           FontWeight="Light"
-                           Foreground="#FFFFFF"/>
+                                <!-- 3 stars -->
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="3 stars" Foreground="#CFCFCF" FontSize="14" VerticalAlignment="Center" Margin="0,3"/>
+                                <Grid Grid.Row="2" Grid.Column="1" Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                                    <Rectangle Fill="#33FFFFFF" Height="12" Width="120" HorizontalAlignment="Left"/>
+                                    <Rectangle x:Name="Bar3" Fill="{StaticResource AccentBrush}" Height="12" Width="0" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <TextBlock Grid.Row="2" Grid.Column="2" x:Name="Count3Text" Text="0" Foreground="#CFCFCF" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-                                    <TextBlock Text="Reviews"
-                           FontSize="16"
-                           Foreground="#CFCFCF"/>
-                                </StackPanel>
+                                <!-- 2 stars -->
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="2 stars" Foreground="#CFCFCF" FontSize="14" VerticalAlignment="Center" Margin="0,3"/>
+                                <Grid Grid.Row="3" Grid.Column="1" Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                                    <Rectangle Fill="#33FFFFFF" Height="12" Width="120" HorizontalAlignment="Left"/>
+                                    <Rectangle x:Name="Bar2" Fill="{StaticResource AccentBrush}" Height="12" Width="0" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <TextBlock Grid.Row="3" Grid.Column="2" x:Name="Count2Text" Text="0" Foreground="#CFCFCF" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                                <!-- 1 star -->
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="1 star" Foreground="#CFCFCF" FontSize="14" VerticalAlignment="Center" Margin="0,3"/>
+                                <Grid Grid.Row="4" Grid.Column="1" Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                                    <Rectangle Fill="#33FFFFFF" Height="12" Width="120" HorizontalAlignment="Left"/>
+                                    <Rectangle x:Name="Bar1" Fill="{StaticResource AccentBrush}" Height="12" Width="0" HorizontalAlignment="Left"/>
+                                </Grid>
+                                <TextBlock Grid.Row="4" Grid.Column="2" x:Name="Count1Text" Text="0" Foreground="#CFCFCF" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
 
                         </StackPanel>

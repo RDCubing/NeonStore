@@ -144,6 +144,10 @@
       <DependentUpon>Downloads.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Feedback.xaml.cs">
+      <DependentUpon>Feedback.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FeedbackService.cs" />
     <Compile Include="Languages.xaml.cs">
       <DependentUpon>Languages.xaml</DependentUpon>
     </Compile>
@@ -157,6 +161,12 @@
       <DependentUpon>Personalization.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublisherPage.xaml.cs">
+      <DependentUpon>PublisherPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Publishers.xaml.cs">
+      <DependentUpon>Publishers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Review.cs" />
     <Compile Include="ReviewService.cs" />
     <Compile Include="RootObject.cs" />
@@ -197,6 +207,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\NeonStore.Helper\bin\Debug\NeonStore.Helper.exe">
+      <Link>NeonStore.Helper.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
@@ -261,6 +275,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Feedback.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Languages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -270,6 +288,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Personalization.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PublisherPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Publishers.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
