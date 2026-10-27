@@ -27,14 +27,54 @@
             <!-- Section 1 body -->
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" TextWrapping="Wrap" Text="Your recent downloads appear here."/>
 
-            <Button Content="Clear history"
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Clear history" x:Name="ClearButton"
         Click="Clear_Click" Margin="0,0,0,25"/>
+                <Button x:Name="DeleteAllButton"
+        Content="Delete all" 
+        Background="DarkRed" 
+        Foreground="White"
+        Margin="0,0,0,25">
+                    <Button.Flyout>
+                        <Flyout x:Name="DeleteAllConfirmationFlyout">
+                            <StackPanel Width="260" Margin="4">
+                                <TextBlock Text="Delete all downloads?" 
+                           FontSize="16"
+                           FontFamily="Segoe UI"
+                           FontWeight="SemiLight"
+                           Margin="0,0,0,6"/>
+
+                                <TextBlock Text="This permanently removes all downloaded files and clears your download history." 
+                           FontSize="12"
+                           FontFamily="Segoe UI"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,16"/>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="Cancel" 
+                            Margin="0,0,10,0" 
+                            Click="CancelDeleteAll_Click"/>
+
+                                    <Button Content="Delete All" 
+                            Background="DarkRed" 
+                            Foreground="White"
+                            BorderThickness="0"
+                            Click="ConfirmDeleteAll_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+            </StackPanel>
+
 
             <Grid Height="450">
                 <!-- DOWNLOAD LIST -->
                 <ListView ItemsSource="{Binding Downloads}"
               SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Auto"
-          ScrollViewer.VerticalScrollMode="Auto"
+          ScrollViewer.VerticalScrollMode="Auto" IsItemClickEnabled="True"
+                          ItemClick="DownloadsList_ItemClick"
           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                     <ListView.ItemTemplate>

@@ -30,22 +30,213 @@
               Header="Reduce motion"
               Toggled="ReduceMotionToggle_Toggled"/>
 
-            <ComboBox x:Name="AccentColorCombo"
-          SelectionChanged="AccentColorCombo_SelectionChanged" Header="Accent color*"
-          PlaceholderText="Choose Accent Color">
-                <ComboBoxItem Content="Teal" Tag="#0F4C4C"/>
-                <ComboBoxItem Content="Neon Violet" Tag="#200589"/>
-                <ComboBoxItem Content="Gray" Tag="#2d2d30"/>
-                <ComboBoxItem Content="Green" Tag="#008A00"/>
-                <ComboBoxItem Content="Mint Green" Tag="#22b14c"/>
-                <ComboBoxItem Content="Light Blue" Tag="#0081CC"/>
-                <ComboBoxItem Content="Purple" Tag="#561269"/>
-                <ComboBoxItem Content="Orange" Tag="#D24726"/>
-                <ComboBoxItem Content="Azure" Tag="#008299"/>
-                <ComboBoxItem Content="Dark Blue" Tag="#0D47A1"/>
-                <ComboBoxItem Content="Dark Red" Tag="#8b0000"/>
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock Text="Accent color*"
+               Style="{StaticResource BodyTextBlockStyle}"
+               Margin="0,0,0,8"/>
 
-            </ComboBox>
+                <GridView x:Name="AccentColorGridView"
+          SelectionMode="Single"
+          SelectionChanged="AccentColorGridView_SelectionChanged"
+          ScrollViewer.VerticalScrollMode="Disabled"
+          ScrollViewer.HorizontalScrollMode="Disabled"
+          HorizontalAlignment="Left">
+
+                    <!-- 6 Columns, 44x44 cell bounds (2 rows of 6 = 12 items) -->
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid Orientation="Horizontal" 
+                      MaximumRowsOrColumns="6" 
+                      ItemWidth="44" 
+                      ItemHeight="44"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+
+                    <!-- Fixed Item Template: Enlarged 26x26 Purple Corner Badge & Selection Frame -->
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="2"/>
+                            <Setter Property="MinWidth" Value="40"/>
+                            <Setter Property="MinHeight" Value="40"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GridViewItem">
+                                        <Grid Width="40" Height="40">
+                                            <!-- Swatch Color Border -->
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                                            <!-- Selection Overlay -->
+                                            <Grid x:Name="SelectionGrid" Visibility="Collapsed">
+                                                <!-- 2px Purple Selection Outline (#4617B4) -->
+                                                <Border BorderBrush="#4617B4" 
+                                    BorderThickness="3" 
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch"/>
+
+                                                <!-- Scaled-Up 26x26 Top-Right Solid Purple Corner Triangle -->
+                                                <Polygon Points="0,0 26,0 26,26"
+                                     Fill="#4617B4"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Top"/>
+
+                                                <!-- Moved closer to the top-right edge (Margin reduced from 0,3,3,0 to 0,1,1,0) -->
+                                                <TextBlock Text="&#xE001;"
+                                                   FontFamily="Segoe UI Symbol"
+                                                   FontSize="9"
+                                                   Foreground="White"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Margin="0,1,1,0"/>
+                                            </Grid>
+
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="SelectionStates">
+                                                    <VisualState x:Name="Unselected"/>
+                                                    <VisualState x:Name="Selected">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="SelectedUnfocused">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+
+                    <!-- Standard Presets (11 Items) -->
+                    <Border Width="40" Height="40" Background="#0F4C4C" Tag="#0F4C4C"/>
+                    <Border Width="40" Height="40" Background="#200589" Tag="#200589"/>
+                    <Border Width="40" Height="40" Background="#2D2D30" Tag="#2d2d30"/>
+                    <Border Width="40" Height="40" Background="#008A00" Tag="#008A00"/>
+                    <Border Width="40" Height="40" Background="#22B14C" Tag="#22b14c"/>
+                    <Border Width="40" Height="40" Background="#0081CC" Tag="#0081CC"/>
+                    <Border Width="40" Height="40" Background="#561269" Tag="#561269"/>
+                    <Border Width="40" Height="40" Background="#D24726" Tag="#D24726"/>
+                    <Border Width="40" Height="40" Background="#008299" Tag="#008299"/>
+                    <Border Width="40" Height="40" Background="#0D47A1" Tag="#0D47A1"/>
+                    <Border Width="40" Height="40" Background="#8B0000" Tag="#8b0000"/>
+
+                    <!-- 12th Item: Custom Color Swatch Tile -->
+                    <Border x:Name="CustomColorBorder"
+            Width="40" Height="40"
+            Background="#333338"
+            Tag="CUSTOM"
+            Tapped="CustomColorBorder_Tapped">
+
+                        <!-- Attached Metro Color Swatcher Flyout -->
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="CustomColorFlyout">
+                                <StackPanel Width="220" Margin="4,0">
+                                    <!-- Flyout Metro Header -->
+                                    <TextBlock Text="Custom color"
+                   FontFamily="Segoe UI"
+                   FontWeight="SemiLight"
+                   FontSize="18"
+                   Foreground="#2B2B2B"
+                   Margin="0,0,0,10"/>
+
+                                    <!-- Swatch Preview Box -->
+                                    <Border x:Name="CustomPreviewBox"
+                Height="32"
+                Background="#333338"
+                BorderBrush="#D0D0D0"
+                BorderThickness="1"
+                Margin="0,0,0,10"/>
+
+                                    <!-- Hex Code Input with Metro Header -->
+                                    <TextBox x:Name="CustomHexInput"
+                 Header="Hex code"
+                 Text="#333338"
+                 MaxLength="7"
+                 FontFamily="Segoe UI"
+                 FontSize="13"
+                 Margin="0,0,0,8"
+                 TextChanged="CustomHexInput_TextChanged"/>
+
+                                    <!-- Red Slider with Numeric Value Indicator -->
+                                    <Grid Margin="0,0,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Red" FontFamily="Segoe UI" FontSize="12" Foreground="#2B2B2B" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="RedValText" Grid.Column="1" Text="51" FontFamily="Segoe UI" FontSize="12" Foreground="#666666" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <Slider x:Name="RedSlider"
+                Minimum="0" Maximum="255" Value="51"
+                Margin="0,-6,0,2"
+                ValueChanged="ColorSlider_ValueChanged"/>
+
+                                    <!-- Green Slider with Numeric Value Indicator -->
+                                    <Grid Margin="0,0,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Green" FontFamily="Segoe UI" FontSize="12" Foreground="#2B2B2B" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="GreenValText" Grid.Column="1" Text="51" FontFamily="Segoe UI" FontSize="12" Foreground="#666666" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <Slider x:Name="GreenSlider"
+                Minimum="0" Maximum="255" Value="51"
+                Margin="0,-6,0,2"
+                ValueChanged="ColorSlider_ValueChanged"/>
+
+                                    <!-- Blue Slider with Numeric Value Indicator -->
+                                    <Grid Margin="0,0,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Blue" FontFamily="Segoe UI" FontSize="12" Foreground="#2B2B2B" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="BlueValText" Grid.Column="1" Text="56" FontFamily="Segoe UI" FontSize="12" Foreground="#666666" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <Slider x:Name="BlueSlider"
+                Minimum="0" Maximum="255" Value="56"
+                Margin="0,-6,0,14"
+                ValueChanged="ColorSlider_ValueChanged"/>
+
+                                    <!-- Apply Button -->
+                                    <Button Content="Apply Color"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource AccentBrush}"
+                Foreground="White"
+                BorderThickness="0"
+                Padding="0,6"
+                Click="ApplyCustomColor_Click"/>
+                                </StackPanel>
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+
+                        <Grid>
+                            <!-- '+' Glyph displayed when unconfigured or to indicate editor -->
+                            <TextBlock x:Name="CustomAddGlyph"
+                       Text="+"
+                       FontFamily="Segoe UI Light"
+                       FontSize="20"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </GridView>
+            </StackPanel>
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,25" TextWrapping="Wrap">
                 <TextBlock.Text>
                     *A restart is highly recommended to load the saved settings!
@@ -57,14 +248,46 @@
         <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
 
             <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Settings" Margin="0,0,0,25" FontSize="28"/>
-            <ToggleSwitch x:Name="SideloadToggle" IsEnabled="False"
-              Header="Experimental Sideload*"
-              Toggled="SideloadToggle_Toggled"/>
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" FontStyle="Italic" Margin="0,0,0,0" TextWrapping="Wrap">
-                <TextBlock.Text>
-                    *This feature is now enabled by default and can't be disabled when you click &quot;Download&quot;, staring at version 2.0.26264.0! Old downloading and opening can be accessed through &quot;More options...&quot;!
-                </TextBlock.Text>
-            </TextBlock>
+            <!-- Auto Update Toggle -->
+            <ToggleSwitch x:Name="AutoUpdateToggle"
+              Header="Automatically check for updates"
+              Toggled="AutoUpdateToggle_Toggled"
+              Margin="0,0,0,16"/>
+
+            <!-- Toast Notifications Toggle -->
+            <ToggleSwitch x:Name="ToastToggle"
+              Header="Toast notifications"
+              Toggled="ToastToggle_Toggled"
+              Margin="0,0,0,16"/>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
+               Text="Sideload Helper" 
+               FontSize="20" 
+               Margin="0,0,0,10"/>
+
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" 
+               Text="If you encounter issues installing packages or the helper is outdated, re-copy the packaged executable to your Pictures\NeonStore folder."
+               TextWrapping="Wrap" 
+               Margin="0,0,0,14"/>
+
+            <Button x:Name="ReinstallHelperButton"
+            Content="Re-copy Helper Executable"
+            HorizontalAlignment="Stretch"
+            Click="ReinstallHelper_Click"/>
+
+            <!-- Inline Progress Bar in Flyout -->
+            <ProgressBar x:Name="HelperProgressBar"
+                 IsIndeterminate="True"
+                 Height="4"
+                 Margin="0,10,0,6"
+                 Visibility="Collapsed"/>
+
+            <!-- Inline Status/Result Message in Flyout -->
+            <TextBlock Foreground="Black" x:Name="HelperStatusText"
+               FontSize="12"
+               FontFamily="Segoe UI"
+               TextWrapping="Wrap"
+               Visibility="Collapsed"/>
+
 
         </StackPanel>
 

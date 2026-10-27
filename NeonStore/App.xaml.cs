@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
+using Windows.Storage;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -89,12 +90,19 @@ namespace NeonStore
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            bool autoUpdate =
+                (bool?)ApplicationData.Current.LocalSettings.Values["AutoUpdate"] ?? true;
+
             SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
             ThemeManager.ApplyAccent();
             // 1. Check JWT expiration on launch
             await AuthService.LogoutIfExpired();
             await NeonStoreService.LoadAsync();
-            await AutoUpdateService.CheckAsync();
+            if (autoUpdate)
+            {
+                await AutoUpdateService.CheckAsync();
+            }
             await DownloadHistoryService.Instance.LoadAsync();
             UpdateRandomTopAppTile();
 

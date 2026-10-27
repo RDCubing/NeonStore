@@ -235,475 +235,85 @@
 
                     <!-- Title -->
                     <TextBlock Grid.Row="0"
-               Text="Books/Reference"
+               Text="Categories"
                FontSize="36"
                FontWeight="Light"
                Foreground="White"
                Margin="0,0,0,10"
                TextWrapping="Wrap"/>
 
-                    <GridView Grid.Row="1" ItemsSource="{Binding BooksReference}"
-          IsItemClickEnabled="True"
-          ItemClick="AppsGrid_ItemClick"
-          Margin="0,0,0,100"
-          ScrollViewer.HorizontalScrollMode="Enabled"
-          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-          ScrollViewer.VerticalScrollMode="Disabled"
-          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <!-- Category Links List -->
+                    <ListView Grid.Row="1" ItemsSource="{Binding Categories}"
+              SelectionMode="None"
+              IsItemClickEnabled="True"
+              ItemClick="CategoryList_ItemClick"
+              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+              ScrollViewer.HorizontalScrollMode="Disabled">
 
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Vertical"
-                                               MaximumRowsOrColumns="2"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-
-                        <GridView.ItemTemplate>
+                        <ListView.ItemTemplate>
                             <DataTemplate>
-
-                                <Border Width="160"
-            Height="210"
-            Background="Transparent"
-            Margin="5">
-
-                                    <Grid>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- IMAGE -->
-                                        <Image Grid.Row="0"
-                   Source="{Binding ImagePath}"
-                   Stretch="UniformToFill"/>
-
-                                        <!-- TITLE -->
-                                        <TextBlock Grid.Row="1"
-                       Text="{Binding Title}"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="Light"
-                       Margin="8,8,8,0"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                        <!-- PUBLISHER -->
-                                        <TextBlock Grid.Row="2"
-                       Text="{Binding Publisher}"
-                       Foreground="#AAAAAA"
-                       FontSize="11"
-                       Margin="8,4,8,8"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                    </Grid>
-
-                                </Border>
-
+                                <TextBlock Text="{Binding}" 
+                           FontFamily="Segoe UI"
+                           FontSize="23"
+                           FontWeight="Light"
+                           Foreground="{StaticResource AccentBrush}"
+                           Margin="0,2,0,4"/>
                             </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
+                        </ListView.ItemTemplate>
 
-                            <Style TargetType="GridViewItem">
-
-                                <!-- NORMAL -->
+                        <!-- Strips default ListView item padding and selection chrome -->
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewItem">
-
+                                        <ControlTemplate TargetType="ListViewItem">
                                             <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-
+                                    Background="Transparent"
+                                    RenderTransformOrigin="0.5,0.5">
                                                 <Border.RenderTransform>
                                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                                 </Border.RenderTransform>
 
-                                                <ContentPresenter />
+                                                <ContentPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                                                 <VisualStateManager.VisualStateGroups>
-
                                                     <VisualStateGroup x:Name="CommonStates">
-
-                                                        <!-- NORMAL -->
                                                         <VisualState x:Name="Normal"/>
-
-                                                        <!-- POINTER OVER (HOVER) -->
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.75"
+                                                                 Duration="0:0:0.1"/>
                                                             </Storyboard>
                                                         </VisualState>
-
-                                                        <!-- PRESSED -->
                                                         <VisualState x:Name="Pressed">
                                                             <Storyboard>
-
                                                                 <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.5"
+                                                                 Duration="0:0:0.05"/>
                                                             </Storyboard>
                                                         </VisualState>
-
                                                     </VisualStateGroup>
-
                                                 </VisualStateManager.VisualStateGroups>
-
                                             </Border>
-
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-
                             </Style>
-
-                        </GridView.ItemContainerStyle>
-
-                    </GridView>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
                 </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="25,0,25,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="News"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <GridView Grid.Row="1" ItemsSource="{Binding News}"
-          IsItemClickEnabled="True"
-          ItemClick="AppsGrid_ItemClick"
-          Margin="0,0,0,100"
-          ScrollViewer.HorizontalScrollMode="Enabled"
-          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-          ScrollViewer.VerticalScrollMode="Disabled"
-          ScrollViewer.VerticalScrollBarVisibility="Disabled">
-
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Vertical"
-                                               MaximumRowsOrColumns="2"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-
-                                <Border Width="160"
-            Height="210"
-            Background="Transparent"
-            Margin="5">
-
-                                    <Grid>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- IMAGE -->
-                                        <Image Grid.Row="0"
-                   Source="{Binding ImagePath}"
-                   Stretch="UniformToFill"/>
-
-                                        <!-- TITLE -->
-                                        <TextBlock Grid.Row="1"
-                       Text="{Binding Title}"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="Light"
-                       Margin="8,8,8,0"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                        <!-- PUBLISHER -->
-                                        <TextBlock Grid.Row="2"
-                       Text="{Binding Publisher}"
-                       Foreground="#AAAAAA"
-                       FontSize="11"
-                       Margin="8,4,8,8"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                    </Grid>
-
-                                </Border>
-
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
-
-                            <Style TargetType="GridViewItem">
-
-                                <!-- NORMAL -->
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewItem">
-
-                                            <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-
-                                                <Border.RenderTransform>
-                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                </Border.RenderTransform>
-
-                                                <ContentPresenter />
-
-                                                <VisualStateManager.VisualStateGroups>
-
-                                                    <VisualStateGroup x:Name="CommonStates">
-
-                                                        <!-- NORMAL -->
-                                                        <VisualState x:Name="Normal"/>
-
-                                                        <!-- POINTER OVER (HOVER) -->
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                        <!-- PRESSED -->
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                    </VisualStateGroup>
-
-                                                </VisualStateManager.VisualStateGroups>
-
-                                            </Border>
-
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-
-                            </Style>
-
-                        </GridView.ItemContainerStyle>
-
-                    </GridView>
-                </Grid>
-                <!-- Welcome Section -->
-                <Grid Width="Auto" Margin="25,0,25,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Links header -->
-                        <RowDefinition Height="*"/>
-                        <!-- Links list (fills space) -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Title -->
-                    <TextBlock Grid.Row="0"
-               Text="Entertainment"
-               FontSize="36"
-               FontWeight="Light"
-               Foreground="White"
-               Margin="0,0,0,10"
-               TextWrapping="Wrap"/>
-
-                    <GridView Grid.Row="1" ItemsSource="{Binding Entertainment}"
-          IsItemClickEnabled="True"
-          ItemClick="AppsGrid_ItemClick"
-          Margin="0,0,0,100"
-          ScrollViewer.HorizontalScrollMode="Enabled"
-          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-          ScrollViewer.VerticalScrollMode="Disabled"
-          ScrollViewer.VerticalScrollBarVisibility="Disabled">
-
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Vertical"
-                                               MaximumRowsOrColumns="2"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-
-                                <Border Width="160"
-            Height="210"
-            Background="Transparent"
-            Margin="5">
-
-                                    <Grid>
-
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- IMAGE -->
-                                        <Image Grid.Row="0"
-                   Source="{Binding ImagePath}"
-                   Stretch="UniformToFill"/>
-
-                                        <!-- TITLE -->
-                                        <TextBlock Grid.Row="1"
-                       Text="{Binding Title}"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="Light"
-                       Margin="8,8,8,0"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                        <!-- PUBLISHER -->
-                                        <TextBlock Grid.Row="2"
-                       Text="{Binding Publisher}"
-                       Foreground="#AAAAAA"
-                       FontSize="11"
-                       Margin="8,4,8,8"
-                       TextTrimming="CharacterEllipsis"/>
-
-                                    </Grid>
-
-                                </Border>
-
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
-
-                            <Style TargetType="GridViewItem">
-
-                                <!-- NORMAL -->
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewItem">
-
-                                            <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-
-                                                <Border.RenderTransform>
-                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                </Border.RenderTransform>
-
-                                                <ContentPresenter />
-
-                                                <VisualStateManager.VisualStateGroups>
-
-                                                    <VisualStateGroup x:Name="CommonStates">
-
-                                                        <!-- NORMAL -->
-                                                        <VisualState x:Name="Normal"/>
-
-                                                        <!-- POINTER OVER (HOVER) -->
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                        <!-- PRESSED -->
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                    </VisualStateGroup>
-
-                                                </VisualStateManager.VisualStateGroups>
-
-                                            </Border>
-
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-
-                            </Style>
-
-                        </GridView.ItemContainerStyle>
-
-                    </GridView>
-                </Grid>
+                
             </StackPanel>
         </ScrollViewer>
 
@@ -738,22 +348,6 @@
                     <AppBarButton Icon="AllApps"
                       Label="All Apps"
                       Click="GoToApps_Click"/>
-
-                    <AppBarButton Icon="Bookmarks"
-                      Label="Categories"
-                      Click="CatApps_Click"/>
-
-                    <AppBarButton Icon="People"
-                      Label="Publishers"
-                      Click="Pub_Click"/>
-
-                    <AppBarButton Icon="Favorite"
-                      Label="Top Apps"
-                      Click="TopApps_Click"/>
-
-                    <AppBarButton Icon="Upload"
-                      Label="App Uploader"
-                      Click="UpApps_Click"/>
 
                     <AppBarButton Icon="Refresh"
                       Label="Refresh"

@@ -145,6 +145,15 @@ namespace NeonStore
             flyout.Show();
         }
 
+        private void CategoryList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var category = e.ClickedItem as string;
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                Frame.Navigate(typeof(Apps), "Category:" + category);
+            }
+        }
+
         private void NavigateToApp(string id)
         {
             var app = NeonStoreService.NeonStore

@@ -74,7 +74,13 @@ namespace NeonStore
                 {
                     var uri = new Uri(update.DownloadUrl);
 
-                    ToastService.Show("Update started", update.Name, null);
+                    bool toast =
+    (bool?)ApplicationData.Current.LocalSettings.Values["Toast"] ?? true;
+
+                    if (toast)
+                    {
+                        ToastService.Show("Update started", update.Name, null);
+                    }
 
                     var picker = new Windows.Storage.Pickers.FileSavePicker();
                     picker.SuggestedStartLocation =
@@ -104,7 +110,10 @@ namespace NeonStore
 
                     await FileIO.WriteBufferAsync(file, buffer);
 
-                    ToastService.Show1("Update downloaded", update.Name);
+                    if (toast)
+                    {
+                        ToastService.Show1("Update downloaded", update.Name);
+                    }
 
                     var installDialog = new MessageDialog(
                         $"\"{file.Name}\" downloaded. Install now?");

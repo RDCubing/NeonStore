@@ -35,6 +35,7 @@
         * Row 0 contains the back button and page title
         * Row 1 contains the rest of the page layout
     -->
+    
     <Grid>
 
         <Grid.Background>
@@ -120,10 +121,10 @@
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
 
-                                        <MenuFlyoutItem Text="Download (legacy)"
+                                        <MenuFlyoutItem Text="Download (legacy)" x:Name="DownloadOld"
                                                         Click="OldDownload_Click"/>
 
-                                        <MenuFlyoutItem Text="Save As..."
+                                        <MenuFlyoutItem Text="Save As..." x:Name="SaveAs"
                                                         Click="OpenProject_Click"/>
 
                                         <MenuFlyoutItem Text="Open in Browser"
@@ -663,158 +664,271 @@
                FontWeight="Light"
                Margin="0,0,0,10"/>
 
-                    <!-- REVIEWS GRID -->
-                    <ListView Grid.Row="1"
+                    <!-- REVIEWS DISPLAY (HORIZONTAL GRIDVIEW + SIDE PAGINATION COLUMN) -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <!-- Horizontal Reviews GridView takes primary space -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Side Pagination Column -->
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- HORIZONTAL METRO GRIDVIEW -->
+                        <GridView Grid.Column="0"
               x:Name="ReviewsGrid"
-              SelectionMode="None"
-              ScrollViewer.HorizontalScrollMode="Disabled"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              ScrollViewer.VerticalScrollMode="Enabled"
-              ScrollViewer.VerticalScrollBarVisibility="Auto">
+              SelectionMode="None" IsItemClickEnabled="True"
+          ItemClick="ReviewsGrid_ItemClick"
+              ScrollViewer.HorizontalScrollMode="Enabled"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+              ScrollViewer.VerticalScrollMode="Disabled"
+              ScrollViewer.VerticalScrollBarVisibility="Disabled">
 
-                        <!-- REVIEWS LIST -->
-                        <!-- REVIEWS LIST -->
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <!-- Authentic Compact Metro Review Tile (No side bar, flat background, strict typographic hierarchy) -->
-                                <Border Width="380"
-                Background="#FF1A1A1E"
-                Margin="0,0,0,18"
-                Padding="16,14"
-                HorizontalAlignment="Left">
-                                    <StackPanel Orientation="Vertical">
+                            <!-- 2-Row Horizontal Metro Wrapping Layout -->
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Vertical" MaximumRowsOrColumns="2"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
 
-                                        <!-- 1. Top: Compact Square Avatar Tile (Pure XAML Fallback) -->
-                                        <Grid Width="48"
-                      Height="48"
-                      HorizontalAlignment="Left"
-                      Margin="0,0,0,10">
-                                            <!-- Layer 1: Default Fallback Asset -->
-                                            <Image Source="ms-appx:///Assets/user-200.png"
-                           Stretch="UniformToFill"
-                           Width="48"
-                           Height="48"/>
-                                            <!-- Layer 2: Discord/Web Avatar -->
-                                            <Image Source="{Binding avatar}"
-                           Stretch="UniformToFill"
-                           Width="48"
-                           Height="48"/>
+                            <!-- Compact Flat Metro Review Card -->
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="360"
+                        Height="190"
+                        Background="#FF1A1A1E"
+                        Margin="0,0,16,16"
+                        Padding="16,14"
+                        HorizontalAlignment="Left">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <!-- Row 0: Avatar + User & Rating Metadata -->
+                                                <RowDefinition Height="Auto"/>
+                                                <!-- Row 1: Review Comment with Ellipsis -->
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Row 0: Header with Avatar & Byline -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Compact Avatar Tile (Layered Pure XAML Fallback) -->
+                                                <Grid Grid.Column="0"
+                                  Width="42"
+                                  Height="42"
+                                  VerticalAlignment="Top"
+                                  Margin="0,0,12,0">
+                                                    <!-- Layer 1: Default Built-In Asset -->
+                                                    <Image Source="ms-appx:///Assets/user-200.png"
+                                       Stretch="UniformToFill"
+                                       Width="42"
+                                       Height="42"/>
+                                                    <!-- Layer 2: Remote Avatar -->
+                                                    <Image Stretch="UniformToFill"
+                                       Width="42"
+                                       Height="42">
+                                                        <Image.Source>
+                                                            <BitmapImage UriSource="{Binding avatar}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Grid>
+
+                                                <!-- User Metadata Details -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <!-- Username (Segoe UI SemiLight Metro Heading) -->
+                                                    <TextBlock Text="{Binding username}"
+                                           FontFamily="Segoe UI"
+                                           FontWeight="SemiLight"
+                                           FontSize="16"
+                                           Foreground="White"
+                                           TextTrimming="CharacterEllipsis"/>
+
+                                                    <!-- Rating & Timestamp Line -->
+                                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="★"
+                                               FontSize="12"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding rating}"
+                                               FontFamily="Segoe UI"
+                                               FontWeight="SemiBold"
+                                               FontSize="12"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               Margin="3,0,6,0"
+                                               VerticalAlignment="Center"/>
+
+                                                        <TextBlock Text="•"
+                                               FontFamily="Segoe UI"
+                                               FontSize="10"
+                                               Foreground="#666666"
+                                               Margin="0,0,6,0"
+                                               VerticalAlignment="Center"/>
+
+                                                        <TextBlock Text="{Binding updatedAt}"
+                                               FontFamily="Segoe UI"
+                                               FontWeight="Normal"
+                                               FontSize="11"
+                                               Foreground="#8E8E93"
+                                               VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- Row 1: Review Comment (Strict Metro Typography with Truncation Ellipsis) -->
+                                            <TextBlock Grid.Row="1"
+                                   Text="{Binding comment}"
+                                   FontFamily="Segoe UI"
+                                   FontWeight="Normal"
+                                   FontSize="13"
+                                   LineHeight="18"
+                                   Foreground="#CCCCCC"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Stretch"/>
                                         </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
 
-                                        <!-- 2. Reviewer Name (Segoe UI Semilight / Metro Heading Style) -->
-                                        <TextBlock Text="{Binding username}"
-                           FontFamily="Segoe UI"
-                           FontWeight="SemiLight"
-                           FontSize="18"
-                           Foreground="White"
-                           TextTrimming="CharacterEllipsis"/>
+                            <!-- Clean Metro Item Hover / Tap State -->
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewItem">
+                                                <Border x:Name="Root"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="0"
+                                    RenderTransformOrigin="0.5,0.5">
+                                                    <Border.RenderTransform>
+                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                    </Border.RenderTransform>
 
-                                        <!-- 3. Sub-header Metadata Line: Star Rating & Timestamp -->
-                                        <StackPanel Orientation="Horizontal" Margin="0,3,0,8" VerticalAlignment="Center">
-                                            <!-- Star Rating Indicator -->
-                                            <TextBlock Text="★"
-                               FontSize="13"
-                               Foreground="{StaticResource AccentBrush}"
-                               VerticalAlignment="Center"/>
-                                            <TextBlock Text="{Binding rating}"
-                               FontFamily="Segoe UI"
-                               FontWeight="SemiBold"
-                               FontSize="13"
-                               Foreground="{StaticResource AccentBrush}"
-                               Margin="3,0,6,0"
-                               VerticalAlignment="Center"/>
+                                                    <ContentPresenter/>
 
-                                            <!-- Bullet Separator -->
-                                            <TextBlock Text="•"
-                               FontFamily="Segoe UI"
-                               FontSize="11"
-                               Foreground="#666666"
-                               Margin="0,0,6,0"
-                               VerticalAlignment="Center"/>
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.9"
+                                                                 Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="Root"
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.75"
+                                                                 Duration="0:0:0.05"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                        </GridView>
 
-                                            <!-- Date -->
-                                            <TextBlock Text="{Binding updatedAt}"
-                               FontFamily="Segoe UI"
-                               FontWeight="Normal"
-                               FontSize="11"
-                               Foreground="#8E8E93"
-                               VerticalAlignment="Center"/>
-                                        </StackPanel>
+                        <!-- COLUMNED PAGINATION (Side Column with Flat Accent Text Buttons) -->
+                        <StackPanel x:Name="PaginationPanel"
+                Grid.Column="1"
+                Orientation="Vertical"
+                VerticalAlignment="Top"
+                Margin="24,0,0,0"
+                Visibility="Collapsed">
 
-                                        <!-- 4. Review Body (Clean flat Metro body text) -->
-                                        <TextBlock Text="{Binding comment}"
-                           FontFamily="Segoe UI"
-                           FontWeight="Normal"
-                           FontSize="13"
-                           LineHeight="18"
-                           Foreground="#CCCCCC"
-                           TextWrapping="Wrap"
-                           HorizontalAlignment="Stretch"/>
+                            <StackPanel.Resources>
+                                <!-- Borderless Metro Text Button Style -->
+                                <Style x:Key="MetroPaginationTextButtonStyle" TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+                                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="0,6"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid Background="Transparent">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                  Content="{TemplateBinding Content}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.7" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.4" Duration="0:0:0.05"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                                 Storyboard.TargetProperty="Opacity"
+                                                                 To="0.25" Duration="0"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </StackPanel.Resources>
 
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
+                            <!-- Page Indicator Subtitle -->
+                            <TextBlock x:Name="PageIndicatorText"
+                   Text="Page 1 of 1"
+                   FontFamily="Segoe UI"
+                   FontWeight="SemiLight"
+                   FontSize="16"
+                   Foreground="White"
+                   Margin="0,0,0,8"/>
 
-                        <!-- Metro Container Style -->
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                <Setter Property="VerticalContentAlignment" Value="Top"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-                                                <Border.RenderTransform>
-                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                </Border.RenderTransform>
+                            <!-- Row of Flat Text Buttons -->
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="PrevPageBtn"
+                    Content="Previous"
+                    Style="{StaticResource MetroPaginationTextButtonStyle}"
+                    Margin="0,0,16,0"
+                    Click="PrevPageBtn_Click"/>
 
-                                                <ContentPresenter/>
-
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="Normal"/>
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.92"
-                                                         Duration="0:0:0.1"/>
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.015"
-                                                         Duration="0:0:0.1"/>
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.015"
-                                                         Duration="0:0:0.1"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.75"
-                                                         Duration="0:0:0.05"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-
-                    </ListView>
+                                <Button x:Name="NextPageBtn"
+                    Content="Next"
+                    Style="{StaticResource MetroPaginationTextButtonStyle}"
+                    Click="NextPageBtn_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                     <!-- WINDOWS 8 EMPTY STATE -->
                     <StackPanel x:Name="EmptyStatePanel"
             Grid.Row="1"
@@ -847,6 +961,7 @@
 
         </ScrollViewer>
     </Grid>
+    
     <Page.BottomAppBar>
         <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="False">
 
@@ -874,11 +989,15 @@
 
                     </StackPanel>
 
-                    <AppBarButton Icon="Download"
+                    <AppBarButton Icon="Download" x:Name="DownloadBar"
                       Label="Download"
                       Click="InstantDownload_Click"/>
 
-                    <AppBarButton Icon="Save"
+                    <AppBarButton Icon="Download" x:Name="DownloadOldBar"
+                      Label="Download (legacy)"
+                      Click="OldDownload_Click"/>
+
+                    <AppBarButton Icon="Save" x:Name="OpenProjectBar"
                       Label="Save As..."
                       Click="OpenProject_Click"/>
 

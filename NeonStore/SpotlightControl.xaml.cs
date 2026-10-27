@@ -69,10 +69,29 @@ namespace NeonStore
         {
             if (NeonStoreService.NeonStore == null || NeonStoreService.NeonStore.Count == 0) return;
 
-            spotlightApps = NeonStoreService.TopApps != null && NeonStoreService.TopApps.Count > 0
-                ? NeonStoreService.TopApps.ToList()
-                : NeonStoreService.NeonStore.Take(10).ToList();
+            var random = new Random();
 
+            // 1. Group apps by category, shuffle categories randomly, and take up to 10 distinct categories
+            var randomCategoryGroups = NeonStoreService.NeonStore
+                .Where(a => !string.IsNullOrWhiteSpace(a.Category))
+                .GroupBy(a => a.Category)
+                .OrderBy(_ => random.Next())
+                .Take(10)
+                .ToList();
+
+            var selectedApps = new List<AppItem>();
+
+            // 2. Pick one random AppItem representative per selected category
+            foreach (var group in randomCategoryGroups)
+            {
+                var appList = group.ToList();
+                var representativeApp = appList[random.Next(appList.Count)];
+                selectedApps.Add(representativeApp);
+            }
+
+            spotlightApps = selectedApps;
+
+            // ItemsSource is bound to List<AppItem>, preserving all XAML bindings (Title, ImagePath, etc.)
             StripAppsItemsControl.ItemsSource = spotlightApps;
         }
 

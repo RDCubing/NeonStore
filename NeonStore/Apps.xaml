@@ -74,15 +74,17 @@
         VerticalScrollBarVisibility="Disabled"
         ZoomMode="Disabled">
 
-                <GridView x:Name="ProjectsGrid" IsItemClickEnabled="True" ItemClick="ProjectsGrid_ItemClick"
-          ItemsSource="{Binding}"
-          Margin="40,40,40,100">
+                <GridView x:Name="ProjectsGrid"
+              IsItemClickEnabled="True"
+              ItemClick="ProjectsGrid_ItemClick"
+              ItemsSource="{Binding}"
+              Margin="40,10,0,40">
                     <GridView.RenderTransform>
                         <TranslateTransform x:Name="MainPanelTransform"
                             X="200"/>
                     </GridView.RenderTransform>
 
-                    <!-- ✅ Horizontal + only 2 rows -->
+                    <!-- WRAP LAYOUT -->
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid Orientation="Vertical"/>
@@ -91,70 +93,91 @@
 
                     <GridView.ItemTemplate>
                         <DataTemplate>
+                            <!-- Windows 8.1 Transparent Banner Tile (Compact Footprint: 260 x 215) -->
+                            <Grid Width="260" Height="215" Margin="0,0,18,18" Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <!-- 1. Banner Image Container -->
+                                    <RowDefinition Height="130"/>
+                                    <!-- 2. Text Information Stack -->
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                            <!-- Windows 8 style tile -->
-                            <Grid Height="130"
-              Width="380"
-              Margin="8"
-              Background="Transparent">
+                                <!-- 1. BANNER IMAGE + STAMPED LOGO OVERLAY -->
+                                <Grid Grid.Row="0">
+                                    <!-- Background Hero / Detail Image -->
+                                    <Border Background="#18181A">
+                                        <Image Source="{Binding DetailImagePath}"
+                           Stretch="UniformToFill"/>
+                                    </Border>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="130"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                                    <!-- Subtle dark vignette at the bottom of the banner for high contrast -->
+                                    <Rectangle VerticalAlignment="Bottom" Height="48">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#00000000" Offset="0.0"/>
+                                                <GradientStop Color="#66000000" Offset="1.0"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
 
-                                <!-- IMAGE TILE -->
-                                <Border Grid.Column="0"
-                    Background="{StaticResource AccentBrush}">
+                                    <!-- STAMPED APP LOGO (Anchored bottom-left corner) -->
+                                    <Border Width="40" 
+                        Height="40" 
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        Margin="8"
+                        Background="#CC1E1E22">
+                                        <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                                    </Border>
+                                </Grid>
 
-                                    <Image Source="{Binding ImagePath}"
-                       Stretch="UniformToFill"/>
-
-                                </Border>
-
-                                <!-- TEXT AREA -->
-                                <StackPanel Grid.Column="1"
-                        Margin="14"
-                        VerticalAlignment="Center">
+                                <!-- 2. TEXT AREA -->
+                                <StackPanel Grid.Row="1" Margin="0,6,0,0">
 
                                     <!-- Title -->
                                     <TextBlock Text="{Binding Title}"
+                           FontFamily="Segoe UI"
+                           FontSize="15"
+                           FontWeight="SemiLight"
                            Foreground="White"
-                           FontSize="20"
-                           FontWeight="Light"
                            TextTrimming="CharacterEllipsis"
-                           MaxLines="2"/>
+                           MaxLines="1"/>
 
-                                    <!-- Subtitle -->
-                                    <TextBlock Text="{Binding Subtitle}"
-                           Foreground="#BFBFBF"
-                           FontSize="12"
-                           Margin="0,6,0,0"
-                           TextTrimming="CharacterEllipsis"
-                           MaxLines="2"/>
-
-                                    <!-- Category (Windows 8 style metadata) -->
+                                    <!-- Category -->
                                     <TextBlock Text="{Binding Category}"
+                           FontFamily="Segoe UI"
+                           FontSize="11"
+                           FontWeight="Normal"
                            Foreground="{StaticResource AccentBrush}"
-                           FontSize="11"
-                           Margin="0,8,0,0"
-                           FontWeight="Light"
-                           TextWrapping="NoWrap"/>
-
-                                    <!-- Publisher (secondary metadata) -->
-                                    <TextBlock Text="{Binding Publisher}"
-                           Foreground="#80FFFFFF"
-                           FontSize="11"
                            Margin="0,2,0,0"
-                           TextWrapping="NoWrap"/>
+                           TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Publisher -->
+                                    <TextBlock Text="{Binding Publisher}"
+                           FontFamily="Segoe UI"
+                           FontSize="11"
+                           FontWeight="Normal"
+                           Foreground="#8E8E93"
+                           Margin="0,1,0,0"
+                           TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Description with Ellipsis -->
+                                    <TextBlock Text="{Binding Description}"
+                           FontFamily="Segoe UI"
+                           FontSize="11"
+                           FontWeight="Normal"
+                           LineHeight="15"
+                           Foreground="#80FFFFFF"
+                           Margin="0,4,0,0"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"/>
 
                                 </StackPanel>
-
                             </Grid>
-
                         </DataTemplate>
-                    </GridView.ItemTemplate>
-                    <GridView.ItemContainerStyle>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
 
                         <Style TargetType="GridViewItem">
 
@@ -235,10 +258,10 @@
                     </GridView.ItemContainerStyle>
 
                 </GridView>
-
             </ScrollViewer>
 
         </Grid>
+
     </Grid>
     <Page.BottomAppBar>
         <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="True">
@@ -273,6 +296,57 @@
                                FontWeight="Light"/>
                     </StackPanel>
 
+                    <AppBarButton Icon="Filter" Label="Filters">
+                        <AppBarButton.Flyout>
+                            <Flyout x:Name="FilterFlyout" Placement="Top">
+                                <StackPanel Width="240" Margin="4,2">
+                                    <!-- Metro Sub-Header -->
+                                    <TextBlock Text="Filters"
+                           FontFamily="Segoe UI"
+                           FontWeight="SemiLight"
+                           FontSize="18"
+                           Foreground="#2B2B2B"
+                           Margin="0,0,0,14"/>
+
+                                    <!-- 1. Sort by ComboBox -->
+                                    <ComboBox x:Name="SortComboBox"
+                          Header="Sort by"
+                          HorizontalAlignment="Stretch"
+                          SelectedIndex="0"
+                          Margin="0,0,0,12"
+                          SelectionChanged="FilterCriteria_Changed">
+                                        <ComboBoxItem Content="Featured" Tag="Featured"/>
+                                        <ComboBoxItem Content="Title (A - Z)" Tag="AlphaAsc"/>
+                                        <ComboBoxItem Content="Title (Z - A)" Tag="AlphaDesc"/>
+                                        <ComboBoxItem Content="Top Apps First" Tag="TopApps"/>
+                                    </ComboBox>
+
+                                    <!-- 2. Category ComboBox (Items populated dynamically) -->
+                                    <ComboBox x:Name="CategoryComboBox"
+                          Header="Category"
+                          HorizontalAlignment="Stretch"
+                          SelectedIndex="0"
+                          Margin="0,0,0,12"
+                          SelectionChanged="FilterCriteria_Changed"/>
+
+                                    <!-- 3. Publisher ComboBox (Items populated dynamically) -->
+                                    <ComboBox x:Name="PublisherComboBox"
+                          Header="Publisher"
+                          HorizontalAlignment="Stretch"
+                          SelectedIndex="0"
+                          Margin="0,0,0,18"
+                          SelectionChanged="FilterCriteria_Changed"/>
+
+                                    <!-- Reset Filters Button -->
+                                    <Button Content="Reset Filters"
+                        HorizontalAlignment="Stretch"
+                        Padding="0,6"
+                        Click="ResetFilters_Click"/>
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+
                     <!-- BUTTONS (still LEFT) -->
                     <AppBarButton Icon="Refresh"
                               Label="Refresh"
@@ -283,18 +357,29 @@
                 <!-- MIDDLE SPACER -->
                 <Grid Grid.Column="1"/>
 
-                <!-- RIGHT SIDE: SEARCH ONLY -->
+                <!-- RIGHT SIDE: COUNT & SEARCH -->
                 <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center"
-                        Margin="0,0,10,0">
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            Margin="0,0,10,0">
 
-                    <SearchBox x:Name="SearchBox" QueryChanged="SearchBox_QueryChanged"
-QuerySubmitted="SearchBox_QuerySubmitted"
-                           Width="300"
-                           Height="32"
-                           PlaceholderText="Search apps..." SearchHistoryEnabled="False"
-                           Margin="0,0,0,0"/>
+                    <!-- APPS COUNT -->
+                    <TextBlock x:Name="AppsCountText"
+               Text="0 apps"
+               FontFamily="Segoe UI"
+               FontWeight="SemiLight"
+               FontSize="14"
+               VerticalAlignment="Center"
+               Margin="0,0,16,0"/>
+
+                    <SearchBox x:Name="SearchBox" 
+               QueryChanged="SearchBox_QueryChanged"
+               QuerySubmitted="SearchBox_QuerySubmitted"
+               Width="300"
+               Height="32"
+               PlaceholderText="Search apps..." 
+               SearchHistoryEnabled="False"
+               Margin="0,0,0,0"/>
 
                 </StackPanel>
 

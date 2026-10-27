@@ -23,6 +23,9 @@ using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Text;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
@@ -171,6 +174,8 @@ namespace NeonStore
 
         private async void OpenProject_Click(object sender, RoutedEventArgs e)
         {
+            SetDownloadButtonsEnabled(false);
+
             PrivacyNoteText.Visibility = Visibility.Collapsed;
             DownloadProgressRing.Visibility = Visibility.Visible;
             DownloadProgressRing.IsActive = true;
@@ -214,12 +219,16 @@ namespace NeonStore
                     DownloadProgressRing.IsActive = false;
                     DownloadProgressRing.Visibility = Visibility.Collapsed;
                     DownloadStatusText.Text = "";
-
                     return;
                 }
 
-                // ✅ Notification: download started
-                ToastService.Show("Download started", project.Title, project.ImagePath);
+                bool toast =
+                    (bool?)ApplicationData.Current.LocalSettings.Values["Toast"] ?? true;
+
+                if (toast)
+                {
+                    ToastService.Show("Download started", project.Title, project.ImagePath);
+                }
 
                 var client = new Windows.Web.Http.HttpClient();
 
@@ -241,7 +250,6 @@ namespace NeonStore
                 while (true)
                 {
                     uint loaded = await reader.LoadAsync(BufferSize);
-
                     if (loaded == 0)
                         break;
 
@@ -255,38 +263,26 @@ namespace NeonStore
 
                     if (totalBytes > 0)
                     {
-                        double percent =
-                            (double)downloadedBytes / totalBytes * 100;
-
-                        double downloadedMB =
-                            downloadedBytes / 1024d / 1024d;
-
-                        double totalMB =
-                            totalBytes / 1024d / 1024d;
+                        double percent = (double)downloadedBytes / totalBytes * 100;
+                        double downloadedMB = downloadedBytes / 1024d / 1024d;
+                        double totalMB = totalBytes / 1024d / 1024d;
 
                         DownloadProgressBar.Value = percent;
-
-                        DownloadStatusText.Text =
-                            string.Format(
-                                "{0:F1} MB / {1:F1} MB ({2:F0}%)",
-                                downloadedMB,
-                                totalMB,
-                                percent);
+                        DownloadStatusText.Text = string.Format(
+                            "{0:F1} MB / {1:F1} MB ({2:F0}%)",
+                            downloadedMB,
+                            totalMB,
+                            percent);
                     }
                 }
 
                 await writer.FlushAsync();
-
                 DownloadProgressBar.Value = 100;
 
                 if (totalBytes > 0)
                 {
                     double totalMB = totalBytes / 1024d / 1024d;
-
-                    DownloadStatusText.Text =
-                        string.Format(
-                            "{0:F1} MB / {0:F1} MB (100%)",
-                            totalMB);
+                    DownloadStatusText.Text = string.Format("{0:F1} MB / {0:F1} MB (100%)", totalMB);
                 }
                 else
                 {
@@ -298,10 +294,12 @@ namespace NeonStore
                 input.Dispose();
                 output.Dispose();
 
-                // ✅ Notification: download completed
-                ToastService.Show("Download complete", project.Title, project.ImagePath);
+                if (toast)
+                {
+                    ToastService.Show("Download complete", project.Title, project.ImagePath);
+                }
 
-                var dialog = new MessageDialog($"\"{file.Name}\" downloaded. Open it?");
+                var dialog = new MessageDialog(string.Format("\"{0}\" downloaded. Open it?", file.Name));
                 dialog.Commands.Add(new UICommand("Open"));
                 dialog.Commands.Add(new UICommand("Cancel"));
 
@@ -311,6 +309,7 @@ namespace NeonStore
                 {
                     await Windows.System.Launcher.LaunchFileAsync(file);
                 }
+
                 DownloadHistoryService.Instance.Add(new DownloadItem
                 {
                     Title = project.Title,
@@ -335,11 +334,15 @@ namespace NeonStore
                     if (DownloadStatusText.Text != "Download complete")
                         DownloadStatusText.Text = "Ready";
                 }
+
+                SetDownloadButtonsEnabled(true);
             }
         }
 
         private async void InstantDownload_Click(object sender, RoutedEventArgs e)
         {
+            SetDownloadButtonsEnabled(false);
+
             PrivacyNoteText.Visibility = Visibility.Collapsed;
             DownloadProgressRing.Visibility = Visibility.Visible;
             DownloadProgressRing.IsActive = true;
@@ -359,13 +362,11 @@ namespace NeonStore
                 if (string.IsNullOrEmpty(fileName))
                     fileName = project.Title + ".bin";
 
-                // Pictures\NeonStore
                 StorageFolder pictures = KnownFolders.PicturesLibrary;
                 StorageFolder neonStoreFolder = await pictures.CreateFolderAsync(
                     "NeonStore",
                     CreationCollisionOption.OpenIfExists);
 
-                // Check if file already exists locally
                 StorageFile file = null;
                 IStorageItem existingItem = await neonStoreFolder.TryGetItemAsync(fileName);
                 bool alreadyDownloaded = false;
@@ -375,7 +376,6 @@ namespace NeonStore
                     file = (StorageFile)existingItem;
                     var basicProps = await file.GetBasicPropertiesAsync();
 
-                    // Verify file is not empty (e.g. from an aborted previous download)
                     if (basicProps.Size > 0)
                     {
                         alreadyDownloaded = true;
@@ -384,7 +384,6 @@ namespace NeonStore
                     }
                 }
 
-                // If not found locally, proceed with download
                 if (!alreadyDownloaded)
                 {
                     DownloadStatusText.Text = "Preparing download...";
@@ -393,10 +392,16 @@ namespace NeonStore
                         fileName,
                         CreationCollisionOption.OpenIfExists);
 
-                    ToastService.Show(
+                    bool toast =
+    (bool?)ApplicationData.Current.LocalSettings.Values["Toast"] ?? true;
+
+                    if (toast)
+                    {
+                        ToastService.Show(
                         "Download started",
                         project.Title,
                         project.ImagePath);
+                    }
 
                     var client = new Windows.Web.Http.HttpClient();
                     var response = await client.GetAsync(
@@ -460,10 +465,13 @@ namespace NeonStore
                         DownloadStatusText.Text = "Download complete";
                     }
 
-                    ToastService.Show(
+                    if (toast)
+                    {
+                        ToastService.Show(
                         "Download complete",
                         project.Title,
                         project.ImagePath);
+                    }
                 }
 
                 // --- SIDELOAD PROTOCOL EXECUTION ---
@@ -487,7 +495,6 @@ namespace NeonStore
                 string taskId = Guid.NewGuid().ToString("N");
                 DownloadStatusText.Text = "Connecting to helper...";
 
-                // Ensure the helper is in Pictures\NeonStore so the user can easily run it
                 try
                 {
                     var installedLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
@@ -500,7 +507,6 @@ namespace NeonStore
                 }
                 catch { }
 
-                // Launch helper protocol
                 string uriString = string.Format(
                     "neonstore-helper://install?path={0}&taskId={1}",
                     Uri.EscapeDataString(file.Path),
@@ -508,15 +514,20 @@ namespace NeonStore
 
                 await Windows.System.Launcher.LaunchUriAsync(new Uri(uriString));
 
-                // Monitor progress with early handshake timeout
                 bool helperResponded = await MonitorSideloadProgressAsync(neonStoreFolder, taskId);
 
                 if (helperResponded)
                 {
-                    ToastService.Show(
+                    bool toast =
+    (bool?)ApplicationData.Current.LocalSettings.Values["Toast"] ?? true;
+
+                    if (toast)
+                    {
+                        ToastService.Show(
                         "App installed successfully",
                         project.Title,
                         project.ImagePath);
+                    }
                 }
                 else
                 {
@@ -531,7 +542,6 @@ namespace NeonStore
                         "Sideload Helper Setup Required");
 
                     setupDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK"));
-
                     await setupDialog.ShowAsync();
                 }
 
@@ -547,20 +557,22 @@ namespace NeonStore
             }
             catch (Exception ex)
             {
-                await new MessageDialog(
-                    ex.ToString(),
-                    "Crash Debug").ShowAsync();
+                await new MessageDialog(ex.ToString(), "Crash Debug").ShowAsync();
             }
             finally
             {
                 DownloadProgressRing.IsActive = false;
                 DownloadProgressRing.Visibility = Visibility.Collapsed;
                 DownloadStatusText.Text = "Ready";
+
+                SetDownloadButtonsEnabled(true);
             }
         }
 
         private async void OldDownload_Click(object sender, RoutedEventArgs e)
         {
+            SetDownloadButtonsEnabled(false);
+
             PrivacyNoteText.Visibility = Visibility.Collapsed;
             DownloadProgressRing.Visibility = Visibility.Visible;
             DownloadProgressRing.IsActive = true;
@@ -580,13 +592,11 @@ namespace NeonStore
                 if (string.IsNullOrEmpty(fileName))
                     fileName = project.Title + ".bin";
 
-                // Pictures\NeonStore
                 StorageFolder pictures = KnownFolders.PicturesLibrary;
                 StorageFolder neonStoreFolder = await pictures.CreateFolderAsync(
                     "NeonStore",
                     CreationCollisionOption.OpenIfExists);
 
-                // Check if file already exists locally
                 StorageFile file = null;
                 IStorageItem existingItem = await neonStoreFolder.TryGetItemAsync(fileName);
                 bool alreadyDownloaded = false;
@@ -596,7 +606,6 @@ namespace NeonStore
                     file = (StorageFile)existingItem;
                     var basicProps = await file.GetBasicPropertiesAsync();
 
-                    // Verify file is not empty (e.g. from an aborted previous download)
                     if (basicProps.Size > 0)
                     {
                         alreadyDownloaded = true;
@@ -605,7 +614,6 @@ namespace NeonStore
                     }
                 }
 
-                // If not found locally, proceed with download
                 if (!alreadyDownloaded)
                 {
                     DownloadStatusText.Text = "Preparing download...";
@@ -614,10 +622,16 @@ namespace NeonStore
                         fileName,
                         CreationCollisionOption.OpenIfExists);
 
-                    ToastService.Show(
+                    bool toast =
+    (bool?)ApplicationData.Current.LocalSettings.Values["Toast"] ?? true;
+
+                    if (toast)
+                    {
+                        ToastService.Show(
                         "Download started",
                         project.Title,
                         project.ImagePath);
+                    }
 
                     var client = new Windows.Web.Http.HttpClient();
                     var response = await client.GetAsync(
@@ -681,10 +695,13 @@ namespace NeonStore
                         DownloadStatusText.Text = "Download complete";
                     }
 
-                    ToastService.Show(
+                    if (toast)
+                    {
+                        ToastService.Show(
                         "Download complete",
                         project.Title,
                         project.ImagePath);
+                    }
                 }
 
                 // --- DIRECT LAUNCH WITH SYSTEM SHELL ---
@@ -702,15 +719,15 @@ namespace NeonStore
             }
             catch (Exception ex)
             {
-                await new MessageDialog(
-                    ex.ToString(),
-                    "Crash Debug").ShowAsync();
+                await new MessageDialog(ex.ToString(), "Crash Debug").ShowAsync();
             }
             finally
             {
                 DownloadProgressRing.IsActive = false;
                 DownloadProgressRing.Visibility = Visibility.Collapsed;
                 DownloadStatusText.Text = "Ready";
+
+                SetDownloadButtonsEnabled(true);
             }
         }
         private async System.Threading.Tasks.Task<bool> MonitorSideloadProgressAsync(StorageFolder folder, string taskId)
@@ -788,7 +805,13 @@ namespace NeonStore
         }
         #endregion
 
-        // 2. Update LoadReviews to check if the current user already has a review
+        // 1. Pagination Fields (6 items per page)
+        private const int PageSize = 6;
+        private int _currentReviewPage = 1;
+        private int _totalReviewPages = 1;
+        private List<Review> _allReviews = new List<Review>();
+
+        // 2. Load and parse reviews into the master list with 6-per-page pagination
         private async void LoadReviews()
         {
             try
@@ -798,21 +821,22 @@ namespace NeonStore
 
                 string json = await ReviewService.GetReviews(app.Id);
                 var arr = JArray.Parse(json);
-                var list = new ObservableCollection<Review>();
+
+                _allReviews.Clear();
+                myExistingReview = null;
 
                 var currentUserId = ApplicationData.Current.LocalSettings.Values["userId"] as string;
                 var currentUsername = ApplicationData.Current.LocalSettings.Values["username"] as string;
 
-                myExistingReview = null;
-
                 foreach (var item in arr)
                 {
+                    string rawAvatar = item["avatar"]?.ToString();
                     var r = new Review
                     {
                         _id = item["_id"]?.ToString(),
                         userId = item["userId"]?.ToString(),
                         username = item["username"]?.ToString(),
-                        avatar = item["avatar"]?.ToString(),
+                        avatar = string.IsNullOrWhiteSpace(rawAvatar) ? null : rawAvatar,
                         rating = int.Parse(item["rating"]?.ToString() ?? "0"),
                         comment = item["comment"]?.ToString(),
                         appId = item["appId"]?.ToString(),
@@ -827,21 +851,100 @@ namespace NeonStore
                         myExistingReview = r;
                     }
 
-                    list.Add(r);
+                    _allReviews.Add(r);
                 }
 
-                ReviewsGrid.ItemsSource = list;
-                UpdateReviewStatistics(list);
-                UpdateEmptyState(list);
+                // Update statistics and empty state across the entire review collection
+                UpdateReviewStatistics(_allReviews);
+                UpdateEmptyState(_allReviews);
 
-                // Adjust form controls based on whether a review exists
+                // Adjust review submission/edit form controls
                 UpdateReviewFormState();
 
-                System.Diagnostics.Debug.WriteLine("[REVIEWS LOADED] " + list.Count);
+                // Calculate total pages (6 reviews per page) and slice the first page
+                _totalReviewPages = Math.Max(1, (int)Math.Ceiling((double)_allReviews.Count / PageSize));
+                _currentReviewPage = 1;
+                DisplayCurrentReviewPage();
+
+                System.Diagnostics.Debug.WriteLine("[REVIEWS LOADED] Total: " + _allReviews.Count + ", Pages: " + _totalReviewPages);
             }
             catch (System.Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("[LOAD REVIEWS ERROR] " + ex.Message);
+            }
+        }
+
+
+
+        // 3. Slice and bind exactly 6 reviews for the current page
+        private void DisplayCurrentReviewPage()
+        {
+            if (_allReviews.Count == 0)
+            {
+                ReviewsGrid.ItemsSource = null;
+                if (PaginationPanel != null) PaginationPanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            _totalReviewPages = Math.Max(1, (int)Math.Ceiling((double)_allReviews.Count / PageSize));
+
+            // Clamp page number
+            if (_currentReviewPage > _totalReviewPages) _currentReviewPage = _totalReviewPages;
+            if (_currentReviewPage < 1) _currentReviewPage = 1;
+
+            // Slice 6 items
+            var pagedItems = _allReviews
+                .Skip((_currentReviewPage - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            ReviewsGrid.ItemsSource = pagedItems;
+
+            // Update pagination controls
+            UpdatePaginationUI();
+        }
+
+        // 4. Update Previous/Next button states and label
+        private void UpdatePaginationUI()
+        {
+            if (PaginationPanel != null)
+            {
+                // Only show pagination if there are more than 6 reviews (2+ pages)
+                PaginationPanel.Visibility = _totalReviewPages > 1 ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (PageIndicatorText != null)
+            {
+                PageIndicatorText.Text = string.Format("Page {0} of {1}", _currentReviewPage, _totalReviewPages);
+            }
+
+            if (PrevPageBtn != null)
+            {
+                PrevPageBtn.IsEnabled = _currentReviewPage > 1;
+            }
+
+            if (NextPageBtn != null)
+            {
+                NextPageBtn.IsEnabled = _currentReviewPage < _totalReviewPages;
+            }
+        }
+
+        // 5. Button Click Handlers
+        private void PrevPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentReviewPage > 1)
+            {
+                _currentReviewPage--;
+                DisplayCurrentReviewPage();
+            }
+        }
+
+        private void NextPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentReviewPage < _totalReviewPages)
+            {
+                _currentReviewPage++;
+                DisplayCurrentReviewPage();
             }
         }
 
@@ -925,7 +1028,7 @@ namespace NeonStore
 
             if (!string.IsNullOrWhiteSpace(publisher))
             {
-                Frame.Navigate(typeof(PublisherPage), publisher);
+                Frame.Navigate(typeof(Apps), publisher);
             }
         }
 
@@ -1147,6 +1250,19 @@ namespace NeonStore
             }
         }
 
+        private void SetDownloadButtonsEnabled(bool isEnabled)
+        {
+            // Regular Buttons / Flyout items
+            if (InstantDownloadBtn != null) InstantDownloadBtn.IsEnabled = isEnabled;
+            if (DownloadOld != null) DownloadOld.IsEnabled = isEnabled;
+            if (SaveAs != null) SaveAs.IsEnabled = isEnabled;
+
+            // Bottom AppBar Buttons
+            if (DownloadBar != null) DownloadBar.IsEnabled = isEnabled;
+            if (DownloadOldBar != null) DownloadOldBar.IsEnabled = isEnabled;
+            if (OpenProjectBar != null) OpenProjectBar.IsEnabled = isEnabled;
+        }
+
         private async void OpenInBrowser_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -1182,6 +1298,255 @@ namespace NeonStore
             else
             {
                 MainPanelTransform.X = 0;
+            }
+        }
+
+        // 1. GridView Item Click Handler
+        private void ReviewsGrid_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var review = e.ClickedItem as Review;
+            if (review != null)
+            {
+                ReviewDetailModal.Show(review);
+            }
+        }
+
+        // 2. Metro Edge-to-Edge Review Modal Helper
+        private class ReviewDetailModal
+        {
+            private Popup _popup;
+
+            public static ReviewDetailModal Show(Review review)
+            {
+                if (review == null) return null;
+
+                var modal = new ReviewDetailModal();
+                var bounds = Window.Current.Bounds;
+
+                // Root dim overlay (60% Black)
+                var rootGrid = new Grid
+                {
+                    Width = bounds.Width,
+                    Height = bounds.Height,
+                    Background = new SolidColorBrush(Color.FromArgb(160, 0, 0, 0))
+                };
+
+                // Darkened Accent surface (matching the Metro install/message box ribbon)
+                Brush bannerBackground = new SolidColorBrush(Color.FromArgb(255, 20, 20, 24));
+                if (Application.Current.Resources.ContainsKey("AccentBrush"))
+                {
+                    var accentBrush = Application.Current.Resources["AccentBrush"] as SolidColorBrush;
+                    if (accentBrush != null)
+                    {
+                        Color c = accentBrush.Color;
+                        byte darkR = (byte)(c.R * 0.35);
+                        byte darkG = (byte)(c.G * 0.35);
+                        byte darkB = (byte)(c.B * 0.35);
+                        bannerBackground = new SolidColorBrush(Color.FromArgb(255, darkR, darkG, darkB));
+                    }
+                }
+
+                // Full Edge-to-Edge Ribbon (No outline borders)
+                var fullWidthBanner = new Border
+                {
+                    Width = bounds.Width,
+                    Background = bannerBackground,
+                    BorderThickness = new Thickness(0),
+                    Padding = new Thickness(0, 32, 0, 32),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                // Inner standard Metro column container (centered on screen, content left-aligned)
+                var contentStack = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    Width = Math.Min(bounds.Width - 48, 720),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(24, 0, 24, 0)
+                };
+
+                // --- ROW 0: Reviewer Avatar + Details Header ---
+                var headerGrid = new Grid { Margin = new Thickness(0, 0, 0, 16) };
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                // Avatar container with pure XAML fallback
+                var avatarContainer = new Grid
+                {
+                    Width = 56,
+                    Height = 56,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 16, 0)
+                };
+
+                var fallbackImg = new Image
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Assets/user-200.png")),
+                    Stretch = Stretch.UniformToFill,
+                    Width = 56,
+                    Height = 56
+                };
+                avatarContainer.Children.Add(fallbackImg);
+
+                if (!string.IsNullOrWhiteSpace(review.avatar))
+                {
+                    try
+                    {
+                        var userAvatarImg = new Image
+                        {
+                            Source = new BitmapImage(new Uri(review.avatar)),
+                            Stretch = Stretch.UniformToFill,
+                            Width = 56,
+                            Height = 56
+                        };
+                        avatarContainer.Children.Add(userAvatarImg);
+                    }
+                    catch { }
+                }
+
+                // Reviewer Name & Metadata
+                var metaStack = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var nameText = new TextBlock
+                {
+                    Text = review.username ?? "Anonymous",
+                    FontFamily = new FontFamily("Segoe UI Light"),
+                    FontSize = 26,
+                    FontWeight = FontWeights.Light,
+                    Foreground = new SolidColorBrush(Colors.White),
+                    TextTrimming = TextTrimming.CharacterEllipsis
+                };
+
+                var bylineStack = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 4, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var starIcon = new TextBlock
+                {
+                    Text = "★",
+                    FontSize = 14,
+                    Foreground = (Application.Current.Resources.ContainsKey("AccentBrush")
+                        ? Application.Current.Resources["AccentBrush"] as Brush
+                        : new SolidColorBrush(Colors.White)),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var ratingText = new TextBlock
+                {
+                    Text = review.rating.ToString(),
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontWeight = FontWeights.SemiBold,
+                    FontSize = 14,
+                    Foreground = starIcon.Foreground,
+                    Margin = new Thickness(4, 0, 8, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var bulletText = new TextBlock
+                {
+                    Text = "•",
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 12,
+                    Foreground = new SolidColorBrush(Color.FromArgb(255, 120, 120, 120)),
+                    Margin = new Thickness(0, 0, 8, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var dateText = new TextBlock
+                {
+                    Text = review.updatedAt.ToString("MMM d, yyyy"),
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 13,
+                    Foreground = new SolidColorBrush(Color.FromArgb(255, 180, 180, 185)),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                bylineStack.Children.Add(starIcon);
+                bylineStack.Children.Add(ratingText);
+                bylineStack.Children.Add(bulletText);
+                bylineStack.Children.Add(dateText);
+
+                metaStack.Children.Add(nameText);
+                metaStack.Children.Add(bylineStack);
+
+                Grid.SetColumn(avatarContainer, 0);
+                Grid.SetColumn(metaStack, 1);
+                headerGrid.Children.Add(avatarContainer);
+                headerGrid.Children.Add(metaStack);
+
+                // --- ROW 1: Scrollable Review Comment Body ---
+                var commentScroll = new ScrollViewer
+                {
+                    MaxHeight = 280,
+                    HorizontalScrollMode = ScrollMode.Disabled,
+                    VerticalScrollMode = ScrollMode.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    Margin = new Thickness(0, 0, 0, 24)
+                };
+
+                var commentText = new TextBlock
+                {
+                    Text = review.comment ?? string.Empty,
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 15,
+                    LineHeight = 22,
+                    Foreground = new SolidColorBrush(Color.FromArgb(255, 220, 220, 220)),
+                    TextWrapping = TextWrapping.Wrap,
+                    HorizontalAlignment = HorizontalAlignment.Stretch
+                };
+                commentScroll.Content = commentText;
+
+                // --- ROW 2: Metro Action Button (Close) ---
+                var closeButton = new Button
+                {
+                    Content = "Close",
+                    MinWidth = 120,
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 14,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                closeButton.Click += (s, args) => modal.Close();
+
+                contentStack.Children.Add(headerGrid);
+                contentStack.Children.Add(commentScroll);
+                contentStack.Children.Add(closeButton);
+
+                fullWidthBanner.Child = contentStack;
+                rootGrid.Children.Add(fullWidthBanner);
+
+                // Clicking outside the ribbon also dismisses the dialog
+                rootGrid.Tapped += (s, args) =>
+                {
+                    if (args.OriginalSource == rootGrid)
+                    {
+                        modal.Close();
+                    }
+                };
+
+                modal._popup = new Popup
+                {
+                    Child = rootGrid,
+                    IsOpen = true
+                };
+
+                return modal;
+            }
+
+            public void Close()
+            {
+                if (_popup != null)
+                {
+                    _popup.IsOpen = false;
+                    _popup = null;
+                }
             }
         }
     }
