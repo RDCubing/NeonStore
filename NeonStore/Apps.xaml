@@ -12,17 +12,14 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
-        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">All Apps</x:String>
         <Storyboard x:Name="SlideInStoryboard">
-
-            <!-- Slide animation -->
             <DoubleAnimation
-            Storyboard.TargetName="MainPanelTransform"
-            Storyboard.TargetProperty="X"
-            From="200" To="0"
-            Duration="0:0:1.2"
-            EnableDependentAnimation="True">
+                Storyboard.TargetName="MainPanelTransform"
+                Storyboard.TargetProperty="X"
+                From="200" To="0"
+                Duration="0:0:1.2"
+                EnableDependentAnimation="True">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut"/>
                 </DoubleAnimation.EasingFunction>
@@ -30,11 +27,6 @@
         </Storyboard>
     </Page.Resources>
 
-    <!--
-        This grid acts as a root panel for the page that defines two rows:
-        * Row 0 contains the back button and page title
-        * Row 1 contains the rest of the page layout
-    -->
     <Grid>
         <Grid.Background>
             <ImageBrush Stretch="UniformToFill" ImageSource="ms-appx:///Assets/Store1.png"/>
@@ -56,32 +48,31 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="backButton" Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
-                        Style="{StaticResource NavigationBackButtonNormalStyle}"
-                        VerticalAlignment="Top"
-                        AutomationProperties.Name="Back"
-                        AutomationProperties.AutomationId="BackButton"
-                        AutomationProperties.ItemType="Navigation Button"/>
+                    Style="{StaticResource NavigationBackButtonNormalStyle}"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name="Back"
+                    AutomationProperties.AutomationId="BackButton"
+                    AutomationProperties.ItemType="Navigation Button"/>
             <TextBlock x:Name="pageTitle" Text="All Applications" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
-                        IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+                       IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
+
         <!-- CONTENT AREA -->
         <Grid Grid.Row="1">
-
             <ScrollViewer
-        HorizontalScrollMode="Auto"
-        HorizontalScrollBarVisibility="Auto"
-        VerticalScrollMode="Disabled"
-        VerticalScrollBarVisibility="Disabled"
-        ZoomMode="Disabled">
+                HorizontalScrollMode="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollMode="Disabled"
+                VerticalScrollBarVisibility="Disabled"
+                ZoomMode="Disabled">
 
                 <GridView x:Name="ProjectsGrid"
-              IsItemClickEnabled="True"
-              ItemClick="ProjectsGrid_ItemClick"
-              ItemsSource="{Binding}"
-              Margin="40,10,0,40">
+                          IsItemClickEnabled="True"
+                          ItemClick="ProjectsGrid_ItemClick"
+                          ItemsSource="{Binding}"
+                          Margin="40,10,0,40">
                     <GridView.RenderTransform>
-                        <TranslateTransform x:Name="MainPanelTransform"
-                            X="200"/>
+                        <TranslateTransform x:Name="MainPanelTransform" X="200"/>
                     </GridView.RenderTransform>
 
                     <!-- WRAP LAYOUT -->
@@ -96,18 +87,14 @@
                             <!-- Windows 8.1 Transparent Banner Tile (Compact Footprint: 260 x 215) -->
                             <Grid Width="260" Height="215" Margin="0,0,18,18" Background="Transparent">
                                 <Grid.RowDefinitions>
-                                    <!-- 1. Banner Image Container -->
                                     <RowDefinition Height="130"/>
-                                    <!-- 2. Text Information Stack -->
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- 1. BANNER IMAGE + STAMPED LOGO OVERLAY -->
                                 <Grid Grid.Row="0">
-                                    <!-- Background Hero / Detail Image -->
                                     <Border Background="#18181A">
-                                        <Image Source="{Binding DetailImagePath}"
-                           Stretch="UniformToFill"/>
+                                        <Image Source="{Binding DetailImagePath}" Stretch="UniformToFill"/>
                                     </Border>
 
                                     <!-- Subtle dark vignette at the bottom of the banner for high contrast -->
@@ -122,80 +109,71 @@
 
                                     <!-- STAMPED APP LOGO (Anchored bottom-left corner) -->
                                     <Border Width="40" 
-                        Height="40" 
-                        HorizontalAlignment="Left" 
-                        VerticalAlignment="Bottom"
-                        Margin="8"
-                        Background="#CC1E1E22">
-                                        <Image Source="{Binding ImagePath}"
-                           Stretch="UniformToFill"/>
+                                            Height="40" 
+                                            HorizontalAlignment="Left" 
+                                            VerticalAlignment="Bottom"
+                                            Margin="8"
+                                            Background="#CC1E1E22">
+                                        <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
                                     </Border>
                                 </Grid>
 
                                 <!-- 2. TEXT AREA -->
                                 <StackPanel Grid.Row="1" Margin="0,6,0,0">
-
-                                    <!-- Title -->
+                                    <!-- Title (MaxLines removed for Win8.1 compatibility) -->
                                     <TextBlock Text="{Binding Title}"
-                           FontFamily="Segoe UI"
-                           FontSize="15"
-                           FontWeight="SemiLight"
-                           Foreground="White"
-                           TextTrimming="CharacterEllipsis"
-                           MaxLines="1"/>
+                                               FontFamily="Segoe UI"
+                                               FontSize="15"
+                                               FontWeight="SemiLight"
+                                               Foreground="White"
+                                               TextTrimming="CharacterEllipsis"/>
 
                                     <!-- Category -->
                                     <TextBlock Text="{Binding Category}"
-                           FontFamily="Segoe UI"
-                           FontSize="11"
-                           FontWeight="Normal"
-                           Foreground="{StaticResource AccentBrush}"
-                           Margin="0,2,0,0"
-                           TextTrimming="CharacterEllipsis"/>
+                                               FontFamily="Segoe UI"
+                                               FontSize="11"
+                                               FontWeight="Normal"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               Margin="0,2,0,0"
+                                               TextTrimming="CharacterEllipsis"/>
 
                                     <!-- Publisher -->
                                     <TextBlock Text="{Binding Publisher}"
-                           FontFamily="Segoe UI"
-                           FontSize="11"
-                           FontWeight="Normal"
-                           Foreground="#8E8E93"
-                           Margin="0,1,0,0"
-                           TextTrimming="CharacterEllipsis"/>
+                                               FontFamily="Segoe UI"
+                                               FontSize="11"
+                                               FontWeight="Normal"
+                                               Foreground="#8E8E93"
+                                               Margin="0,1,0,0"
+                                               TextTrimming="CharacterEllipsis"/>
 
                                     <!-- Description with Ellipsis -->
                                     <TextBlock Text="{Binding Description}"
-                           FontFamily="Segoe UI"
-                           FontSize="11"
-                           FontWeight="Normal"
-                           LineHeight="15"
-                           Foreground="#80FFFFFF"
-                           Margin="0,4,0,0"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"/>
-
+                                               FontFamily="Segoe UI"
+                                               FontSize="11"
+                                               FontWeight="Normal"
+                                               LineHeight="15"
+                                               Foreground="#80FFFFFF"
+                                               Margin="0,4,0,0"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.ItemContainerStyle>
+                    </GridView.ItemTemplate>
 
+                    <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
-
-                            <!-- NORMAL -->
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="BorderThickness" Value="0"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="GridViewItem">
-
                                         <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            RenderTransformOrigin="0.5,0.5">
-
+                                                Background="{TemplateBinding Background}"
+                                                BorderThickness="0"
+                                                RenderTransformOrigin="0.5,0.5">
                                             <Border.RenderTransform>
                                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
                                             </Border.RenderTransform>
@@ -203,71 +181,48 @@
                                             <ContentPresenter />
 
                                             <VisualStateManager.VisualStateGroups>
-
                                                 <VisualStateGroup x:Name="CommonStates">
-
-                                                    <!-- NORMAL -->
                                                     <VisualState x:Name="Normal"/>
-
-                                                    <!-- POINTER OVER (HOVER) -->
                                                     <VisualState x:Name="PointerOver">
                                                         <Storyboard>
-
                                                             <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.85"
-                                                         Duration="0:0:0.1"/>
-
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             To="0.85"
+                                                                             Duration="0:0:0.1"/>
                                                             <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
+                                                                             Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                             To="1.05"
+                                                                             Duration="0:0:0.1"/>
                                                             <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.05"
-                                                         Duration="0:0:0.1"/>
-
+                                                                             Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                             To="1.05"
+                                                                             Duration="0:0:0.1"/>
                                                         </Storyboard>
                                                     </VisualState>
-
-                                                    <!-- PRESSED -->
                                                     <VisualState x:Name="Pressed">
                                                         <Storyboard>
-
                                                             <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.6"
-                                                         Duration="0:0:0.05"/>
-
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             To="0.6"
+                                                                             Duration="0:0:0.05"/>
                                                         </Storyboard>
                                                     </VisualState>
-
                                                 </VisualStateGroup>
-
                                             </VisualStateManager.VisualStateGroups>
-
                                         </Border>
-
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
-
                         </Style>
-
                     </GridView.ItemContainerStyle>
-
                 </GridView>
             </ScrollViewer>
-
         </Grid>
-
     </Grid>
+
     <Page.BottomAppBar>
         <AppBar Background="{StaticResource AccentBrush}" IsSticky="True" IsOpen="True">
-
             <Grid Background="{StaticResource AccentBrush}">
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -276,31 +231,30 @@
 
                 <!-- LEFT SIDE: HEADER + BUTTONS -->
                 <StackPanel Grid.Column="0"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center">
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
 
                     <!-- HEADER -->
                     <StackPanel Orientation="Horizontal"
-                            Margin="10,10,10,5"
-                            VerticalAlignment="Center">
-
+                                Margin="10,10,10,5"
+                                VerticalAlignment="Center">
                         <Image Source="ms-appx:///Assets/SmallLogo.png"
-                           Width="30" Stretch="UniformToFill"
-                           Height="30"
-                           Margin="10,0,10,0"/>
+                               Width="30" Stretch="UniformToFill"
+                               Height="30"
+                               Margin="10,0,10,0"/>
 
                         <TextBlock Text="NeonStore"
-                               Foreground="White"
-                               FontSize="18"
-                               VerticalAlignment="Center"
-                               FontWeight="Light"/>
+                                   Foreground="White"
+                                   FontSize="18"
+                                   VerticalAlignment="Center"
+                                   FontWeight="Light"/>
                     </StackPanel>
 
+                    <!-- FILTERS BUTTON -->
                     <AppBarButton Icon="Filter" Label="Filters">
                         <AppBarButton.Flyout>
-                            <Flyout x:Name="FilterFlyout" Placement="Top">
+                            <Flyout x:Name="FilterFlyout">
                                 <StackPanel Width="240" Margin="4,2">
-                                    <!-- Metro Sub-Header -->
                                     <TextBlock Text="Filters"
                            FontFamily="Segoe UI"
                            FontWeight="SemiLight"
@@ -309,33 +263,27 @@
                            Margin="0,0,0,14"/>
 
                                     <!-- 1. Sort by ComboBox -->
+                                    <TextBlock Text="Sort by" FontSize="12" Foreground="#888888" Margin="0,0,0,4"/>
                                     <ComboBox x:Name="SortComboBox"
-                          Header="Sort by"
                           HorizontalAlignment="Stretch"
-                          SelectedIndex="0"
-                          Margin="0,0,0,12"
-                          SelectionChanged="FilterCriteria_Changed">
+                          Margin="0,0,0,12">
                                         <ComboBoxItem Content="Featured" Tag="Featured"/>
                                         <ComboBoxItem Content="Title (A - Z)" Tag="AlphaAsc"/>
                                         <ComboBoxItem Content="Title (Z - A)" Tag="AlphaDesc"/>
                                         <ComboBoxItem Content="Top Apps First" Tag="TopApps"/>
                                     </ComboBox>
 
-                                    <!-- 2. Category ComboBox (Items populated dynamically) -->
+                                    <!-- 2. Category ComboBox -->
+                                    <TextBlock Text="Category" FontSize="12" Foreground="#888888" Margin="0,0,0,4"/>
                                     <ComboBox x:Name="CategoryComboBox"
-                          Header="Category"
                           HorizontalAlignment="Stretch"
-                          SelectedIndex="0"
-                          Margin="0,0,0,12"
-                          SelectionChanged="FilterCriteria_Changed"/>
+                          Margin="0,0,0,12"/>
 
-                                    <!-- 3. Publisher ComboBox (Items populated dynamically) -->
+                                    <!-- 3. Publisher ComboBox -->
+                                    <TextBlock Text="Publisher" FontSize="12" Foreground="#888888" Margin="0,0,0,4"/>
                                     <ComboBox x:Name="PublisherComboBox"
-                          Header="Publisher"
                           HorizontalAlignment="Stretch"
-                          SelectedIndex="0"
-                          Margin="0,0,0,18"
-                          SelectionChanged="FilterCriteria_Changed"/>
+                          Margin="0,0,0,18"/>
 
                                     <!-- Reset Filters Button -->
                                     <Button Content="Reset Filters"
@@ -347,11 +295,10 @@
                         </AppBarButton.Flyout>
                     </AppBarButton>
 
-                    <!-- BUTTONS (still LEFT) -->
+                    <!-- REFRESH BUTTON -->
                     <AppBarButton Icon="Refresh"
-                              Label="Refresh"
-                              Click="Refresh_Click"/>
-
+                                  Label="Refresh"
+                                  Click="Refresh_Click"/>
                 </StackPanel>
 
                 <!-- MIDDLE SPACER -->
@@ -359,32 +306,30 @@
 
                 <!-- RIGHT SIDE: COUNT & SEARCH -->
                 <StackPanel Grid.Column="2"
-            Orientation="Horizontal"
-            VerticalAlignment="Center"
-            Margin="0,0,10,0">
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="0,0,10,0">
 
                     <!-- APPS COUNT -->
                     <TextBlock x:Name="AppsCountText"
-               Text="0 apps"
-               FontFamily="Segoe UI"
-               FontWeight="SemiLight"
-               FontSize="14"
-               VerticalAlignment="Center"
-               Margin="0,0,16,0"/>
+                               Text="0 apps"
+                               FontFamily="Segoe UI"
+                               FontWeight="SemiLight"
+                               FontSize="14"
+                               Foreground="#888888"
+                               VerticalAlignment="Center"
+                               Margin="0,0,16,0"/>
 
                     <SearchBox x:Name="SearchBox" 
-               QueryChanged="SearchBox_QueryChanged"
-               QuerySubmitted="SearchBox_QuerySubmitted"
-               Width="300"
-               Height="32"
-               PlaceholderText="Search apps..." 
-               SearchHistoryEnabled="False"
-               Margin="0,0,0,0"/>
-
+                               QueryChanged="SearchBox_QueryChanged"
+                               QuerySubmitted="SearchBox_QuerySubmitted"
+                               Width="300"
+                               Height="32"
+                               PlaceholderText="Search apps..." 
+                               SearchHistoryEnabled="False"
+                               Margin="0,0,0,0"/>
                 </StackPanel>
-
             </Grid>
-
         </AppBar>
     </Page.BottomAppBar>
 </Page>

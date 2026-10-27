@@ -207,31 +207,59 @@ namespace NeonStore
         {
             _isInitializingFilters = true;
 
-            // 1. Dynamic Categories
+            // 1. Detach handlers first to prevent accidental triggers
+            if (SortComboBox != null)
+                SortComboBox.SelectionChanged -= FilterCriteria_Changed;
+            if (CategoryComboBox != null)
+                CategoryComboBox.SelectionChanged -= FilterCriteria_Changed;
+            if (PublisherComboBox != null)
+                PublisherComboBox.SelectionChanged -= FilterCriteria_Changed;
+
+            // 2. Setup Sort
+            if (SortComboBox != null)
+            {
+                SortComboBox.SelectedIndex = 0;
+            }
+
+            // 3. Dynamic Categories
             if (CategoryComboBox != null)
             {
                 CategoryComboBox.Items.Clear();
                 CategoryComboBox.Items.Add(new ComboBoxItem { Content = "All Categories", Tag = "All" });
 
-                foreach (var cat in NeonStoreService.Categories)
+                if (NeonStoreService.Categories != null)
                 {
-                    CategoryComboBox.Items.Add(new ComboBoxItem { Content = cat, Tag = cat });
+                    foreach (var cat in NeonStoreService.Categories)
+                    {
+                        CategoryComboBox.Items.Add(new ComboBoxItem { Content = cat, Tag = cat });
+                    }
                 }
                 CategoryComboBox.SelectedIndex = 0;
             }
 
-            // 2. Dynamic Publishers
+            // 4. Dynamic Publishers
             if (PublisherComboBox != null)
             {
                 PublisherComboBox.Items.Clear();
                 PublisherComboBox.Items.Add(new ComboBoxItem { Content = "All Publishers", Tag = "All" });
 
-                foreach (var pub in NeonStoreService.Publishers)
+                if (NeonStoreService.Publishers != null)
                 {
-                    PublisherComboBox.Items.Add(new ComboBoxItem { Content = pub, Tag = pub });
+                    foreach (var pub in NeonStoreService.Publishers)
+                    {
+                        PublisherComboBox.Items.Add(new ComboBoxItem { Content = pub, Tag = pub });
+                    }
                 }
                 PublisherComboBox.SelectedIndex = 0;
             }
+
+            // 5. Reattach handlers after items & indices are populated
+            if (SortComboBox != null)
+                SortComboBox.SelectionChanged += FilterCriteria_Changed;
+            if (CategoryComboBox != null)
+                CategoryComboBox.SelectionChanged += FilterCriteria_Changed;
+            if (PublisherComboBox != null)
+                PublisherComboBox.SelectionChanged += FilterCriteria_Changed;
 
             _isInitializingFilters = false;
         }
