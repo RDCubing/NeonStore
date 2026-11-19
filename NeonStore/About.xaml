@@ -27,7 +27,7 @@
 
             <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" FontWeight="Bold" TextWrapping="Wrap">
                 <TextBlock.Text>
-                    NeonStore (version 2.1.26300.1)
+                    NeonStore (version 2.1.26323.0)
                 </TextBlock.Text>
             </TextBlock>
 
